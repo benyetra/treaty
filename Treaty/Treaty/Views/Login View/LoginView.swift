@@ -68,8 +68,6 @@ struct LoginView: View {
                     }
                     .padding(.top,10)
                 }
-                .padding(.leading,-60)
-                .frame(maxWidth: .infinity)
                 .alert(loginModel.errorMessage, isPresented: $loginModel.showError) {}
                 
                 HStack(spacing: 8){
@@ -121,11 +119,9 @@ struct LoginView: View {
                         }
                         .clipped()
                 }
-                .padding(.leading,-60)
                 .frame(maxWidth: .infinity)
             }
-            .padding(.leading,60)
-            .padding(.vertical,15)
+            .frame(maxWidth: .infinity)
             // MARK: Register Button
             HStack{
                 Text("Don't have an account?")
