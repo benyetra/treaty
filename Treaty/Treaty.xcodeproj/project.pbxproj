@@ -24,12 +24,12 @@
 		358BCF5629783624000A7F9C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF5529783624000A7F9C /* ContentView.swift */; };
 		358BCF5929783655000A7F9C /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF5829783654000A7F9C /* MainView.swift */; };
 		358BCF5C2978367F000A7F9C /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF5B2978367F000A7F9C /* LoginView.swift */; };
-		358BCF5E2978377C000A7F9C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 358BCF5D2978377C000A7F9C /* GoogleService-Info.plist */; };
 		358BCF60297839D8000A7F9C /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF5F297839D8000A7F9C /* LoadingView.swift */; };
 		358BCF62297839F6000A7F9C /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF61297839F6000A7F9C /* RegisterView.swift */; };
 		358BCF6529783A27000A7F9C /* View+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF6429783A27000A7F9C /* View+Extension.swift */; };
 		358BCF6829783AA8000A7F9C /* BarterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF6729783AA8000A7F9C /* BarterView.swift */; };
 		358BCF6D29783ACE000A7F9C /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF6C29783ACE000A7F9C /* AccountView.swift */; };
+		358BCF6F297852A1000A7F9C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 358BCF6E297852A1000A7F9C /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,12 +66,12 @@
 		358BCF5529783624000A7F9C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		358BCF5829783654000A7F9C /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		358BCF5B2978367F000A7F9C /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
-		358BCF5D2978377C000A7F9C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		358BCF5F297839D8000A7F9C /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		358BCF61297839F6000A7F9C /* RegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterView.swift; sourceTree = "<group>"; };
 		358BCF6429783A27000A7F9C /* View+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extension.swift"; sourceTree = "<group>"; };
 		358BCF6729783AA8000A7F9C /* BarterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarterView.swift; sourceTree = "<group>"; };
 		358BCF6C29783ACE000A7F9C /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
+		358BCF6E297852A1000A7F9C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,7 +127,7 @@
 		358BCF122978329F000A7F9C /* Treaty */ = {
 			isa = PBXGroup;
 			children = (
-				358BCF5D2978377C000A7F9C /* GoogleService-Info.plist */,
+				358BCF6E297852A1000A7F9C /* GoogleService-Info.plist */,
 				358BCF4429783325000A7F9C /* Views */,
 				358BCF432978331D000A7F9C /* Model */,
 				358BCF132978329F000A7F9C /* TreatyApp.swift */,
@@ -344,8 +344,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				358BCF21297832A1000A7F9C /* Preview Assets.xcassets in Resources */,
+				358BCF6F297852A1000A7F9C /* GoogleService-Info.plist in Resources */,
 				358BCF1D297832A1000A7F9C /* Assets.xcassets in Resources */,
-				358BCF5E2978377C000A7F9C /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -562,7 +562,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.losyetis.Treaty;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -602,7 +602,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.losyetis.Treaty;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -745,16 +745,16 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
 			};
 		};
 		358BCF50297833F9000A7F9C /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

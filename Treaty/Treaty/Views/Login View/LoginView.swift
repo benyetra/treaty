@@ -37,11 +37,15 @@ struct LoginView: View {
             VStack(spacing: 12){
                 TextField("Email", text: $emailID)
                     .textContentType(.emailAddress)
+                    .autocorrectionDisabled()
+                    .autocapitalization(.none)
                     .border(1, .gray.opacity(0.5))
                     .padding(.top,25)
                 
                 SecureField("Password", text: $password)
                     .textContentType(.emailAddress)
+                    .autocorrectionDisabled()
+                    .autocapitalization(.none)
                     .border(1, .gray.opacity(0.5))
                 
                 Button("Reset password?", action: resetPassword)

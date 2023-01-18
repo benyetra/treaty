@@ -17,11 +17,10 @@ struct RegisterView: View{
     @State var emailID: String = ""
     @State var password: String = ""
     @State var userName: String = ""
-    @State var userBio: String = ""
-    @State var userBioLink: String = ""
     @State var userProfilePicData: Data?
     // MARK: View Properties
     @Environment(\.dismiss) var dismiss
+    @Environment(\.colorScheme) private var colorScheme
     @State var showImagePicker: Bool = false
     @State var photoItem: PhotosPickerItem?
     @State var showError: Bool = false
@@ -94,14 +93,16 @@ struct RegisterView: View{
     func HelperView()->some View{
         VStack(spacing: 12){
             ZStack{
-                if let userProfilePicData,let image = UIImage(data: userProfilePicData){
+                if let userProfilePicData, let image = UIImage(data: userProfilePicData) {
                     Image(uiImage: image)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
-                }else{
+                } else {
                     Image("NullProfile")
                         .resizable()
                         .aspectRatio(contentMode: .fill)
+                        .clipShape(Circle())
+                        .overlay(Circle().stroke(colorScheme == .light ? Color.black : Color.white, lineWidth: 1))
                 }
             }
             .frame(width: 85, height: 85)
@@ -113,24 +114,31 @@ struct RegisterView: View{
             .padding(.top,25)
             
             TextField("Username", text: $userName)
-                .textContentType(.emailAddress)
+                .textContentType(.nickname)
+                .autocapitalization(.none)
+                .autocorrectionDisabled()
                 .border(1, .gray.opacity(0.5))
+                .onAppear {
+                    if !self.userName.hasPrefix("@") {
+                        self.userName = "@" + self.userName
+                    }
+                }
+                .onChange(of: userName, perform: { value in
+                    if value.contains(where: { !$0.isLetter && !$0.isNumber }) {
+                        self.userName = String(value.filter { $0.isLetter || $0.isNumber })
+                    }
+                })
             
             TextField("Email", text: $emailID)
                 .textContentType(.emailAddress)
+                .autocorrectionDisabled()
+                .autocapitalization(.none)
                 .border(1, .gray.opacity(0.5))
             
             SecureField("Password", text: $password)
-                .textContentType(.emailAddress)
-                .border(1, .gray.opacity(0.5))
-            
-            TextField("About You", text: $userBio,axis: .vertical)
-                .frame(minHeight: 100,alignment: .top)
-                .textContentType(.emailAddress)
-                .border(1, .gray.opacity(0.5))
-            
-            TextField("Bio Link (Optional)", text: $userBioLink)
-                .textContentType(.emailAddress)
+                .textContentType(.password)
+                .autocorrectionDisabled()
+                .autocapitalization(.none)
                 .border(1, .gray.opacity(0.5))
             
             Button(action: registerUser){
@@ -140,7 +148,7 @@ struct RegisterView: View{
                     .hAlign(.center)
                     .fillView(.black)
             }
-            .disableWithOpacity(userName == "" || userBio == "" || emailID == "" || password == "" || userProfilePicData == nil)
+            .disableWithOpacity(userName == "" || emailID == "" || password == "" || userProfilePicData == nil)
             .padding(.top,10)
         }
     }
@@ -160,7 +168,7 @@ struct RegisterView: View{
                 // Step 3: Downloading Photo URL
                 let downloadURL = try await storageRef.downloadURL()
                 // Step 4: Creating a User Firestore Object
-                let user = User(username: userName, userBio: userBio, userBioLink: userBioLink, userUID: userUID, userEmail: emailID, userProfileURL: downloadURL)
+                let user = User(username: userName, userUID: userUID, userEmail: emailID, userProfileURL: downloadURL)
                 // Step 5: Saving User Doc into Firestore Database
                 let _ = try Firestore.firestore().collection("Users").document(userUID).setData(from: user, completion: { error in
                     if error == nil{
@@ -174,7 +182,7 @@ struct RegisterView: View{
                 })
             }catch{
                 // MARK: Deleting Created Account In Case of Failure
-                try await Auth.auth().currentUser?.delete()
+//                try await Auth.auth().currentUser?.delete()
                 await setError(error)
             }
         }

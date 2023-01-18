@@ -10,13 +10,17 @@ import Firebase
 
 @main
 struct TreatyApp: App {
-    init(){
+    init() {
         FirebaseApp.configure()
     }
+    let persistenceController = PersistenceController.shared
+
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .preferredColorScheme(.light)
+                .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
 }
+
+
