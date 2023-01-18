@@ -10,6 +10,7 @@ import SwiftUI
 import Firebase
 import FirebaseStorage
 import FirebaseFirestore
+import GoogleSignIn
 
 struct AccountView: View {
     // MARK: My Profile Data
@@ -82,10 +83,13 @@ struct AccountView: View {
     // MARK: Logging User Out
     func logOutUser(){
         try? Auth.auth().signOut()
-        userUID = ""
-        userName = ""
-        profileURL = nil
-        logStatus = false
+        GIDSignIn.sharedInstance.signOut()
+        withAnimation(.easeInOut){
+            userUID = ""
+            userName = ""
+            profileURL = nil
+            logStatus = false
+        }
     }
     
     // MARK: Deleting User Entire Account
