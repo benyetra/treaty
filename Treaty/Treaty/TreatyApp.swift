@@ -6,9 +6,13 @@
 //
 
 import SwiftUI
+import Firebase
 
 @main
 struct TreatyApp: App {
+    init() {
+        FirebaseApp.configure()
+    }
     let persistenceController = PersistenceController.shared
 
     var body: some Scene {
@@ -18,3 +22,5 @@ struct TreatyApp: App {
         }
     }
 }
+
+
