@@ -30,6 +30,7 @@
 		358BCF6829783AA8000A7F9C /* BarterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF6729783AA8000A7F9C /* BarterView.swift */; };
 		358BCF6D29783ACE000A7F9C /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF6C29783ACE000A7F9C /* AccountView.swift */; };
 		358BCF6F297852A1000A7F9C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 358BCF6E297852A1000A7F9C /* GoogleService-Info.plist */; };
+		358BCF712978609B000A7F9C /* ReusableProfileContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF702978609B000A7F9C /* ReusableProfileContent.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +73,7 @@
 		358BCF6729783AA8000A7F9C /* BarterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarterView.swift; sourceTree = "<group>"; };
 		358BCF6C29783ACE000A7F9C /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
 		358BCF6E297852A1000A7F9C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		358BCF702978609B000A7F9C /* ReusableProfileContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReusableProfileContent.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -224,6 +226,7 @@
 			isa = PBXGroup;
 			children = (
 				358BCF6C29783ACE000A7F9C /* AccountView.swift */,
+				358BCF702978609B000A7F9C /* ReusableProfileContent.swift */,
 			);
 			path = AccountView;
 			sourceTree = "<group>";
@@ -374,6 +377,7 @@
 				358BCF62297839F6000A7F9C /* RegisterView.swift in Sources */,
 				358BCF5929783655000A7F9C /* MainView.swift in Sources */,
 				358BCF142978329F000A7F9C /* TreatyApp.swift in Sources */,
+				358BCF712978609B000A7F9C /* ReusableProfileContent.swift in Sources */,
 				358BCF5629783624000A7F9C /* ContentView.swift in Sources */,
 				358BCF4629783349000A7F9C /* UserModel.swift in Sources */,
 				358BCF6529783A27000A7F9C /* View+Extension.swift in Sources */,
