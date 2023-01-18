@@ -68,6 +68,8 @@ struct LoginView: View {
                     }
                     .padding(.top,10)
                 }
+                .padding(.leading,-60)
+                .frame(maxWidth: .infinity)
                 .alert(loginModel.errorMessage, isPresented: $loginModel.showError) {}
                 
                 HStack(spacing: 8){
