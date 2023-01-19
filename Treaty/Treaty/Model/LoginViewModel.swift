@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Firebase
+import FirebaseFirestore
 import CryptoKit
 import AuthenticationServices
 import GoogleSignIn
@@ -113,10 +114,14 @@ class LoginViewModel: ObservableObject {
             do{
                 guard let idToken = user.idToken else{return}
                 let accesToken = user.accessToken
-                
+
                 let credential = GoogleAuthProvider.credential(withIDToken: idToken.tokenString, accessToken: accesToken.tokenString)
-                
-                try await Auth.auth().signIn(with: credential)
+
+                let authResult = try await Auth.auth().signIn(with: credential)
+                let userUID = authResult.user.uid
+                let userEmail = authResult.user.email
+                let db = Firestore.firestore()
+                try await db.collection("Users").document(userUID).setData(["userEmail": userEmail, "userUID": userUID])
                 
                 print("Success Google!")
                 await MainActor.run(body: {

@@ -63,7 +63,7 @@ struct UserNameView: View {
     func addUsername(){
         isLoading = true
         let db = Firestore.firestore()
-        let userRef = db.collection("users").document(userUID)
+        let userRef = db.collection("Users").document(userUID)
         userRef.updateData(["username": userName]) { (error) in
             if let error = error {
                 self.isLoading = false
