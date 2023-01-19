@@ -146,7 +146,7 @@ struct LoginView: View {
             RegisterView()
         }
         // MARK: Displaying Alert
-        .alert(loginModel.errorMessage, isPresented: $loginModel.showError) {
+        .alert(errorMessage, isPresented: $showError, actions: {}) {
         }
     }
     
