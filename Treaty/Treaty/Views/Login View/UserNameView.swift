@@ -22,31 +22,41 @@ struct UserNameView: View {
 
     var body: some View {
         VStack {
-            TextField("Username", text: $userName)
-                .textContentType(.nickname)
-                .autocapitalization(.none)
-                .autocorrectionDisabled()
-                .border(1, colorScheme == .light ? Color.black : Color.white).opacity(0.5)
-                .onAppear {
-                    if !self.userName.hasPrefix("@") {
-                        self.userName = "@" + self.userName
+            VStack(spacing: 10){
+                Text("Lets set your \nUsername!")
+                    .font(.largeTitle.bold())
+                    .hAlign(.leading)
+                    .padding(15)
+
+                TextField("Username", text: $userName)
+                    .textContentType(.nickname)
+                    .autocapitalization(.none)
+                    .autocorrectionDisabled()
+                    .border(1, colorScheme == .light ? Color.black : Color.white).opacity(0.5)
+                    .onAppear {
+                        if !self.userName.hasPrefix("@") {
+                            self.userName = "@" + self.userName
+                        }
                     }
+                    .onChange(of: userName, perform: { value in
+                            var filteredValue = value
+                            if value.contains(where: { !$0.isLetter && !$0.isNumber }) {
+                                filteredValue = String(value.filter { $0.isLetter || $0.isNumber })
+                            }
+                            self.userName = filteredValue
+                        })
+                
+                Button(action: addUsername){
+                    // MARK: Login Button
+                    Text("Save")
+                        .foregroundColor(colorScheme == .light ? Color.white : Color.black)
+                        .hAlign(.center)
+                        .fillView(colorScheme == .light ? Color.black : Color.white)
                 }
-                .onChange(of: userName, perform: { value in
-                    if value.contains(where: { !$0.isLetter && !$0.isNumber }) {
-                        self.userName = String(value.filter { $0.isLetter || $0.isNumber })
-                    }
-                })
-            
-            Button(action: addUsername){
-                // MARK: Login Button
-                Text("Sign up")
-                    .foregroundColor(colorScheme == .light ? Color.white : Color.black)
-                    .hAlign(.center)
-                    .fillView(colorScheme == .light ? Color.black : Color.white)
+                .disableWithOpacity(userName == "")
+                .padding(20)
             }
-            .disableWithOpacity(userName == "")
-            .padding(.top,10)
+            .padding(30)
         }
     }
     
@@ -59,13 +69,32 @@ struct UserNameView: View {
                 self.isLoading = false
                 self.showError = true
                 self.errorMessage = error.localizedDescription
-            } else {
-                self.isLoading = false
-                self.userNameStored = self.userName
-                self.logStatus = true
             }
         }
-  }
+    }
+
+    func listenToAuthChanges(){
+        Auth.auth().addStateDidChangeListener { (auth, user) in
+            guard let user = user else { return }
+            let userRef = Firestore.firestore().collection("Users").document(user.uid)
+            userRef.getDocument { (document, error) in
+                if let error = error {
+                    self.errorMessage = error.localizedDescription
+                    self.showError = true
+                } else if document?.exists == false {
+                    userRef.setData([
+                        "email": user.email ?? "",
+                        "username": ""
+                    ]) { error in
+                        if let error = error {
+                            self.errorMessage = error.localizedDescription
+                            self.showError = true
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     
     // MARK: Displaying Errors VIA Alert

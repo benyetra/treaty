@@ -14,13 +14,19 @@ struct MainView: View {
         TabView{
             BarterView()
                 .tabItem {
-                    Image(systemName: "rectangle.portrait.on.rectangle.portrait.angled")
-                    Text("Post's")
+                    Image(systemName: "dollarsign.arrow.circlepath")
+                    Text("Barter")
+                }
+            
+            JournalView()
+                .tabItem {
+                    Image(systemName: "rectangle.and.pencil.and.ellipsis")
+                    Text("Journal")
                 }
             
             AccountView()
                 .tabItem {
-                    Image(systemName: "gear")
+                    Image(systemName: "figure.2.arms.open")
                     Text("Profile")
                 }
         }

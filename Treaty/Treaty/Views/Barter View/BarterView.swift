@@ -8,8 +8,15 @@
 import SwiftUI
 
 struct BarterView: View {
+    @ObservedObject var credentials = UserCredentials()
+    @AppStorage("user_name") var userName: String = ""
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        if userName.isEmpty {
+            UserNameView().environmentObject(credentials)
+        } else {
+            Text("Hello World")
+        }
     }
 }
 
