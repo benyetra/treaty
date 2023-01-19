@@ -9,21 +9,6 @@ import SwiftUI
 import Firebase
 import GoogleSignIn
 
-//@main
-//struct TreatyApp: App {
-//    init() {
-//        FirebaseApp.configure()
-//    }
-//    let persistenceController = PersistenceController.shared
-//
-//    var body: some Scene {
-//        WindowGroup {
-//            ContentView()
-//                .environment(\.managedObjectContext, persistenceController.container.viewContext)
-//        }
-//    }
-//}
-
 @main
 struct TreatyApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
