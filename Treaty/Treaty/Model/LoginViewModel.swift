@@ -83,7 +83,6 @@ class LoginViewModel: ObservableObject {
         // getting Token....
         guard let token = credential.identityToken else{
             print("error with firebase")
-            
             return
         }
         
@@ -101,6 +100,12 @@ class LoginViewModel: ObservableObject {
                 print(error.localizedDescription)
                 return
             }
+            let user = Auth.auth().currentUser
+            let userUID = user?.uid
+            let userEmail = user?.email
+            UserDefaults.standard.set(userUID, forKey: "user_UID")
+            let db = Firestore.firestore()
+            db.collection("Users").document(userUID!).setData(["userEmail": userEmail!, "userUID": userUID!])
             
             // User Successfully Logged Into Firebase...
             print("Logged In Success")
@@ -120,6 +125,7 @@ class LoginViewModel: ObservableObject {
                 let authResult = try await Auth.auth().signIn(with: credential)
                 let userUID = authResult.user.uid
                 let userEmail = authResult.user.email
+                UserDefaults.standard.set(userUID, forKey: "user_UID")
                 let db = Firestore.firestore()
                 try await db.collection("Users").document(userUID).setData(["userEmail": userEmail, "userUID": userUID])
                 

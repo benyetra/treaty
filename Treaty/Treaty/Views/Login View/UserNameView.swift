@@ -11,6 +11,8 @@ import FirebaseFirestore
 import FirebaseStorage
 
 struct UserNameView: View {
+    @State var showSuccess = false
+    @State var successMessage = ""
     @State var userName: String = ""
     @AppStorage("user_name") var userNameStored: String = ""
     @AppStorage("log_status") var logStatus: Bool = false
@@ -52,6 +54,11 @@ struct UserNameView: View {
                         .foregroundColor(colorScheme == .light ? Color.white : Color.black)
                         .hAlign(.center)
                         .fillView(colorScheme == .light ? Color.black : Color.white)
+                    if showSuccess {
+                        Text(successMessage)
+                            .foregroundColor(.green)
+                            .padding()
+                    }
                 }
                 .disableWithOpacity(userName == "")
                 .padding(20)
@@ -69,34 +76,14 @@ struct UserNameView: View {
                 self.isLoading = false
                 self.showError = true
                 self.errorMessage = error.localizedDescription
+            }else{
+                self.isLoading = false
+                self.showSuccess = true
+                self.successMessage = "Username added successfully!"
             }
         }
     }
-
-    func listenToAuthChanges(){
-        Auth.auth().addStateDidChangeListener { (auth, user) in
-            guard let user = user else { return }
-            let userRef = Firestore.firestore().collection("Users").document(user.uid)
-            userRef.getDocument { (document, error) in
-                if let error = error {
-                    self.errorMessage = error.localizedDescription
-                    self.showError = true
-                } else if document?.exists == false {
-                    userRef.setData([
-                        "email": user.email ?? "",
-                        "username": ""
-                    ]) { error in
-                        if let error = error {
-                            self.errorMessage = error.localizedDescription
-                            self.showError = true
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    
+  
     // MARK: Displaying Errors VIA Alert
     func setError(_ error: Error)async{
         // MARK: UI Must be Updated on Main Thread
