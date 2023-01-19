@@ -15,10 +15,10 @@ class LoginViewModel: ObservableObject {
     // MARK: View Properties
     @Published var mobileNo: String = ""
     @Published var otpCode: String = ""
-    
     @Published var CLIENT_CODE: String = ""
     @Published var showOTPField: Bool = false
-    
+    @Environment(\.colorScheme) private var colorScheme
+
     // MARK: Error Properties
     @Published var showError: Bool = false
     @Published var errorMessage: String = ""
@@ -118,7 +118,7 @@ class LoginViewModel: ObservableObject {
                 
                 try await Auth.auth().signIn(with: credential)
                 
-                print("Sucess Google!")
+                print("Success Google!")
                 await MainActor.run(body: {
                     withAnimation(.easeInOut){logStatus = true}
                 })

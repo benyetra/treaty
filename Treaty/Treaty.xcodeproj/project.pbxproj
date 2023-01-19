@@ -12,6 +12,7 @@
 		352C02ED2978AA3D008E77DF /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352C02EC2978AA3D008E77DF /* LoginViewModel.swift */; };
 		352C02EF2978AA60008E77DF /* CustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352C02EE2978AA60008E77DF /* CustomTextField.swift */; };
 		352C02F12978AB17008E77DF /* PhoneRegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352C02F02978AB17008E77DF /* PhoneRegisterView.swift */; };
+		352C02F32978C379008E77DF /* UserNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352C02F22978C379008E77DF /* UserNameView.swift */; };
 		358BCF142978329F000A7F9C /* TreatyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF132978329F000A7F9C /* TreatyApp.swift */; };
 		358BCF162978329F000A7F9C /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF152978329F000A7F9C /* Persistence.swift */; };
 		358BCF192978329F000A7F9C /* Treaty.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF172978329F000A7F9C /* Treaty.xcdatamodeld */; };
@@ -59,6 +60,7 @@
 		352C02EC2978AA3D008E77DF /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		352C02EE2978AA60008E77DF /* CustomTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextField.swift; sourceTree = "<group>"; };
 		352C02F02978AB17008E77DF /* PhoneRegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneRegisterView.swift; sourceTree = "<group>"; };
+		352C02F22978C379008E77DF /* UserNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNameView.swift; sourceTree = "<group>"; };
 		358BCF102978329F000A7F9C /* Treaty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Treaty.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		358BCF132978329F000A7F9C /* TreatyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreatyApp.swift; sourceTree = "<group>"; };
 		358BCF152978329F000A7F9C /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
@@ -214,6 +216,7 @@
 				358BCF5B2978367F000A7F9C /* LoginView.swift */,
 				358BCF61297839F6000A7F9C /* RegisterView.swift */,
 				352C02F02978AB17008E77DF /* PhoneRegisterView.swift */,
+				352C02F22978C379008E77DF /* UserNameView.swift */,
 			);
 			path = "Login View";
 			sourceTree = "<group>";
@@ -390,6 +393,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				358BCF192978329F000A7F9C /* Treaty.xcdatamodeld in Sources */,
+				352C02F32978C379008E77DF /* UserNameView.swift in Sources */,
 				358BCF62297839F6000A7F9C /* RegisterView.swift in Sources */,
 				358BCF5929783655000A7F9C /* MainView.swift in Sources */,
 				358BCF142978329F000A7F9C /* TreatyApp.swift in Sources */,

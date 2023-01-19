@@ -23,6 +23,7 @@ struct LoginView: View {
     @State var showError: Bool = false
     @State var errorMessage: String = ""
     @State var isLoading: Bool = false
+    @Environment(\.colorScheme) private var colorScheme
     // MARK: User Defaults
     @AppStorage("user_profile_url") var profileURL: URL?
     @AppStorage("user_name") var userNameStored: String = ""
@@ -44,27 +45,33 @@ struct LoginView: View {
                         .textContentType(.emailAddress)
                         .autocorrectionDisabled()
                         .autocapitalization(.none)
-                        .border(1, .gray.opacity(0.5))
+                        .border(1, colorScheme == .light ? Color.black : Color.white).opacity(0.5)
                         .padding(.top,25)
                     
                     SecureField("Password", text: $password)
                         .textContentType(.emailAddress)
                         .autocorrectionDisabled()
                         .autocapitalization(.none)
-                        .border(1, .gray.opacity(0.5))
-                    
+                        .border(1, colorScheme == .light ? Color.black : Color.white).opacity(0.5)
+
                     Button("Reset password?", action: resetPassword)
                         .font(.callout)
                         .fontWeight(.medium)
-                        .tint(.black)
+                        .tint(colorScheme == .light ? Color.black : Color.white)
                         .hAlign(.trailing)
                     
                     Button(action: loginUser){
                         // MARK: Login Button
                         Text("Sign in")
-                            .foregroundColor(.white)
+                            .foregroundColor(colorScheme == .light ? Color.white : Color.black)
                             .hAlign(.center)
-                            .fillView(.black)
+                            .fillView(colorScheme == .light ? Color.black : Color.white)
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal,50)
+                    .background {
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .fill(.black)
                     }
                     .padding(.top,10)
                 }
@@ -131,7 +138,7 @@ struct LoginView: View {
                     createAccount.toggle()
                 }
                 .fontWeight(.bold)
-                .foregroundColor(.black)
+                .foregroundColor(colorScheme == .light ? Color.black : Color.white)
             }
             .font(.callout)
             .vAlign(.bottom)
@@ -223,11 +230,11 @@ struct LoginView: View {
                 .font(.callout)
                 .lineLimit(1)
         }
-        .foregroundColor(.white)
+        .foregroundColor(colorScheme == .light ? Color.white : Color.black)
         .padding(.horizontal,15)
         .background {
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(.black)
+                .fill(colorScheme == .light ? Color.black : Color.white)
         }
     }
 }

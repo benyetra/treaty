@@ -12,6 +12,7 @@ struct CustomTextField: View {
     @Binding var text: String
     
     // MARK: View Properties
+    @Environment(\.colorScheme) private var colorScheme
     @FocusState var isEnabled: Bool
     var contentType: UITextContentType = .telephoneNumber
     var body: some View {
@@ -23,10 +24,10 @@ struct CustomTextField: View {
             
             ZStack(alignment: .leading) {
                 Rectangle()
-                    .fill(.black.opacity(0.2))
+                    .fill((colorScheme == .light ? Color.black : Color.white).opacity(0.2))
                 
                 Rectangle()
-                    .fill(.black)
+                    .fill(colorScheme == .light ? Color.white : Color.black)
                     .frame(width: isEnabled ? nil : 0,alignment: .leading)
                     .animation(.easeInOut(duration: 0.3), value: isEnabled)
             }

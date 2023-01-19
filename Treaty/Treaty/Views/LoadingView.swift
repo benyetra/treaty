@@ -9,17 +9,18 @@ import SwiftUI
 
 struct LoadingView: View {
     @Binding var show: Bool
+    @Environment(\.colorScheme) private var colorScheme
     var body: some View {
         ZStack{
             if show{
                 Group{
                     Rectangle()
-                        .fill(.black.opacity(0.25))
+                        .fill(colorScheme == .light ? Color.black : Color.white).opacity(0.25)
                         .ignoresSafeArea()
                     
                     ProgressView()
                         .padding(15)
-                        .background(.white,in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .background(colorScheme == .light ? Color.white : Color.black, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
             }
         }
