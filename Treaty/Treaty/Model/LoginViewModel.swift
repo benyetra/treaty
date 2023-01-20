@@ -127,7 +127,11 @@ class LoginViewModel: ObservableObject {
                 let userEmail = authResult.user.email
                 UserDefaults.standard.set(userUID, forKey: "user_UID")
                 let db = Firestore.firestore()
-                try await db.collection("Users").document(userUID).setData(["userEmail": userEmail, "userUID": userUID])
+                let userRef = db.collection("Users").document(userUID)
+                let userData = try await userRef.getDocument()
+                if !userData.exists{
+                    try await userRef.setData(["userEmail": userEmail, "userUID": userUID])
+                }
                 
                 print("Success Google!")
                 await MainActor.run(body: {
