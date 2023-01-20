@@ -28,8 +28,9 @@ struct BarterView: View {
 
     init(userWrapper: UserWrapper) {
         self.userWrapper = userWrapper
+        self.user = userWrapper.user
     }
-    
+
     var body: some View {
         if userWrapper.user.username.isEmpty {
             UserNameView()
