@@ -9,61 +9,126 @@ import SwiftUI
 import Firebase
 import FirebaseFirestore
 import FirebaseStorage
+import AuthenticationServices
+import GoogleSignIn
+import GoogleSignInSwift
 
 struct LoginView: View {
     // MARK: User Details
     @State var emailID: String = ""
     @State var password: String = ""
     // MARK: View Properties
+    @StateObject var loginModel: LoginViewModel = .init()
     @State var createAccount: Bool = false
     @State var showError: Bool = false
     @State var errorMessage: String = ""
     @State var isLoading: Bool = false
+    @Environment(\.colorScheme) private var colorScheme
     // MARK: User Defaults
     @AppStorage("user_profile_url") var profileURL: URL?
     @AppStorage("user_name") var userNameStored: String = ""
     @AppStorage("user_UID") var userUID: String = ""
     @AppStorage("log_status") var logStatus: Bool = false
     var body: some View {
-        VStack(spacing: 10){
-            Text("Lets Sign you in")
-                .font(.largeTitle.bold())
-                .hAlign(.leading)
-            
-            Text("Welcome Back,\nYou have been missed")
-                .font(.title3)
-                .hAlign(.leading)
-            
-            VStack(spacing: 12){
-                TextField("Email", text: $emailID)
-                    .textContentType(.emailAddress)
-                    .autocorrectionDisabled()
-                    .autocapitalization(.none)
-                    .border(1, .gray.opacity(0.5))
-                    .padding(.top,25)
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(spacing: 10){
+                Text("Lets Sign you in")
+                    .font(.largeTitle.bold())
+                    .hAlign(.leading)
                 
-                SecureField("Password", text: $password)
-                    .textContentType(.emailAddress)
-                    .autocorrectionDisabled()
-                    .autocapitalization(.none)
-                    .border(1, .gray.opacity(0.5))
+                Text("Welcome Back,\nYou have been missed")
+                    .font(.title3)
+                    .hAlign(.leading)
                 
-                Button("Reset password?", action: resetPassword)
-                    .font(.callout)
-                    .fontWeight(.medium)
-                    .tint(.black)
-                    .hAlign(.trailing)
-                
-                Button(action: loginUser){
-                    // MARK: Login Button
-                    Text("Sign in")
-                        .foregroundColor(.white)
-                        .hAlign(.center)
-                        .fillView(.black)
+                VStack(spacing: 12){
+                    TextField("Email", text: $emailID)
+                        .textContentType(.emailAddress)
+                        .autocorrectionDisabled()
+                        .autocapitalization(.none)
+                        .border(1, colorScheme == .light ? Color.black : Color.white).opacity(0.5)
+                        .padding(.top,25)
+                    
+                    SecureField("Password", text: $password)
+                        .textContentType(.emailAddress)
+                        .autocorrectionDisabled()
+                        .autocapitalization(.none)
+                        .border(1, colorScheme == .light ? Color.black : Color.white).opacity(0.5)
+
+                    Button("Reset password?", action: resetPassword)
+                        .font(.callout)
+                        .fontWeight(.medium)
+                        .tint(colorScheme == .light ? Color.black : Color.white)
+                        .hAlign(.trailing)
+                    
+                    Button(action: loginUser){
+                        // MARK: Login Button
+                        Text("Sign in")
+                            .foregroundColor(colorScheme == .light ? Color.white : Color.black)
+                            .hAlign(.center)
+                            .fillView(colorScheme == .light ? Color.black : Color.white)
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal,50)
+                    .background {
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .fill(.black)
+                    }
+                    .padding(.top,10)
                 }
-                .padding(.top,10)
+                .alert(loginModel.errorMessage, isPresented: $loginModel.showError) {}
+                
+                HStack(spacing: 8){
+                    // MARK: Custom Apple Sign in Button
+                    CustomButton()
+                        .overlay {
+                            SignInWithAppleButton { (request) in
+                                loginModel.nonce = randomNonceString()
+                                request.requestedScopes = [.email,.fullName]
+                                request.nonce = sha256(loginModel.nonce)
+                                
+                            } onCompletion: { (result) in
+                                switch result{
+                                case .success(let user):
+                                    print("success")
+                                    guard let credential = user.credential as? ASAuthorizationAppleIDCredential else{
+                                        print("error with firebase")
+                                        return
+                                    }
+                                    loginModel.appleAuthenticate(credential: credential)
+                                case.failure(let error):
+                                    print(error.localizedDescription)
+                                }
+                            }
+                            .signInWithAppleButtonStyle(.white)
+                            .frame(height: 55)
+                            .blendMode(.overlay)
+                        }
+                        .clipped()
+                    
+                    // MARK: Custom Google Sign in Button
+                    CustomButton(isGoogle: true)
+                        .overlay {
+                            // MARK: We Have Native Google Sign in Button
+                            // It's Simple to Integrate Now
+                            GoogleSignInButton{
+                                Task{
+                                    do{
+                                        let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: UIApplication.shared.rootController())
+                                        
+                                        loginModel.logGoogleUser(user: result.user)
+                                        
+                                    }catch{
+                                        print(error.localizedDescription)
+                                    }
+                                }
+                            }
+                            .blendMode(.overlay)
+                        }
+                        .clipped()
+                }
+                .frame(maxWidth: .infinity)
             }
-            
+            .frame(maxWidth: .infinity)
             // MARK: Register Button
             HStack{
                 Text("Don't have an account?")
@@ -73,7 +138,7 @@ struct LoginView: View {
                     createAccount.toggle()
                 }
                 .fontWeight(.bold)
-                .foregroundColor(.black)
+                .foregroundColor(colorScheme == .light ? Color.black : Color.white)
             }
             .font(.callout)
             .vAlign(.bottom)
@@ -88,8 +153,10 @@ struct LoginView: View {
             RegisterView()
         }
         // MARK: Displaying Alert
-        .alert(errorMessage, isPresented: $showError, actions: {})
+        .alert(errorMessage, isPresented: $showError, actions: {}) {
+        }
     }
+    
     
     func loginUser(){
         isLoading = true
@@ -141,7 +208,37 @@ struct LoginView: View {
             isLoading = false
         })
     }
+    
+    @ViewBuilder
+    func CustomButton(isGoogle: Bool = false)->some View{
+        HStack{
+            Group{
+                if isGoogle{
+                    Image("Google")
+                        .resizable()
+                        .renderingMode(.template)
+                }else{
+                    Image(systemName: "applelogo")
+                        .resizable()
+                }
+            }
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 25, height: 25)
+            .frame(height: 45)
+            
+            Text("\(isGoogle ? "Google" : "Apple") Sign in")
+                .font(.callout)
+                .lineLimit(1)
+        }
+        .foregroundColor(colorScheme == .light ? Color.white : Color.black)
+        .padding(.horizontal,15)
+        .background {
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(colorScheme == .light ? Color.black : Color.white)
+        }
+    }
 }
+
 
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {

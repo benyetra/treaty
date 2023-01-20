@@ -59,7 +59,7 @@ struct RegisterView: View{
                     dismiss()
                 }
                 .fontWeight(.bold)
-                .foregroundColor(.black)
+                .foregroundColor(colorScheme == .light ? Color.black : Color.white)
             }
             .font(.callout)
             .vAlign(.bottom)
@@ -102,7 +102,7 @@ struct RegisterView: View{
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .clipShape(Circle())
-                        .overlay(Circle().stroke(colorScheme == .light ? Color.black : Color.white, lineWidth: 1))
+                        .overlay(Circle().stroke(colorScheme == .light ? Color.black : Color.white, lineWidth: 2))
                 }
             }
             .frame(width: 85, height: 85)
@@ -117,7 +117,7 @@ struct RegisterView: View{
                 .textContentType(.nickname)
                 .autocapitalization(.none)
                 .autocorrectionDisabled()
-                .border(1, .gray.opacity(0.5))
+                .border(1, colorScheme == .light ? Color.black : Color.white).opacity(0.5)
                 .onAppear {
                     if !self.userName.hasPrefix("@") {
                         self.userName = "@" + self.userName
@@ -133,20 +133,20 @@ struct RegisterView: View{
                 .textContentType(.emailAddress)
                 .autocorrectionDisabled()
                 .autocapitalization(.none)
-                .border(1, .gray.opacity(0.5))
-            
+                .border(1, colorScheme == .light ? Color.black : Color.white).opacity(0.5)
+
             SecureField("Password", text: $password)
                 .textContentType(.password)
                 .autocorrectionDisabled()
                 .autocapitalization(.none)
-                .border(1, .gray.opacity(0.5))
-            
+                .border(1, colorScheme == .light ? Color.black : Color.white).opacity(0.5)
+
             Button(action: registerUser){
                 // MARK: Login Button
                 Text("Sign up")
-                    .foregroundColor(.white)
+                    .foregroundColor(colorScheme == .light ? Color.white : Color.black)
                     .hAlign(.center)
-                    .fillView(.black)
+                    .fillView(colorScheme == .light ? Color.black : Color.white)
             }
             .disableWithOpacity(userName == "" || emailID == "" || password == "" || userProfilePicData == nil)
             .padding(.top,10)
@@ -182,7 +182,6 @@ struct RegisterView: View{
                 })
             }catch{
                 // MARK: Deleting Created Account In Case of Failure
-//                try await Auth.auth().currentUser?.delete()
                 await setError(error)
             }
         }

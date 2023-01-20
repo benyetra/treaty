@@ -10,11 +10,19 @@ import SwiftUI
 import Firebase
 import FirebaseStorage
 import FirebaseFirestore
+import GoogleSignIn
+
+class UserCredentials: ObservableObject {
+    @Published var email: String = ""
+    @Published var password: String = ""
+}
+
 
 struct AccountView: View {
     // MARK: My Profile Data
     @State private var myProfile: User?
     // MARK: User Defaults Data
+    @ObservedObject var credentials = UserCredentials()
     @AppStorage("user_profile_url") var profileURL: URL?
     @AppStorage("user_name") var userName: String = ""
     @AppStorage("user_UID") var userUID: String = ""
@@ -45,7 +53,7 @@ struct AccountView: View {
                         // 1. Logout
                         // 2. Delete Account
                         Button("Logout",action: logOutUser)
-                        
+                            
                         Button("Delete Account",role: .destructive,action: deleteAccount)
                     } label: {
                         Image(systemName: "ellipsis")
@@ -69,6 +77,7 @@ struct AccountView: View {
             await fetchUserData()
         }
     }
+
     
     // MARK: Fetching User Data
     func fetchUserData()async{
@@ -82,10 +91,13 @@ struct AccountView: View {
     // MARK: Logging User Out
     func logOutUser(){
         try? Auth.auth().signOut()
-        userUID = ""
-        userName = ""
-        profileURL = nil
-        logStatus = false
+        GIDSignIn.sharedInstance.signOut()
+        withAnimation(.easeInOut){
+            userUID = ""
+            userName = ""
+            profileURL = nil
+            logStatus = false
+        }
     }
     
     // MARK: Deleting User Entire Account
