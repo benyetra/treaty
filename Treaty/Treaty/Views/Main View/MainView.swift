@@ -11,7 +11,7 @@ import FirebaseFirestore
 
 struct MainView: View {
     @ObservedObject var userWrapper = UserWrapper(user: User(username: "", userUID: "", userEmail: "", userProfileURL: URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!))
-    @Environment(\.colorScheme) private var colorScheme
+        @Environment(\.colorScheme) private var colorScheme
 
     init() {
         fetchUserData()
@@ -24,18 +24,22 @@ struct MainView: View {
                     Image(systemName: "dollarsign.arrow.circlepath")
                     Text("Barter")
                 }
+                .environmentObject(userWrapper)
+
             
             JournalView()
                 .tabItem {
                     Image(systemName: "rectangle.and.pencil.and.ellipsis")
                     Text("Journal")
                 }
-            
+                .environmentObject(userWrapper)
+
             AccountView()
                 .tabItem {
                     Image(systemName: "figure.2.arms.open")
                     Text("Profile")
                 }
+                .environmentObject(userWrapper)
         }
         .tint(colorScheme == .light ? Color.black : Color.white)
     }

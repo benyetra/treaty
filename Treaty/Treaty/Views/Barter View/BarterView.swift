@@ -32,11 +32,3 @@ struct BarterView: View {
         }
     }
 }
-
-
-
-//struct BarterView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        BarterView()
-//    }
-//}
