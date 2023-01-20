@@ -106,11 +106,19 @@ struct AccountView: View {
         Task{
             do{
                 guard let userUID = Auth.auth().currentUser?.uid else{return}
-                // Step 1: First Deleting Profile Image From Storage
+
+                // Step 1: Check if user has any Profile_Images associated with their userUID
                 let reference = Storage.storage().reference().child("Profile_Images").child(userUID)
-                try await reference.delete()
+                do {
+                    _ = try await reference.getMetadata()
+                    // if no error is thrown, it means image exists and can be deleted
+                    try await reference.delete()
+                } catch {
+                    // if error is thrown, it means image does not exist and can be skipped
+                }
                 // Step 2: Deleting Firestore User Document
                 try await Firestore.firestore().collection("Users").document(userUID).delete()
+                
                 // Final Step: Deleting Auth Account and Setting Log Status to False
                 try await Auth.auth().currentUser?.delete()
                 logStatus = false
@@ -119,6 +127,7 @@ struct AccountView: View {
             }
         }
     }
+
     
     // MARK: Setting Error
     func setError(_ error: Error)async{
