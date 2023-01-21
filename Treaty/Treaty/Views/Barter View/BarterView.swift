@@ -93,22 +93,29 @@ struct BarterView: View {
                         GeometryReader { geometry in
                             RoundedRectangle(cornerRadius: 2, style: .continuous)
                                 .menuTitleView(CGSize(width: geometry.size.width, height: 2),"Sent", offset, expandMenu){
-                                    print("Tapped Limits")
+                                    print("Tapped Sent")
                                 }
                         }
                         GeometryReader { geometry in
                             RoundedRectangle(cornerRadius: 2, style: .continuous)
                                 .menuTitleView(CGSize(width: geometry.size.width, height: 2),"Received", (offset * 2), expandMenu){
-                                    print("Tapped Money")
+                                    print("Tapped Received")
                                 }
                         }
                         GeometryReader { geometry in
                             RoundedRectangle(cornerRadius: 2, style: .continuous)
                                 .menuTitleView(CGSize(width: geometry.size.width, height: 2),"All", (offset * 3), expandMenu){
-                                    print("Tapped Wallets")
+                                    print("Tapped All")
                                 }
                         }
                     }
+                    .overlay(content: {
+                        Image(systemName: "xmark")
+                            .font(.title3)
+                            .foregroundColor(.white)
+                            .scaleEffect(expandMenu ? 1 : 0.001)
+                            .rotationEffect(.init(degrees: expandMenu ? 0 : -180))
+                    })
                     .overlay(content: {
                         Rectangle()
                             .foregroundColor(.clear)
@@ -181,12 +188,12 @@ struct BarterView: View {
                             .resizable()
                             .frame(width: 40, height: 40)
                 
-                        Text("5,020")
+                        Text("67")
                             .font(.custom(ubuntu, size: 40, relativeTo: .largeTitle))
                             .fontWeight(.medium)
                             .foregroundColor(Color("Blue"))
                     }
-                    Text("-235 today")
+                    Text("-25 today")
                         .font(.custom(ubuntu, size: 12, relativeTo: .caption))
                         .foregroundColor(.red)
                 }
@@ -230,10 +237,15 @@ struct BarterView: View {
                 }
                 .frame(maxWidth: .infinity,alignment: .leading)
                 
-                Text(transaction.amountSpent)
-                    .font(.custom(ubuntu, size: 18, relativeTo: .title3))
-                    .fontWeight(.medium)
-                    .foregroundColor(Color("Blue"))
+                HStack {
+                    Text(transaction.amountSpent)
+                        .font(.custom(ubuntu, size: 18, relativeTo: .title3))
+                        .fontWeight(.medium)
+                        .foregroundColor(Color("Blue"))
+                    Image("treat")
+                        .resizable()
+                        .frame(width: 18, height: 18)
+                }
             }
             .padding(10)
             .background(Color.white)

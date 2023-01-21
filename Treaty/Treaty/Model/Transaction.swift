@@ -17,13 +17,13 @@ struct Transaction: Identifiable{
 }
 
 var transactions: [Transaction] = [
-    Transaction(amountSpent: "$128", product: "Amazon", productIcon: "Amazon", spendType: "Groceries"),
-    Transaction(amountSpent: "$18", product: "Youtube", productIcon: "Youtube", spendType: "Streaming"),
-    Transaction(amountSpent: "$10", product: "Dribbble", productIcon: "Dribbble", spendType: "Membership"),
-    Transaction(amountSpent: "$28", product: "Apple", productIcon: "Apple", spendType: "Apple Pay"),
-    Transaction(amountSpent: "$9", product: "Patreon", productIcon: "Patreon", spendType: "Membership"),
-    Transaction(amountSpent: "$100", product: "Instagram", productIcon: "Instagram", spendType: "Ad Publish"),
-    Transaction(amountSpent: "$55", product: "Netflix", productIcon: "Netflix", spendType: "Movies"),
-    Transaction(amountSpent: "$348", product: "Photoshop", productIcon: "Photoshop", spendType: "Editing"),
-    Transaction(amountSpent: "$99", product: "Figma", productIcon: "Figma", spendType: "Pro Member"),
+    Transaction(amountSpent: "10", product: "Walk", productIcon: "walk", spendType: "Received"),
+    Transaction(amountSpent: "3", product: "Gave Medicine", productIcon: "pills", spendType: "Sent"),
+    Transaction(amountSpent: "25", product: "Went to Vet", productIcon: "vet", spendType: "Received"),
+    Transaction(amountSpent: "5", product: "Wake Up with Dog", productIcon: "wakeup", spendType: "Sent"),
+    Transaction(amountSpent: "15", product: "Went to Park", productIcon: "park", spendType: "Sent"),
+    Transaction(amountSpent: "5", product: "Played with Dog", productIcon: "play", spendType: "Received"),
+    Transaction(amountSpent: "10", product: "Brushed Hair", productIcon: "comb", spendType: "Received"),
+    Transaction(amountSpent: "10", product: "Brushed Teeth", productIcon: "brushedteeth", spendType: "Sent"),
+    Transaction(amountSpent: "20", product: "Bath", productIcon: "bath", spendType: "Received"),
 ]
