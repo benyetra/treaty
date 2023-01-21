@@ -39,7 +39,7 @@ struct BarterView: View {
                 HeaderView()
                 
                 VStack(spacing: 10){
-                    Text("Wallet")
+                    Text("@\(userWrapper.user.username)'s Treat Jar")
                         .font(.custom(ubuntu, size: 30, relativeTo: .title))
                         .foregroundColor(expandMenu ? Color("Blue") : .white)
                         .contentTransition(.interpolate)
@@ -90,28 +90,25 @@ struct BarterView: View {
                 
                 HStack{
                     VStack(alignment: .leading, spacing: 4) {
-                        RoundedRectangle(cornerRadius: 2, style: .continuous)
-                            .menuTitleView(CGSize(width: 15, height: 2),"Limits", offset, expandMenu){
-                                print("Tapped Limits")
-                            }
-                        
-                        RoundedRectangle(cornerRadius: 2, style: .continuous)
-                            .menuTitleView(CGSize(width: 25, height: 2),"Money", (offset * 2), expandMenu){
-                                print("Tapped Money")
-                            }
-                        
-                        RoundedRectangle(cornerRadius: 2, style: .continuous)
-                            .menuTitleView(CGSize(width: 20, height: 2),"Wallets", (offset * 3), expandMenu){
-                                print("Tapped Wallets")
-                            }
+                        GeometryReader { geometry in
+                            RoundedRectangle(cornerRadius: 2, style: .continuous)
+                                .menuTitleView(CGSize(width: geometry.size.width, height: 2),"Sent", offset, expandMenu){
+                                    print("Tapped Limits")
+                                }
+                        }
+                        GeometryReader { geometry in
+                            RoundedRectangle(cornerRadius: 2, style: .continuous)
+                                .menuTitleView(CGSize(width: geometry.size.width, height: 2),"Received", (offset * 2), expandMenu){
+                                    print("Tapped Money")
+                                }
+                        }
+                        GeometryReader { geometry in
+                            RoundedRectangle(cornerRadius: 2, style: .continuous)
+                                .menuTitleView(CGSize(width: geometry.size.width, height: 2),"All", (offset * 3), expandMenu){
+                                    print("Tapped Wallets")
+                                }
+                        }
                     }
-                    .overlay(content: {
-                        Image(systemName: "xmark")
-                            .font(.title3)
-                            .foregroundColor(.white)
-                            .scaleEffect(expandMenu ? 1 : 0.001)
-                            .rotationEffect(.init(degrees: expandMenu ? 0 : -180))
-                    })
                     .overlay(content: {
                         Rectangle()
                             .foregroundColor(.clear)
@@ -179,10 +176,16 @@ struct BarterView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Total")
                         .font(.custom(ubuntu, size: 16, relativeTo: .body))
-                    Text("$5,020")
-                        .font(.custom(ubuntu, size: 40, relativeTo: .largeTitle))
-                        .fontWeight(.medium)
-                        .foregroundColor(Color("Blue"))
+                    HStack {
+                        Image("treat")
+                            .resizable()
+                            .frame(width: 40, height: 40)
+                
+                        Text("5,020")
+                            .font(.custom(ubuntu, size: 40, relativeTo: .largeTitle))
+                            .fontWeight(.medium)
+                            .foregroundColor(Color("Blue"))
+                    }
                     Text("-235 today")
                         .font(.custom(ubuntu, size: 12, relativeTo: .caption))
                         .foregroundColor(.red)
