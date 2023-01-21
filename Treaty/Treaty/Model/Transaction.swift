@@ -26,4 +26,7 @@ var transactions: [Transaction] = [
     Transaction(amountSpent: "10", product: "Brushed Hair", productIcon: "comb", spendType: "Received"),
     Transaction(amountSpent: "10", product: "Brushed Teeth", productIcon: "brushedteeth", spendType: "Sent"),
     Transaction(amountSpent: "20", product: "Bath", productIcon: "bath", spendType: "Received"),
+    Transaction(amountSpent: "2", product: "Feed Dog", productIcon: "food", spendType: "Received"),
+    Transaction(amountSpent: "2", product: "Fill Water", productIcon: "water", spendType: "Sent"),
+    Transaction(amountSpent: "12", product: "Late Night Wake Ups", productIcon: "night", spendType: "Received")
 ]

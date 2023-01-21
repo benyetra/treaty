@@ -90,31 +90,29 @@ struct BarterView: View {
                 
                 HStack{
                     VStack(alignment: .leading, spacing: 4) {
-                        GeometryReader { geometry in
-                            RoundedRectangle(cornerRadius: 2, style: .continuous)
-                                .menuTitleView(CGSize(width: geometry.size.width, height: 2),"Sent", offset, expandMenu){
-                                    print("Tapped Sent")
-                                }
-                        }
-                        GeometryReader { geometry in
-                            RoundedRectangle(cornerRadius: 2, style: .continuous)
-                                .menuTitleView(CGSize(width: geometry.size.width, height: 2),"Received", (offset * 2), expandMenu){
-                                    print("Tapped Received")
-                                }
-                        }
-                        GeometryReader { geometry in
-                            RoundedRectangle(cornerRadius: 2, style: .continuous)
-                                .menuTitleView(CGSize(width: geometry.size.width, height: 2),"All", (offset * 3), expandMenu){
-                                    print("Tapped All")
-                                }
-                        }
+                        RoundedRectangle(cornerRadius: 2, style: .continuous)
+                            .menuTitleView(CGSize(width: 15, height: 2),"Gave", offset, expandMenu){
+                                print("Tapped Gave")
+                            }
+                        
+                        RoundedRectangle(cornerRadius: 2, style: .continuous)
+                            .menuTitleView(CGSize(width: 35, height: 2),"Earned", (offset * 2), expandMenu){
+                                print("Tapped Earned")
+                            }
+                        
+                        RoundedRectangle(cornerRadius: 2, style: .continuous)
+                            .menuTitleView(CGSize(width: 20, height: 2),"All", (offset * 3), expandMenu){
+                                print("Tapped All")
+                            }
                     }
+                    .hAlign(.leading)
                     .overlay(content: {
                         Image(systemName: "xmark")
                             .font(.title3)
                             .foregroundColor(.white)
                             .scaleEffect(expandMenu ? 1 : 0.001)
                             .rotationEffect(.init(degrees: expandMenu ? 0 : -180))
+                            .hAlign(.topLeading)
                     })
                     .overlay(content: {
                         Rectangle()
@@ -138,7 +136,7 @@ struct BarterView: View {
                         .clipShape(Circle())
                     }
                 }
-                .padding(15)
+                .padding(10)
             }
             .frame(height: 60)
             .padding(.bottom,expandMenu ? 200 : 130)
