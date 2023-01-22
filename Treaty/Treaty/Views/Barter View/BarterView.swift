@@ -39,7 +39,7 @@ struct BarterView: View {
                 HeaderView()
                 
                 VStack(spacing: 10){
-                    Text("@\(userWrapper.user.username)'s Treat Jar")
+                    Text("My Treat Jar")
                         .font(.custom(ubuntu, size: 30, relativeTo: .title))
                         .foregroundColor(expandMenu ? Color("Blue") : .white)
                         .contentTransition(.interpolate)
@@ -53,8 +53,8 @@ struct BarterView: View {
                     
                     ScrollView(.vertical, showsIndicators: false) {
                         VStack(spacing: 12){
-                            ForEach(transactions){transaction in
-                                TransactionCardView(transaction)
+                            ForEach(types){transactionType in
+                                TransactionCardView(transactionType)
                             }
                         }
                         .padding(.top,40)
@@ -220,7 +220,7 @@ struct BarterView: View {
         
         /// - Transaction Card View
         @ViewBuilder
-        func TransactionCardView(_ transaction: Transaction)->some View{
+        func TransactionCardView(_ transaction: TransactionType)->some View{
             HStack(spacing: 12){
                 Image(transaction.productIcon)
                     .resizable()
@@ -229,14 +229,14 @@ struct BarterView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(transaction.product)
                         .font(.custom(ubuntu, size: 16, relativeTo: .body))
-                    Text(transaction.spendType)
+                    Text("Earned")
                         .font(.custom(ubuntu, size: 12, relativeTo: .caption))
                         .foregroundColor(.gray)
                 }
                 .frame(maxWidth: .infinity,alignment: .leading)
                 
                 HStack {
-                    Text(transaction.amountSpent)
+                    Text("\(transaction.amountSpent)")
                         .font(.custom(ubuntu, size: 18, relativeTo: .title3))
                         .fontWeight(.medium)
                         .foregroundColor(Color("Blue"))
