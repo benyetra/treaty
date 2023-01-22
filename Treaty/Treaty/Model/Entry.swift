@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-// Task Model
-struct Entries: Identifiable{
+// Entry Model
+struct Entry: Identifiable{
     var id = UUID().uuidString
     var taskTitle: String
     var taskDescription: String

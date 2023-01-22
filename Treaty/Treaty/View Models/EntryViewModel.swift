@@ -10,17 +10,16 @@ import SwiftUI
 class EntryViewModel: ObservableObject{
     
     // Sample Tasks
-    @Published var storedEntries: [Entries] = [
+    @Published var storedEntries: [Entry] = [
     
-        Entries(taskTitle: "Meeting", taskDescription: "Discuss team task for the day", taskDate: .init(timeIntervalSince1970: 1641645497)),
-        Entries(taskTitle: "Icon set", taskDescription: "Edit icons for team task for next week", taskDate: .init(timeIntervalSince1970: 1641649097)),
-        Entries(taskTitle: "Prototype", taskDescription: "Make and send prototype", taskDate: .init(timeIntervalSince1970: 1641652697)),
-        Entries(taskTitle: "Check asset", taskDescription: "Start checking the assets", taskDate: .init(timeIntervalSince1970: 1641656297)),
-        Entries(taskTitle: "Team party", taskDescription: "Make fun with team mates", taskDate: .init(timeIntervalSince1970: 1641661897)),
-        Entries(taskTitle: "Client Meeting", taskDescription: "Explain project to clinet", taskDate: .init(timeIntervalSince1970: 1641641897)),
-        
-        Entries(taskTitle: "Next Project", taskDescription: "Discuss next project with team", taskDate: .init(timeIntervalSince1970: 1641677897)),
-        Entries(taskTitle: "App Proposal", taskDescription: "Meet client for next App Proposal", taskDate: .init(timeIntervalSince1970: 1641681497)),
+        Entry(taskTitle: "Meeting", taskDescription: "Discuss team task for the day", taskDate: .init(timeIntervalSince1970: 1674422225)),
+        Entry(taskTitle: "Icon set", taskDescription: "Edit icons for team task for next week", taskDate: .init(timeIntervalSince1970: 1674526620)),
+        Entry(taskTitle: "Prototype", taskDescription: "Make and send prototype", taskDate: .init(timeIntervalSince1970: 1674422225)),
+        Entry(taskTitle: "Check asset", taskDescription: "Start checking the assets", taskDate: .init(timeIntervalSince1970: 1674785820)),
+        Entry(taskTitle: "Team party", taskDescription: "Make fun with team mates", taskDate: .init(timeIntervalSince1970: 1674526620)),
+        Entry(taskTitle: "Client Meeting", taskDescription: "Explain project to clinet", taskDate: .init(timeIntervalSince1970: 1674422225)),
+        Entry(taskTitle: "Next Project", taskDescription: "Discuss next project with team", taskDate: .init(timeIntervalSince1970: 1674422225)),
+        Entry(taskTitle: "App Proposal", taskDescription: "Meet client for next App Proposal", taskDate: .init(timeIntervalSince1970: 1674785820))
     ]
     
     // MARK: Current Week Days
@@ -30,16 +29,16 @@ class EntryViewModel: ObservableObject{
     @Published var currentDay: Date = Date()
     
     // MARK: Filtering Today Tasks
-    @Published var filteredEntries: [Entries]?
+    @Published var filteredEntries: [Entry]?
     
     // MARK: Intializing
     init(){
         fetchCurrentWeek()
-        filterTodayTasks()
+        filterTodayEntries()
     }
     
     // MARK: Filter Today Tasks
-    func filterTodayTasks(){
+    func filterTodayEntries(){
         
         DispatchQueue.global(qos: .userInteractive).async {
             
@@ -47,11 +46,9 @@ class EntryViewModel: ObservableObject{
             
             let filtered = self.storedEntries.filter{
                 return calendar.isDate($0.taskDate, inSameDayAs: self.currentDay)
-            }
-                .sorted { task1, task2 in
+            }.sorted { task1, task2 in
                     return task2.taskDate < task1.taskDate
                 }
-            
             DispatchQueue.main.async {
                 withAnimation{
                     self.filteredEntries = filtered

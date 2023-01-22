@@ -108,7 +108,7 @@ struct JournalView: View {
                 else{
                     
                     ForEach(entries){entry in
-                        EntryCardView(task: entry)
+                        EntryCardView(entry: entry)
                     }
                 }
             }
@@ -122,17 +122,17 @@ struct JournalView: View {
         .padding(.top)
         // MARK: Updating Tasks
         .onChange(of: entryModel.currentDay) { newValue in
-            entryModel.filterTodayTasks()
+            entryModel.filterTodayEntries()
         }
     }
     
     // MARK: Task Card View
-    func EntryCardView(task: Entries)->some View{
+    func EntryCardView(entry: Entry)->some View{
         
         HStack(alignment: .top,spacing: 30){
             VStack(spacing: 10){
                 Circle()
-                    .fill(entryModel.isCurrentHour(date: task.taskDate) ? .black : .clear)
+                    .fill(entryModel.isCurrentHour(date: entry.taskDate) ? .black : .clear)
                     .frame(width: 15, height: 15)
                     .background(
                     
@@ -140,7 +140,7 @@ struct JournalView: View {
                             .stroke(.black,lineWidth: 1)
                             .padding(-3)
                     )
-                    .scaleEffect(!entryModel.isCurrentHour(date: task.taskDate) ? 0.8 : 1)
+                    .scaleEffect(!entryModel.isCurrentHour(date: entry.taskDate) ? 0.8 : 1)
                 
                 Rectangle()
                     .fill(.black)
@@ -153,19 +153,19 @@ struct JournalView: View {
                     
                     VStack(alignment: .leading, spacing: 12) {
                         
-                        Text(task.taskTitle)
+                        Text(entry.taskTitle)
                             .font(.title2.bold())
                         
-                        Text(task.taskDescription)
+                        Text(entry.taskDescription)
                             .font(.callout)
                             .foregroundStyle(.secondary)
                     }
                     .hLeading()
                     
-                    Text(task.taskDate.formatted(date: .omitted, time: .shortened))
+                    Text(entry.taskDate.formatted(date: .omitted, time: .shortened))
                 }
                 
-                if entryModel.isCurrentHour(date: task.taskDate){
+                if entryModel.isCurrentHour(date: entry.taskDate){
                     
                     // MARK: Team Members
                     HStack(spacing: 0){
@@ -202,14 +202,14 @@ struct JournalView: View {
                     .padding(.top)
                 }
             }
-            .foregroundColor(entryModel.isCurrentHour(date: task.taskDate) ? .white : .black)
-            .padding(entryModel.isCurrentHour(date: task.taskDate) ? 15 : 0)
-            .padding(.bottom,entryModel.isCurrentHour(date: task.taskDate) ? 0 : 10)
+            .foregroundColor(entryModel.isCurrentHour(date: entry.taskDate) ? .white : .black)
+            .padding(entryModel.isCurrentHour(date: entry.taskDate) ? 15 : 0)
+            .padding(.bottom,entryModel.isCurrentHour(date: entry.taskDate) ? 0 : 10)
             .hLeading()
             .background(
                 Color("Black")
                     .cornerRadius(25)
-                    .opacity(entryModel.isCurrentHour(date: task.taskDate) ? 1 : 0)
+                    .opacity(entryModel.isCurrentHour(date: entry.taskDate) ? 1 : 0)
             )
         }
         .hLeading()
