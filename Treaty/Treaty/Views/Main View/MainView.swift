@@ -27,7 +27,7 @@ struct MainView: View {
                 .environmentObject(userWrapper)
 
             
-            JournalView()
+            JournalView(userWrapper: userWrapper)
                 .tabItem {
                     Image(systemName: "rectangle.and.pencil.and.ellipsis")
                     Text("Journal")
