@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		3518189C2979C33400230753 /* JournalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3518189B2979C33400230753 /* JournalView.swift */; };
+		3518189E297B3E4100230753 /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = 3518189D297B3E4100230753 /* Fonts */; };
+		351818A0297B3E9200230753 /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3518189F297B3E9200230753 /* Transaction.swift */; };
 		352C02E92978A9B0008E77DF /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 352C02E82978A9B0008E77DF /* GoogleSignIn */; };
 		352C02EB2978A9B0008E77DF /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 352C02EA2978A9B0008E77DF /* GoogleSignInSwift */; };
 		352C02ED2978AA3D008E77DF /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352C02EC2978AA3D008E77DF /* LoginViewModel.swift */; };
@@ -60,6 +62,8 @@
 
 /* Begin PBXFileReference section */
 		3518189B2979C33400230753 /* JournalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JournalView.swift; sourceTree = "<group>"; };
+		3518189D297B3E4100230753 /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Fonts; sourceTree = "<group>"; };
+		3518189F297B3E9200230753 /* Transaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transaction.swift; sourceTree = "<group>"; };
 		352C02EC2978AA3D008E77DF /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		352C02EE2978AA60008E77DF /* CustomTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextField.swift; sourceTree = "<group>"; };
 		352C02F02978AB17008E77DF /* PhoneRegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneRegisterView.swift; sourceTree = "<group>"; };
@@ -154,6 +158,7 @@
 			isa = PBXGroup;
 			children = (
 				35E3FCE029787C1A00B2E97A /* GoogleService-Info.plist */,
+				3518189D297B3E4100230753 /* Fonts */,
 				358BCF4429783325000A7F9C /* Views */,
 				358BCF432978331D000A7F9C /* Model */,
 				358BCF132978329F000A7F9C /* TreatyApp.swift */,
@@ -196,6 +201,7 @@
 			children = (
 				358BCF4529783349000A7F9C /* UserModel.swift */,
 				352C02EC2978AA3D008E77DF /* LoginViewModel.swift */,
+				3518189F297B3E9200230753 /* Transaction.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -382,6 +388,7 @@
 				358BCF21297832A1000A7F9C /* Preview Assets.xcassets in Resources */,
 				358BCF1D297832A1000A7F9C /* Assets.xcassets in Resources */,
 				35E3FCE129787C1A00B2E97A /* GoogleService-Info.plist in Resources */,
+				3518189E297B3E4100230753 /* Fonts in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -420,6 +427,7 @@
 				358BCF5C2978367F000A7F9C /* LoginView.swift in Sources */,
 				358BCF162978329F000A7F9C /* Persistence.swift in Sources */,
 				358BCF6829783AA8000A7F9C /* BarterView.swift in Sources */,
+				351818A0297B3E9200230753 /* Transaction.swift in Sources */,
 				352C02F12978AB17008E77DF /* PhoneRegisterView.swift in Sources */,
 				358BCF6D29783ACE000A7F9C /* AccountView.swift in Sources */,
 				358BCF60297839D8000A7F9C /* LoadingView.swift in Sources */,
