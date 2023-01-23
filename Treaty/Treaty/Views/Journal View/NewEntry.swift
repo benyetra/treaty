@@ -16,6 +16,8 @@ struct NewEntry: View {
     @State var taskDescription: String = ""
     @State var taskDate: Date = Date()
     @State private var selectedUser: Int? = nil
+    @State private var isButton1Selected = false
+    @State private var isButton2Selected = false
     var user: User
 
     init(userWrapper: UserWrapper) {
@@ -39,7 +41,8 @@ struct NewEntry: View {
                 Section {
                     HStack {
                         Button(action: {
-                            self.selectedUser = 0
+                            self.isButton1Selected.toggle()
+                            print("button 1 pressed")
                         }) {
                             WebImage(url: user.userProfileURL).placeholder{
                                 // MARK: Placeholder Imgae
@@ -47,22 +50,27 @@ struct NewEntry: View {
                                     .resizable()
                             }
                             .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 60, height: 60)
+                            .frame(width: 50, height: 50)
                             .clipShape(Circle())
+                            .overlay(Circle().stroke(Color.black, lineWidth: 2))
+                            .opacity(isButton1Selected ? 1 : 0.5)
                         }
-                        .foregroundColor(self.selectedUser == 0 ? .blue : .gray)
-                        
+                        Text(user.username)
+                    }
+                    HStack {
                         Button(action: {
-                            self.selectedUser = 1
+                            self.isButton2Selected.toggle()
+                            print("button 2 pressed")
                         }) {
                             Image("NullProfile")
                                 .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 60, height: 60)
+                                .frame(width: 50, height: 50)
                                 .clipShape(Circle())
+                                .overlay(Circle().stroke(Color.black, lineWidth: 2))
+                                .opacity(isButton2Selected ? 1 : 0.5)
                         }
-                        .foregroundColor(self.selectedUser == 1 ? .blue : .gray)
+                        Text("User 2")
+                        
                     }
                 } header: {
                     Text("Which Pawrent")
