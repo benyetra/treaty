@@ -89,7 +89,27 @@ struct JournalView: View {
             }
         }
         .ignoresSafeArea(.container, edges: .top)
+        .overlay(
+        
+            Button(action: {
+                entryModel.addNewTask.toggle()
+            }, label: {
+                Image(systemName: "plus")
+                    .foregroundColor(.white)
+                    .padding()
+                    .background(Color("Blue"),in: Circle())
+            })
+            .padding()
+            
+            ,alignment: .bottomTrailing
+        )
+        .sheet(isPresented: $entryModel.addNewTask) {
+        } content: {
+            NewEntry(userWrapper: userWrapper)
+                .environmentObject(entryModel)
+        }
     }
+    
     
     // MARK: Tasks View
     func EntriesView()->some View{
