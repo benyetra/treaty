@@ -11,7 +11,8 @@ struct NewEntry: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var userWrapper: UserWrapper
     @EnvironmentObject var entryModel: EntryViewModel
-    
+    @Environment(\.colorScheme) private var colorScheme
+
     // MARK: Task Values
     @State var taskTitle: String = ""
     @State var taskDescription: String = ""
@@ -55,13 +56,16 @@ struct NewEntry: View {
         NavigationView{
             List{
                 Section {
-                    VStack(spacing: 12){
-                        ForEach(types.indices, id: \.self) { index in
-                            Button(action: { print("Button with tag: ", index, " pressed") }) {
-                                EntryButtonView(types[index])
-                            }.tag(index)
-                                .buttonStyle(BorderlessButtonStyle())
-
+                    HStack {
+                        VStack(spacing: 12){
+                            ForEach(types.indices, id: \.self) { index in
+                                Button(action: { print("Button with tag: ", index, " pressed") }) {
+                                    EntryButtonView(types[index])
+                                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                                }.tag(index)
+                                    .buttonStyle(BorderlessButtonStyle())
+                                    .hAlign(.leading)
+                            }
                         }
                     }
                 } header: {
@@ -153,36 +157,6 @@ struct NewEntry: View {
         print("saved")
     }
     
-    struct CapsuleButton: View {
-        let index: Int
-        let type: EntryType
-        let isSelected: Bool
-        let action: () -> Void
-        
-        var body: some View {
-            Button(action: action) {
-                HStack {
-                    Image(type.productIcon)
-                        .resizable()
-                        .frame(width: 10, height: 10)
-                    Text(type.product)
-                    HStack {
-                        Text("\(type.amountSpent)")
-                            .font(.custom(ubuntu, size: 10, relativeTo: .title3))
-                            .fontWeight(.medium)
-                            .foregroundColor(Color("Blue"))
-                        Image("treat")
-                            .resizable()
-                            .frame(width: 10, height: 10)
-                            .padding(-5)
-                    }
-                }
-            }
-            .clipShape(Capsule())
-            .foregroundColor(isSelected ? (Color("Blue")) : .black)
-        }
-    }
-    
     /// - Transaction Card View
     @ViewBuilder
     func EntryButtonView(_ entry: EntryType)->some View{
@@ -193,7 +167,7 @@ struct NewEntry: View {
                 .frame(width: 15, height: 15)
             VStack(alignment: .leading, spacing: 4) {
                 Text(entry.product)
-                    .font(.custom(ubuntu, size: 10, relativeTo: .body))
+                    .font(.custom(ubuntu, size: 15, relativeTo: .body))
             }
             HStack {
                 Text("\(entry.amountSpent)")
