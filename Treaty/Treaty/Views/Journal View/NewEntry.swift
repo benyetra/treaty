@@ -10,7 +10,8 @@ import SDWebImageSwiftUI
 struct NewEntry: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var userWrapper: UserWrapper
-
+    @EnvironmentObject var entryModel: EntryViewModel
+    
     // MARK: Task Values
     @State var taskTitle: String = ""
     @State var taskDescription: String = ""
@@ -18,24 +19,53 @@ struct NewEntry: View {
     @State private var selectedUser: Int? = nil
     @State private var isButton1Selected = false
     @State private var isButton2Selected = false
+    @State private var selectedButton = -1
     var user: User
-
+    
     init(userWrapper: UserWrapper) {
         self.userWrapper = userWrapper
         self.user = userWrapper.user
     }
     
-    @EnvironmentObject var entryModel: EntryViewModel
+    struct EntryType: Identifiable{
+        var id: UUID = .init()
+        var amountSpent: Int
+        var product: String
+        var productIcon: String
+        var isSelected = false
+    }
+    
+    var types: [EntryType] = [
+        EntryType(amountSpent: 10, product: "Walk", productIcon: "walk"),
+        EntryType(amountSpent: 3, product: "Gave Medicine", productIcon: "pills"),
+        EntryType(amountSpent: 25, product: "Went to Vet", productIcon: "vet"),
+        EntryType(amountSpent: 5, product: "Wake Up with Dog", productIcon: "wakeup"),
+        EntryType(amountSpent: 15, product: "Went to Park", productIcon: "park"),
+        EntryType(amountSpent: 5, product: "Played with Dog", productIcon: "play"),
+        EntryType(amountSpent: 10, product: "Brushed Hair", productIcon: "comb"),
+        EntryType(amountSpent: 10, product: "Brushed Teeth", productIcon: "brushedteeth"),
+        EntryType(amountSpent: 20, product: "Bath", productIcon: "bath"),
+        EntryType(amountSpent: 2, product: "Feed Dog", productIcon: "food"),
+        EntryType(amountSpent: 2, product: "Fill Water", productIcon: "water"),
+        EntryType(amountSpent: 12, product: "Late Night Wake Ups", productIcon: "night")
+    ]
+    
+    
     var body: some View {
-        
         NavigationView{
-            
             List{
-                
                 Section {
-                    TextField("Go to work", text: $taskTitle)
+                    VStack(spacing: 12){
+                        ForEach(types.indices, id: \.self) { index in
+                            Button(action: { print("Button with tag: ", index, " pressed") }) {
+                                EntryButtonView(types[index])
+                            }.tag(index)
+                                .buttonStyle(BorderlessButtonStyle())
+
+                        }
+                    }
                 } header: {
-                    Text("Task Title")
+                    Text("Completed Task")
                 }
                 
                 Section {
@@ -73,7 +103,7 @@ struct NewEntry: View {
                         
                     }
                 } header: {
-                    Text("Which Pawrent")
+                    Text("Participants")
                 }
                 
                 Section {
@@ -121,5 +151,63 @@ struct NewEntry: View {
     }
     func saveEntry() {
         print("saved")
+    }
+    
+    struct CapsuleButton: View {
+        let index: Int
+        let type: EntryType
+        let isSelected: Bool
+        let action: () -> Void
+        
+        var body: some View {
+            Button(action: action) {
+                HStack {
+                    Image(type.productIcon)
+                        .resizable()
+                        .frame(width: 10, height: 10)
+                    Text(type.product)
+                    HStack {
+                        Text("\(type.amountSpent)")
+                            .font(.custom(ubuntu, size: 10, relativeTo: .title3))
+                            .fontWeight(.medium)
+                            .foregroundColor(Color("Blue"))
+                        Image("treat")
+                            .resizable()
+                            .frame(width: 10, height: 10)
+                            .padding(-5)
+                    }
+                }
+            }
+            .clipShape(Capsule())
+            .foregroundColor(isSelected ? (Color("Blue")) : .black)
+        }
+    }
+    
+    /// - Transaction Card View
+    @ViewBuilder
+    func EntryButtonView(_ entry: EntryType)->some View{
+        HStack(spacing: 12){
+            Image(entry.productIcon)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 15, height: 15)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(entry.product)
+                    .font(.custom(ubuntu, size: 10, relativeTo: .body))
+            }
+            HStack {
+                Text("\(entry.amountSpent)")
+                    .font(.custom(ubuntu, size: 15, relativeTo: .title3))
+                    .fontWeight(.medium)
+                    .foregroundColor(Color("Blue"))
+                Image("treat")
+                    .resizable()
+                    .frame(width: 11, height: 11)
+            }
+        }
+        .padding(8)
+        .background(Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .shadow(color: .black.opacity(0.05), radius: 5, x: 5, y: 5)
     }
 }

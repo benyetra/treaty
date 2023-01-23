@@ -10,6 +10,7 @@ import SDWebImageSwiftUI
 
 struct JournalView: View {
     @StateObject var entryModel: EntryViewModel = EntryViewModel()
+    @Environment(\.colorScheme) private var colorScheme
     @Namespace var animation
     @ObservedObject var userWrapper: UserWrapper
     /// - Animation Properties
@@ -54,8 +55,8 @@ struct JournalView: View {
                                         .opacity(entryModel.isToday(date: day) ? 1 : 0)
                                 }
                                 // MARK: Foreground Style
-                                .foregroundStyle(entryModel.isToday(date: day) ? .primary : .secondary)
-                                .foregroundColor(entryModel.isToday(date: day) ? .white : .black)
+                                .foregroundStyle(entryModel.isToday(date: day) ? (colorScheme == .light ? Color.white : Color.black) : (colorScheme == .light ? Color.black : Color.white))
+                                .foregroundColor(entryModel.isToday(date: day) ? (colorScheme == .light ? Color.black : Color.white) : (colorScheme == .light ? Color.white : Color.black))
                                 // MARK: Capsule Shape
                                 .frame(width: 45, height: 90)
                                 .background(
@@ -152,18 +153,18 @@ struct JournalView: View {
         HStack(alignment: .top,spacing: 30){
             VStack(spacing: 10){
                 Circle()
-                    .fill(entryModel.isCurrentHour(date: entry.taskDate) ? .black : .clear)
+                    .fill(entryModel.isCurrentHour(date: entry.taskDate) ? (colorScheme == .light ? Color.black : Color.white) : .clear)
                     .frame(width: 15, height: 15)
                     .background(
                     
                         Circle()
-                            .stroke(.black,lineWidth: 1)
+                            .stroke((colorScheme == .light ? Color.black : Color.white), lineWidth: 1)
                             .padding(-3)
                     )
                     .scaleEffect(!entryModel.isCurrentHour(date: entry.taskDate) ? 0.8 : 1)
                 
                 Rectangle()
-                    .fill(.black)
+                    .fill(colorScheme == .light ? Color.black : Color.white)
                     .frame(width: 3)
             }
             
@@ -175,10 +176,10 @@ struct JournalView: View {
                         
                         Text(entry.taskTitle)
                             .font(.title2.bold())
-                        
+                            .foregroundColor(colorScheme == .light ? Color.black : Color.white)
                         Text(entry.taskDescription)
                             .font(.callout)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(colorScheme == .light ? Color.black : Color.white)
                     }
                     .hLeading()
                     
@@ -202,7 +203,7 @@ struct JournalView: View {
                                     .background(
                                     
                                         Circle()
-                                            .stroke(.black,lineWidth: 5)
+                                            .stroke((colorScheme == .light ? Color.black : Color.white),lineWidth: 5)
                                     )
                             }
                         }
@@ -214,9 +215,9 @@ struct JournalView: View {
                         } label: {
                             
                             Image(systemName: "checkmark")
-                                .foregroundStyle(.black)
+                                .foregroundStyle(colorScheme == .light ? Color.black : Color.white)
                                 .padding(10)
-                                .background(Color.white,in: RoundedRectangle(cornerRadius: 10))
+                                .background((colorScheme == .light ? Color.white : Color.black), in: RoundedRectangle(cornerRadius: 10))
                         }
                     }
                     .padding(.top)
@@ -267,7 +268,7 @@ struct JournalView: View {
         }
         .padding()
         .padding(.top,getSafeArea().top)
-        .background(Color.white)
+        .background(colorScheme == .light ? Color.white : Color.black)
     }
 }
 

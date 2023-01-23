@@ -20,6 +20,8 @@ class UserWrapper: ObservableObject {
 
 let ubuntu = "Ubuntu"
 struct BarterView: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     @ObservedObject var userWrapper: UserWrapper
     /// - Animation Properties
     @State private var expandMenu: Bool = false
@@ -75,7 +77,7 @@ struct BarterView: View {
             }
             .frame(maxHeight: .infinity,alignment: .top)
             .background {
-                Color("BG")
+                (colorScheme == .light ? Color("BG") : Color.black)
                     .ignoresSafeArea()
             }
         }
@@ -181,6 +183,7 @@ struct BarterView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Total")
                         .font(.custom(ubuntu, size: 16, relativeTo: .body))
+                        .foregroundColor(colorScheme == .light ? Color.white : Color.black)
                     HStack {
                         Image("treat")
                             .resizable()
@@ -211,7 +214,7 @@ struct BarterView: View {
                 }
             }
             .padding(15)
-            .background(Color.white)
+            .background(colorScheme == .light ? Color.white : Color("Sand"))
             .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
             .shadow(color: .black.opacity(0.15), radius: 10, x: 5, y: 5)
             .padding(.horizontal,15)
@@ -246,7 +249,7 @@ struct BarterView: View {
                 }
             }
             .padding(10)
-            .background(Color.white)
+            .background(colorScheme == .light ? Color.white : Color("Sand"))
             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             .shadow(color: .black.opacity(0.05), radius: 5, x: 5, y: 5)
         }
