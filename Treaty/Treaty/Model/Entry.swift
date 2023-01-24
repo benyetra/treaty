@@ -10,8 +10,8 @@ import SwiftUI
 // Entry Model
 struct Entry: Identifiable{
     var id = UUID().uuidString
-    var taskTitle: String
-    var taskDescription: String
+    var product: String
+    var taskParticipants: String
     var taskDate: Date
 }
 

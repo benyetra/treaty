@@ -6,6 +6,8 @@
 //
 import SwiftUI
 import SDWebImageSwiftUI
+import FirebaseFirestore
+
 
 struct NewEntry: View {
     @Environment(\.dismiss) var dismiss
@@ -14,8 +16,9 @@ struct NewEntry: View {
     @Environment(\.colorScheme) private var colorScheme
 
     // MARK: Task Values
-    @State var taskTitle: String = ""
-    @State var taskDescription: String = ""
+    @State var selectedType: String = ""
+    @State var product: String = ""
+    @State var taskParticipants: String = ""
     @State var taskDate: Date = Date()
     @State private var selectedUser: Int? = nil
     @State private var isButton1Selected = false
@@ -59,7 +62,9 @@ struct NewEntry: View {
                     HStack {
                         VStack(spacing: 12){
                             ForEach(types.indices, id: \.self) { index in
-                                Button(action: { print("Button with tag: ", index, " pressed") }) {
+                                Button(action: {
+                                    self.selectedType = self.types[index].product
+                                    print("Button with tag: \(selectedType) pressed") }) {
                                     EntryButtonView(types[index])
                                         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                                 }.tag(index)
@@ -121,7 +126,7 @@ struct NewEntry: View {
             .listStyle(.insetGrouped)
             .navigationTitle("Add New Task")
             .navigationBarTitleDisplayMode(.inline)
-            // MARK: Disbaling Dismiss on Swipe
+            // MARK: Disabling Dismiss on Swipe
             .interactiveDismissDisabled()
             // MARK: Action Buttons
             .toolbar {
@@ -134,27 +139,29 @@ struct NewEntry: View {
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save"){
-                        saveEntry()
-                        //                        if let task = entryModel.editTask{
-                        //
-                        //                            task.taskTitle = taskTitle
-                        //                            task.taskDescription = taskDescription
-                        //                        }
-                        //                        else{
-                        //                            let task = Entry()
-                        //                            task.taskTitle = taskTitle
-                        //                            task.taskDescription = taskDescription
-                        //                            task.taskDate = taskDate
+                        saveEntry(product: selectedType, taskDate: taskDate, taskParticipants: user.username)
+                        // Dismissing View
+                        dismiss()
                     }
-                    // Dismissing View
-                    //                        dismiss()
                 }
-                //                    .disabled(taskTitle == "" || taskDescription == "")
             }
         }
     }
-    func saveEntry() {
-        print("saved")
+    
+    func saveEntry(product: String, taskDate: Date, taskParticipants: String) {
+        let entry = Entry(product: product, taskParticipants: taskParticipants, taskDate: taskDate)
+        let db = Firestore.firestore()
+        db.collection("Entries").addDocument(data: [
+            "product": entry.product,
+            "taskParticipants": entry.taskParticipants,
+            "taskDate": entry.taskDate,
+        ]) { (error) in
+            if let error = error {
+                print("Error adding document: (error)")
+            } else {
+                print("Document added with ID: (entry.id)")
+            }
+        }
     }
     
     /// - Transaction Card View

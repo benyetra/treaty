@@ -6,21 +6,12 @@
 //
 
 import SwiftUI
+import FirebaseFirestore
 
 class EntryViewModel: ObservableObject{
     
     // Sample Tasks
-    @Published var storedEntries: [Entry] = [
-    
-        Entry(taskTitle: "Meeting", taskDescription: "Discuss team task for the day", taskDate: .init(timeIntervalSince1970: 1674422225)),
-        Entry(taskTitle: "Icon set", taskDescription: "Edit icons for team task for next week", taskDate: .init(timeIntervalSince1970: 1674526620)),
-        Entry(taskTitle: "Prototype", taskDescription: "Make and send prototype", taskDate: .init(timeIntervalSince1970: 1674422225)),
-        Entry(taskTitle: "Check asset", taskDescription: "Start checking the assets", taskDate: .init(timeIntervalSince1970: 1674785820)),
-        Entry(taskTitle: "Team party", taskDescription: "Make fun with team mates", taskDate: .init(timeIntervalSince1970: 1674526620)),
-        Entry(taskTitle: "Client Meeting", taskDescription: "Explain project to clinet", taskDate: .init(timeIntervalSince1970: 1674422225)),
-        Entry(taskTitle: "Next Project", taskDescription: "Discuss next project with team", taskDate: .init(timeIntervalSince1970: 1674422225)),
-        Entry(taskTitle: "App Proposal", taskDescription: "Meet client for next App Proposal", taskDate: .init(timeIntervalSince1970: 1674785820))
-    ]
+    @Published var storedEntries: [Entry] = []
     
     // MARK: Current Week Days
     @Published var currentWeek: [Date] = []
@@ -42,19 +33,24 @@ class EntryViewModel: ObservableObject{
     
     // MARK: Filter Today Tasks
     func filterTodayEntries(){
-        
-        DispatchQueue.global(qos: .userInteractive).async {
-            
-            let calendar = Calendar.current
-            
-            let filtered = self.storedEntries.filter{
-                return calendar.isDate($0.taskDate, inSameDayAs: self.currentDay)
-            }.sorted { task1, task2 in
+        fetchEntries { (entries) in
+            // use the entries here
+            for entry in entries {
+                self.storedEntries = entries
+            }
+            DispatchQueue.global(qos: .userInteractive).async {
+                
+                let calendar = Calendar.current
+                
+                let filtered = self.storedEntries.filter{
+                    return calendar.isDate($0.taskDate, inSameDayAs: self.currentDay)
+                }.sorted { task1, task2 in
                     return task2.taskDate < task1.taskDate
                 }
-            DispatchQueue.main.async {
-                withAnimation{
-                    self.filteredEntries = filtered
+                DispatchQueue.main.async {
+                    withAnimation{
+                        self.filteredEntries = filtered
+                    }
                 }
             }
         }
@@ -106,4 +102,25 @@ class EntryViewModel: ObservableObject{
         
         return hour == currentHour
     }
+    
+    func fetchEntries(completion: @escaping ([Entry]) -> Void) {
+        var entries: [Entry] = []
+        let db = Firestore.firestore()
+        db.collection("entries").getDocuments { (querySnapshot, error) in
+            if let error = error {
+                print("Error getting documents: \(error)")
+            } else {
+                for document in querySnapshot!.documents {
+                    let data = document.data()
+                    let product = data["product"] as! String
+                    let taskParticipants = data["taskParticipants"] as! String
+                    let taskDate = data["taskDate"] as! Date
+                    let entry = Entry(id: document.documentID, product: product, taskParticipants: taskParticipants, taskDate: taskDate)
+                    entries.append(entry)
+                }
+                completion(entries)
+            }
+        }
+    }
 }
+

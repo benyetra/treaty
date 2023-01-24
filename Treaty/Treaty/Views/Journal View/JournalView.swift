@@ -174,10 +174,10 @@ struct JournalView: View {
                     
                     VStack(alignment: .leading, spacing: 12) {
                         
-                        Text(entry.taskTitle)
+                        Text(entry.product)
                             .font(.title2.bold())
                             .foregroundColor(colorScheme == .light ? Color.white : Color.white)
-                        Text(entry.taskDescription)
+                        Text(entry.taskParticipants)
                             .font(.callout)
                             .foregroundStyle(colorScheme == .light ? Color.white : Color.white)
                     }
