@@ -24,6 +24,8 @@ struct NewEntry: View {
     @State private var isButton1Selected = false
     @State private var isButton2Selected = false
     @State private var selectedButton = -1
+    @State var selectedIndex: Int? = nil
+
     var user: User
     
     init(userWrapper: UserWrapper) {
@@ -63,13 +65,18 @@ struct NewEntry: View {
                         VStack(spacing: 12){
                             ForEach(types.indices, id: \.self) { index in
                                 Button(action: {
+                                    self.selectedIndex = index
                                     self.selectedType = self.types[index].product
-                                    print("Button with tag: \(selectedType) pressed") }) {
+                                    print("Button with tag: \(self.types[index].product) pressed")
+                                }) {
                                     EntryButtonView(types[index])
                                         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-                                }.tag(index)
-                                    .buttonStyle(BorderlessButtonStyle())
-                                    .hAlign(.leading)
+                                        .background(index == self.selectedIndex ? Color("Blue") : Color.white)
+                                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                }
+                                .tag(index)
+                                .buttonStyle(BorderlessButtonStyle())
+                                .hAlign(.leading)
                             }
                         }
                     }
@@ -181,15 +188,13 @@ struct NewEntry: View {
                 Text("\(entry.amountSpent)")
                     .font(.custom(ubuntu, size: 15, relativeTo: .title3))
                     .fontWeight(.medium)
-                    .foregroundColor(Color("Blue"))
+                    .foregroundColor(colorScheme == .light ? Color.white : Color.black)
                 Image("treat")
                     .resizable()
                     .frame(width: 11, height: 11)
             }
         }
         .padding(8)
-        .background(Color.white)
-        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
         .shadow(color: .black.opacity(0.05), radius: 5, x: 5, y: 5)
     }
 }
