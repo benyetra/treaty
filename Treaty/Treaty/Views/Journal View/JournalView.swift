@@ -176,10 +176,10 @@ struct JournalView: View {
                         
                         Text(entry.taskTitle)
                             .font(.title2.bold())
-                            .foregroundColor(colorScheme == .light ? Color.black : Color.white)
+                            .foregroundColor(colorScheme == .light ? Color.white : Color.black)
                         Text(entry.taskDescription)
                             .font(.callout)
-                            .foregroundStyle(colorScheme == .light ? Color.black : Color.white)
+                            .foregroundStyle(colorScheme == .light ? Color.white : Color.black)
                     }
                     .hLeading()
                     
@@ -214,7 +214,7 @@ struct JournalView: View {
                             
                         } label: {
                             
-                            Image(systemName: "checkmark")
+                            Image(systemName: "trash")
                                 .foregroundStyle(colorScheme == .light ? Color.black : Color.white)
                                 .padding(10)
                                 .background((colorScheme == .light ? Color.white : Color.black), in: RoundedRectangle(cornerRadius: 10))
