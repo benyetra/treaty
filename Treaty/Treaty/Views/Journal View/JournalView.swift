@@ -164,7 +164,7 @@ struct JournalView: View {
                     .scaleEffect(!entryModel.isCurrentHour(date: entry.taskDate) ? 0.8 : 1)
                 
                 Rectangle()
-                    .fill(colorScheme == .light ? Color.black : Color.white)
+                    .fill(colorScheme == .light ? Color.black : Color("Sand"))
                     .frame(width: 3)
             }
             
@@ -176,10 +176,10 @@ struct JournalView: View {
                         
                         Text(entry.taskTitle)
                             .font(.title2.bold())
-                            .foregroundColor(colorScheme == .light ? Color.white : Color.black)
+                            .foregroundColor(colorScheme == .light ? Color.white : Color.white)
                         Text(entry.taskDescription)
                             .font(.callout)
-                            .foregroundStyle(colorScheme == .light ? Color.white : Color.black)
+                            .foregroundStyle(colorScheme == .light ? Color.white : Color.white)
                     }
                     .hLeading()
                     

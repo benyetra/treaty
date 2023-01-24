@@ -168,6 +168,7 @@ struct NewEntry: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(entry.product)
                     .font(.custom(ubuntu, size: 15, relativeTo: .body))
+                    .foregroundColor(colorScheme == .light ? Color.white : Color.black)
             }
             HStack {
                 Text("\(entry.amountSpent)")
