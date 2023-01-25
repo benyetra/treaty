@@ -148,6 +148,7 @@
 		351818AF297D9B4700230753 /* View Models */ = {
 			isa = PBXGroup;
 			children = (
+				352C02EC2978AA3D008E77DF /* LoginViewModel.swift */,
 				351818B0297D9B5900230753 /* EntryViewModel.swift */,
 			);
 			path = "View Models";
@@ -220,7 +221,6 @@
 			isa = PBXGroup;
 			children = (
 				358BCF4529783349000A7F9C /* UserModel.swift */,
-				352C02EC2978AA3D008E77DF /* LoginViewModel.swift */,
 				3518189F297B3E9200230753 /* TransactionType.swift */,
 				351818AD297D9B0D00230753 /* Entry.swift */,
 				3506E03E2980139F005F0771 /* PartnerModel.swift */,

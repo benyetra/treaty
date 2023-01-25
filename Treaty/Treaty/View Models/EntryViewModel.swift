@@ -113,14 +113,54 @@ class EntryViewModel: ObservableObject{
                 for document in querySnapshot!.documents {
                     let data = document.data()
                     let product = data["product"] as! String
-                    let taskParticipants = data["taskParticipants"] as! String
-                    let taskDate = data["taskDate"] as! Date
-                    let entry = Entry(id: document.documentID, product: product, taskParticipants: taskParticipants, taskDate: taskDate)
-                    entries.append(entry)
+                    let taskDate = data["taskDate"] as! Timestamp
+                    if let taskParticipantsIds = data["taskParticipantsIds"] as? [String] {
+                        self.getTaskParticipants(taskParticipantIds: taskParticipantsIds) { (users) in
+                            let entry = Entry(id: document.documentID, product: product, taskParticipants: users, taskDate:taskDate.dateValue())
+                            entries.append(entry)
+                            completion(entries)
+                        }
+                    } else {
+                        print("No taskparticipantsIDs present or is nil")
+                        let taskParticipants: [User] = []
+                        let entry = Entry(id: document.documentID, product: product, taskParticipants: taskParticipants, taskDate:taskDate.dateValue())
+                        entries.append(entry)
+                        completion(entries)
+                    }
                 }
-                completion(entries)
             }
         }
     }
+    
+    func getTaskParticipants(taskParticipantIds: [String], completion: @escaping ([User]) -> Void) {
+        var users: [User] = []
+        let db = Firestore.firestore()
+        for id in taskParticipantIds {
+            db.collection("users").document(id).getDocument { (document, error) in
+                if let error = error {
+                    print("Error getting document: (error)")
+                } else {
+                    if let document = document, document.exists {
+                        let data = document.data()
+                        if let user = try? Firestore.Decoder().decode(User.self, from: data!) {
+                            users.append(user)
+                        }
+                    } else {
+                        print("No such document")
+                    }
+                }
+            }
+        }
+        completion(users)
+    }
 }
 
+//
+//    struct Entry: Identifiable{
+//        var id = UUID().uuidString
+//        var product: String
+//        var taskParticipantIds: [String]
+//        var taskDate: Date
+//
+
+//}

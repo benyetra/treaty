@@ -11,7 +11,8 @@ import SwiftUI
 struct Entry: Identifiable{
     var id = UUID().uuidString
     var product: String
-    var taskParticipants: String
+    var taskParticipants: [User]
     var taskDate: Date
 }
+
 

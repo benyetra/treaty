@@ -10,7 +10,7 @@ import Firebase
 import FirebaseFirestore
 
 struct MainView: View {
-    @ObservedObject var userWrapper = UserWrapper(user: User(username: "", userUID: "", userEmail: "", userProfileURL: URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!))
+    @ObservedObject var userWrapper = UserWrapper(user: User(id: "", username: "", userUID: "", userEmail: "", userProfileURL: URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!))
     @Environment(\.colorScheme) private var colorScheme
     
     init() {
@@ -56,10 +56,11 @@ struct MainView: View {
                 let userEmail = data["userEmail"] as? String ?? ""
                 let userProfileURL = data["userProfileURL"] as? String ?? ""
                 if let url = URL(string: userProfileURL) {
-                    self.userWrapper.user = User(username: username, userUID: userUID, userEmail: userEmail, userProfileURL: url)
+                    self.userWrapper.user = User(id: "", username: username, userUID: userUID, userEmail: userEmail, userProfileURL: url)
+
                 } else {
                     let defaultURL = URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!
-                    self.userWrapper.user = User(username: username, userUID: userUID, userEmail: userEmail, userProfileURL: defaultURL)
+                    self.userWrapper.user = User(id: "", username: username, userUID: userUID, userEmail: userEmail, userProfileURL: defaultURL)
                 }
                 if let partnerUsername = data["partners"] as? String {
                     let partnerRef = db.collection("Users").whereField("username", isEqualTo: partnerUsername)

@@ -77,6 +77,9 @@ struct AddPartnerView: View {
                 }
             }
         }
+        .onAppear {
+            getPartner()
+        }
         .padding(30)
     }
     
@@ -116,6 +119,18 @@ struct AddPartnerView: View {
                 return
             }
             print("Partner added successfully!")
+        }
+    }
+    
+    func getPartner() {
+        let db = Firestore.firestore()
+        let uid = Auth.auth().currentUser?.uid
+        db.collection("Users").document(uid!).getDocument { (document, error) in
+            if let document = document, document.exists {
+                self.partnerUsername = document["partner"] as? String ?? ""
+            } else {
+                print("Error getting user data: \(error)")
+            }
         }
     }
 

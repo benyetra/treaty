@@ -16,11 +16,11 @@ struct NewEntry: View {
     @Environment(\.colorScheme) private var colorScheme
     
     // MARK: Task Values
+    @State var selectedUsers = [User]()
     @State var selectedType: String = ""
     @State var product: String = ""
     @State var taskParticipants: String = ""
     @State var taskDate: Date = Date()
-    @State private var selectedUsers: [User] = []
     @State private var isButton1Selected = false
     @State private var isButton2Selected = false
     @State private var selectedButton = -1
@@ -92,12 +92,18 @@ struct NewEntry: View {
                     Group {
                         HStack {
                             Button(action: {
-                                self.isButton1Selected.toggle()
                                 if self.isButton1Selected {
-                                    self.selectedUsers.append(self.user)
+                                    self.selectedUsers.append(self.userWrapper.user)
+                                    print(self.userWrapper.user)
+                                    print(self.selectedUsers)
+                                    print(selectedUsers)
                                 } else {
-                                    self.selectedUsers.removeAll(where: { $0.username == self.user.username })
+                                    self.selectedUsers.removeAll(where: { $0.username == self.userWrapper.user.username })
+                                    print(self.userWrapper.user)
+                                    print(self.selectedUsers)
+                                    print(selectedUsers)
                                 }
+                                self.isButton1Selected.toggle()
                             }) {
                                 WebImage(url: user.userProfileURL).placeholder{
                                     // MARK: Placeholder Imgae
@@ -115,15 +121,23 @@ struct NewEntry: View {
                         if userWrapper.partner != nil {
                             HStack {
                                 Button(action: {
-                                    self.isButton2Selected.toggle()
                                     if let partner = self.userWrapper.partner {
                                         if self.isButton2Selected {
-                                            let newUser = User(id: "", username: partner.username, userUID: "", userEmail: "", userProfileURL: partner.userProfileURL)
-                                            self.selectedUsers.append(newUser)
+                                            if !self.selectedUsers.contains(where: { $0.username == partner.username }) {
+                                                let newUser = User(id: "", username: partner.username, userUID: "", userEmail: "", userProfileURL: partner.userProfileURL)
+                                                self.selectedUsers.append(newUser)
+                                                print(partner)
+                                                print(self.selectedUsers)
+                                                print(newUser)
+                                            }
                                         } else {
                                             self.selectedUsers.removeAll(where: { $0.username == partner.username })
+                                            print(self.userWrapper.user)
+                                            print(self.selectedUsers)
+                                            print(selectedUsers)
                                         }
                                     }
+                                    self.isButton2Selected.toggle()
                                 }) {
                                     if let userProfileURL = userWrapper.partner?.userProfileURL {
                                         WebImage(url: userProfileURL).placeholder {
@@ -177,29 +191,30 @@ struct NewEntry: View {
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save"){
-                        saveEntry(product: selectedType, taskDate: taskDate, taskParticipants: taskParticipants)
-                        // Dismissing View
-                        dismiss()
+                        save()
+                        print("Array count: \(self.selectedUsers.count)")
                     }
                 }
             }
         }
     }
     
-    func saveEntry(product: String, taskDate: Date, taskParticipants: String) {
-        let entry = Entry(product: product, taskParticipants: taskParticipants, taskDate: taskDate)
+    func save(){
+        let newEntry = Entry(product: self.selectedType, taskParticipants: self.selectedUsers, taskDate: self.taskDate)
         let db = Firestore.firestore()
-        db.collection("Entries").addDocument(data: [
-            "product": entry.product,
-            "taskParticipants": entry.taskParticipants,
-            "taskDate": entry.taskDate,
-        ]) { (error) in
-            if let error = error {
-                print("Error adding document: (error)")
+        var ref: DocumentReference? = nil
+        ref = db.collection("entries").addDocument(data: [
+            "product": newEntry.product,
+            "taskParticipants": newEntry.taskParticipants,
+            "taskDate": newEntry.taskDate
+        ]) { err in
+            if let err = err {
+                print("Error adding document: \(err)")
             } else {
-                print("Document added with ID: (entry.id)")
+                print("Document added with ID: \(ref!.documentID)")
             }
         }
+        self.dismiss()
     }
 
     /// - Transaction Card View

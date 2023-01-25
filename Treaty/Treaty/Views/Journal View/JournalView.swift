@@ -182,9 +182,10 @@ struct JournalView: View {
                         Text(entry.product)
                             .font(.title2.bold())
                             .foregroundColor(colorScheme == .light ? Color.white : Color.white)
-                        Text(entry.taskParticipants)
-                            .font(.callout)
-                            .foregroundStyle(colorScheme == .light ? Color.white : Color.white)
+                        
+//                        Text(entry.taskParticipants)
+//                            .font(.callout)
+//                            .foregroundStyle(colorScheme == .light ? Color.white : Color.white)
                     }
                     .hLeading()
                     
