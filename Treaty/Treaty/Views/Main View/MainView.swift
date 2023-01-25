@@ -11,8 +11,8 @@ import FirebaseFirestore
 
 struct MainView: View {
     @ObservedObject var userWrapper = UserWrapper(user: User(username: "", userUID: "", userEmail: "", userProfileURL: URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!))
-        @Environment(\.colorScheme) private var colorScheme
-
+    @Environment(\.colorScheme) private var colorScheme
+    
     init() {
         fetchUserData()
     }
@@ -25,7 +25,7 @@ struct MainView: View {
                     Text("Barter")
                 }
                 .environmentObject(userWrapper)
-
+            
             
             JournalView(userWrapper: userWrapper)
                 .tabItem {
@@ -33,7 +33,7 @@ struct MainView: View {
                     Text("Journal")
                 }
                 .environmentObject(userWrapper)
-
+            
             AccountView()
                 .tabItem {
                     Image(systemName: "figure.2.arms.open")
@@ -43,6 +43,7 @@ struct MainView: View {
         }
         .tint(colorScheme == .light ? Color.black : Color.white)
     }
+    
     
     func fetchUserData() {
         let db = Firestore.firestore()
@@ -60,14 +61,32 @@ struct MainView: View {
                     let defaultURL = URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!
                     self.userWrapper.user = User(username: username, userUID: userUID, userEmail: userEmail, userProfileURL: defaultURL)
                 }
+                if let partnerUsername = data["partners"] as? String {
+                    let partnerRef = db.collection("Users").whereField("username", isEqualTo: partnerUsername)
+                    print("partnerRef:",partnerRef)
+                    partnerRef.getDocuments { (querySnapshot, error) in
+                        print("querySnapshot:",querySnapshot)
+                        print("error:",error)
+                        print(querySnapshot!.documents.count)
+                        if let querySnapshot = querySnapshot, !querySnapshot.isEmpty {
+                            let partnerData = querySnapshot.documents[0].data()
+                            print("partnerData:",partnerData)
+                            let partnerUsername = partnerData["username"] as? String ?? ""
+                            let partnerProfileURL = partnerData["userProfileURL"] as? String ?? ""
+                            if let partnerURL = URL(string: partnerProfileURL) {
+                                self.userWrapper.partner = PartnerModel(username: partnerUsername, userProfileURL: partnerURL)
+                            } else {
+                                let defaultPartnerURL = URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!
+                                self.userWrapper.partner = PartnerModel(username: partnerUsername, userProfileURL: defaultPartnerURL)
+                            }
+                        } else {
+                            self.userWrapper.partner = nil
+                        }
+                    }
+                } else {
+                    self.userWrapper.partner = nil
+                }
             }
         }
     }
 }
-
-struct MainView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
-

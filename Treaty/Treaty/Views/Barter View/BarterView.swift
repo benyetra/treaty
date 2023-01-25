@@ -12,11 +12,14 @@ import SDWebImageSwiftUI
 
 class UserWrapper: ObservableObject {
     @Published var user: User
+    @Published var partner: PartnerModel?
     
     init(user: User) {
         self.user = user
+        self.partner = nil
     }
 }
+
 
 let ubuntu = "Ubuntu"
 struct BarterView: View {
@@ -183,7 +186,7 @@ struct BarterView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Total")
                         .font(.custom(ubuntu, size: 16, relativeTo: .body))
-                        .foregroundColor(colorScheme == .light ? Color.white : Color.black)
+                        .foregroundColor(colorScheme == .light ? Color.black : Color.white)
                     HStack {
                         Image("treat")
                             .resizable()
@@ -196,6 +199,7 @@ struct BarterView: View {
                     }
                     Text("-25 today")
                         .font(.custom(ubuntu, size: 12, relativeTo: .caption))
+                        .fontWeight(.bold)
                         .foregroundColor(.red)
                 }
                 .frame(maxWidth: .infinity,alignment: .leading)

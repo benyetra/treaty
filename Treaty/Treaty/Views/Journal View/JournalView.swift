@@ -7,17 +7,20 @@
 
 import SwiftUI
 import SDWebImageSwiftUI
+import FirebaseFirestore
+import Firebase
 
 struct JournalView: View {
     @StateObject var entryModel: EntryViewModel = EntryViewModel()
     @Environment(\.colorScheme) private var colorScheme
     @Namespace var animation
     @ObservedObject var userWrapper: UserWrapper
+    
     /// - Animation Properties
     @State private var expandMenu: Bool = false
     @State private var dimContent: Bool = false
     var user: User
-
+    
     init(userWrapper: UserWrapper) {
         self.userWrapper = userWrapper
         self.user = userWrapper.user
@@ -26,7 +29,6 @@ struct JournalView: View {
     var body: some View {
         
         ScrollView(.vertical, showsIndicators: false) {
-            
             // MARK: Lazy Stack With Pinned Header
             LazyVStack(spacing: 15, pinnedViews: [.sectionHeaders]) {
                 
@@ -60,7 +62,7 @@ struct JournalView: View {
                                 // MARK: Capsule Shape
                                 .frame(width: 45, height: 90)
                                 .background(
-                                
+                                    
                                     ZStack{
                                         // MARK: Matched Geometry Effect
                                         if entryModel.isToday(date: day){
@@ -83,7 +85,7 @@ struct JournalView: View {
                     }
                     
                     EntriesView()
-                    
+
                 } header: {
                     HeaderView()
                 }
@@ -91,7 +93,7 @@ struct JournalView: View {
         }
         .ignoresSafeArea(.container, edges: .top)
         .overlay(
-        
+            
             Button(action: {
                 entryModel.addNewTask.toggle()
             }, label: {
@@ -108,6 +110,9 @@ struct JournalView: View {
         } content: {
             NewEntry(userWrapper: userWrapper)
                 .environmentObject(entryModel)
+                .onAppear {
+                    MainView().fetchUserData()
+                }
         }
     }
     

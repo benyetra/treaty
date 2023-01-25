@@ -7,25 +7,29 @@
 import SwiftUI
 import SDWebImageSwiftUI
 import FirebaseFirestore
-
+import Firebase
 
 struct NewEntry: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var userWrapper: UserWrapper
     @EnvironmentObject var entryModel: EntryViewModel
     @Environment(\.colorScheme) private var colorScheme
-
+    
     // MARK: Task Values
     @State var selectedType: String = ""
     @State var product: String = ""
     @State var taskParticipants: String = ""
     @State var taskDate: Date = Date()
-    @State private var selectedUser: Int? = nil
+    @State private var selectedUsers: [User] = []
     @State private var isButton1Selected = false
     @State private var isButton2Selected = false
     @State private var selectedButton = -1
     @State var selectedIndex: Int? = nil
-
+    @State private var partnerUser: User?
+    @State private var partnerModel: PartnerModel?
+    @State private var partnerUsername: String = ""
+    @State private var partnerProfileURL: String = ""
+    
     var user: User
     
     init(userWrapper: UserWrapper) {
@@ -85,38 +89,65 @@ struct NewEntry: View {
                 }
                 
                 Section {
-                    HStack {
-                        Button(action: {
-                            self.isButton1Selected.toggle()
-                            print("button 1 pressed")
-                        }) {
-                            WebImage(url: user.userProfileURL).placeholder{
-                                // MARK: Placeholder Imgae
-                                Image("NullProfile")
-                                    .resizable()
-                            }
-                            .resizable()
-                            .frame(width: 50, height: 50)
-                            .clipShape(Circle())
-                            .overlay(Circle().stroke(Color.black, lineWidth: 2))
-                            .opacity(isButton1Selected ? 1 : 0.5)
-                        }
-                        Text(user.username)
-                    }
-                    HStack {
-                        Button(action: {
-                            self.isButton2Selected.toggle()
-                            print("button 2 pressed")
-                        }) {
-                            Image("NullProfile")
+                    Group {
+                        HStack {
+                            Button(action: {
+                                self.isButton1Selected.toggle()
+                                if self.isButton1Selected {
+                                    self.selectedUsers.append(self.user)
+                                } else {
+                                    self.selectedUsers.removeAll(where: { $0.username == self.user.username })
+                                }
+                            }) {
+                                WebImage(url: user.userProfileURL).placeholder{
+                                    // MARK: Placeholder Imgae
+                                    Image("NullProfile")
+                                        .resizable()
+                                }
                                 .resizable()
                                 .frame(width: 50, height: 50)
                                 .clipShape(Circle())
                                 .overlay(Circle().stroke(Color.black, lineWidth: 2))
-                                .opacity(isButton2Selected ? 1 : 0.5)
+                                .opacity(isButton1Selected ? 1 : 0.5)
+                            }
+                            Text(user.username)
                         }
-                        Text("User 2")
-                        
+                        if userWrapper.partner != nil {
+                            HStack {
+                                Button(action: {
+                                    self.isButton2Selected.toggle()
+                                    if let partner = self.userWrapper.partner {
+                                        if self.isButton2Selected {
+                                            let newUser = User(id: "", username: partner.username, userUID: "", userEmail: "", userProfileURL: partner.userProfileURL)
+                                            self.selectedUsers.append(newUser)
+                                        } else {
+                                            self.selectedUsers.removeAll(where: { $0.username == partner.username })
+                                        }
+                                    }
+                                }) {
+                                    if let userProfileURL = userWrapper.partner?.userProfileURL {
+                                        WebImage(url: userProfileURL).placeholder {
+                                            Image("NullProfile")
+                                                .resizable()
+                                        }
+                                        .resizable()
+                                        .frame(width: 50, height: 50)
+                                        .clipShape(Circle())
+                                        .overlay(Circle().stroke(Color.black, lineWidth: 2))
+                                        .opacity(isButton2Selected ? 1 : 0.5)
+                                    }
+                                }
+                                if let username = userWrapper.partner?.username {
+                                    Text(username)
+                                } else {
+                                    Text("Your Partner")
+                                }
+                            }
+                            
+                            
+                        } else {
+                            Text("No partner linked.").opacity(0)
+                        }
                     }
                 } header: {
                     Text("Participants")
@@ -146,7 +177,7 @@ struct NewEntry: View {
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save"){
-                        saveEntry(product: selectedType, taskDate: taskDate, taskParticipants: user.username)
+                        saveEntry(product: selectedType, taskDate: taskDate, taskParticipants: taskParticipants)
                         // Dismissing View
                         dismiss()
                     }
@@ -170,7 +201,7 @@ struct NewEntry: View {
             }
         }
     }
-    
+
     /// - Transaction Card View
     @ViewBuilder
     func EntryButtonView(_ entry: EntryType)->some View{
@@ -182,13 +213,13 @@ struct NewEntry: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(entry.product)
                     .font(.custom(ubuntu, size: 15, relativeTo: .body))
-                    .foregroundColor(colorScheme == .light ? Color.white : Color.black)
+                    .foregroundColor(colorScheme == .light ? Color.black : Color.black)
             }
             HStack {
                 Text("\(entry.amountSpent)")
                     .font(.custom(ubuntu, size: 15, relativeTo: .title3))
                     .fontWeight(.medium)
-                    .foregroundColor(colorScheme == .light ? Color.white : Color.black)
+                    .foregroundColor(colorScheme == .light ? Color.black : Color.black)
                 Image("treat")
                     .resizable()
                     .frame(width: 11, height: 11)
