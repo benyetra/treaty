@@ -224,8 +224,8 @@ struct JournalView: View {
         Task {
             do {
                 /// Step 2: Delete Firestore Document
-                let entryID =  entry.id
-                try await Firestore.firestore().collection("Entries").document(entryID!).delete()
+                guard let entryID =  entry.id else {return}
+                try await Firestore.firestore().collection("Entries").document(entryID).delete()
             } catch {
                 print(error.localizedDescription)
             }

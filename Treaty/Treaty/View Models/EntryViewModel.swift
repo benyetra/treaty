@@ -114,14 +114,14 @@ class EntryViewModel: ObservableObject{
                     let data = document.data()
                     let product = data["product"] as! String
                     let taskDate = data["taskDate"] as! Timestamp
-                    if let taskParticipantsIds = data["taskParticipantsIds"] as? [String] {
-                        self.getTaskParticipants(taskParticipantIds: taskParticipantsIds) { (users) in
+                    if let taskParticipants = data["taskParticipants"] as? [String] {
+                        self.getTaskParticipants(taskParticipants: taskParticipants) { (users) in
                             let entry = Entry(id: document.documentID, product: product, taskParticipants: users, taskDate:taskDate.dateValue())
                             entries.append(entry)
                             completion(entries)
                         }
                     } else {
-                        print("No taskparticipantsIDs present or is nil")
+                        print("No taskparticipants present or is nil")
                         let taskParticipants: [User] = []
                         let entry = Entry(id: document.documentID, product: product, taskParticipants: taskParticipants, taskDate:taskDate.dateValue())
                         entries.append(entry)
@@ -132,10 +132,10 @@ class EntryViewModel: ObservableObject{
         }
     }
     
-    func getTaskParticipants(taskParticipantIds: [String], completion: @escaping ([User]) -> Void) {
+    func getTaskParticipants(taskParticipants: [String], completion: @escaping ([User]) -> Void) {
         var users: [User] = []
         let db = Firestore.firestore()
-        for id in taskParticipantIds {
+        for id in taskParticipants {
             db.collection("users").document(id).getDocument { (document, error) in
                 if let error = error {
                     print("Error getting document: (error)")

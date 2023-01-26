@@ -98,6 +98,7 @@ struct AddPartnerView: View {
                 print("partner found : \(self.partnerUser)")
             } else {
                 print("Partner not found")
+            
             }
         }
     }
