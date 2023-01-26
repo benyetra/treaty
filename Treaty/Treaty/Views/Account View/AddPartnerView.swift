@@ -107,7 +107,7 @@ struct AddPartnerView: View {
         let currentUserUID = Auth.auth().currentUser?.uid
         let currentUserRef = Firestore.firestore().collection("Users").document(currentUserUID!)
         let partnerModel = PartnerModel(username: partner.username, userProfileURL: partner.userProfileURL)
-        currentUserRef.updateData(["partner": partnerModel.username]) { (error) in
+        currentUserRef.updateData(["partners": partnerModel.username]) { (error) in
             if let error = error {
                 print("Error adding partner: (error)")
             } else {
@@ -133,7 +133,7 @@ struct AddPartnerView: View {
 
             if let partnerUser = partnerUser {
                 let partner = PartnerModel(username: partnerUser.username, userProfileURL: partnerUser.userProfileURL)
-                currentUserRef.updateData(["partner": partner]) { (error) in
+                currentUserRef.updateData(["partners": partner]) { (error) in
                     if let error = error {
                         print("Error adding partner: (error)")
                         return
