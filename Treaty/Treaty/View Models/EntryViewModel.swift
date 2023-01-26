@@ -154,13 +154,3 @@ class EntryViewModel: ObservableObject{
         completion(users)
     }
 }
-
-//
-//    struct Entry: Identifiable{
-//        var id = UUID().uuidString
-//        var product: String
-//        var taskParticipantIds: [String]
-//        var taskDate: Date
-//
-
-//}

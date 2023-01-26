@@ -6,10 +6,11 @@
 //
 
 import SwiftUI
+import FirebaseFirestoreSwift
 
 // Entry Model
 struct Entry: Identifiable{
-    var id = UUID().uuidString
+    @DocumentID var id: String?
     var product: String
     var taskParticipants: [User]
     var taskDate: Date

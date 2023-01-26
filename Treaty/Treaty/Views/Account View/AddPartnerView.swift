@@ -46,92 +46,107 @@ struct AddPartnerView: View {
                         }
                         self.partnerUsername = filteredValue
                     })
-                VStack {
-                    Button(action: {
-                        self.searchForPartner()
-                        if self.partnerUser == nil {
-                            self.showError = true
-                            self.errorMessage = "Partner not found, please check username and try again."
-                        } else {
-                            self.showAlert = true
-                        }
-                    }) {
-                        Text("Save")
-                            .foregroundColor(colorScheme == .light ? Color.white : Color.black)
-                            .hAlign(.center)
-                            .fillView(colorScheme == .light ? Color.black : Color.white)
+                Button(action: {
+                    searchForPartner()
+                    if self.partnerUser != nil {
+                        addPartnerToFirestore(partner: self.partnerUser!)
+                        self.showAlert = true
+                    } else {
+                        self.showError = true
+                        self.errorMessage = "Partner not found, please check username and try again."
                     }
-                    .disableWithOpacity(partnerUsername == "")
-                    .padding(20)
-                    if showSuccess {
-                        Text(successMessage)
-                            .foregroundColor(.green)
-                            .padding()
-                    }
+                }) {
+                    Text("Save")
+                        .foregroundColor(colorScheme == .light ? Color.white : Color.black)
+                        .hAlign(.center)
+                        .fillView(colorScheme == .light ? Color.black : Color.white)
                 }
-                .alert(isPresented: $showAlert) {
-                    Alert(title: Text("Confirmation"), message: Text("Are you sure you want to save this partner?"), primaryButton: .default(Text("Save"), action: {
-                        self.addPartner()
-                        self.showSuccess = true
-                    }), secondaryButton: .cancel())
+                
+                .disabled(partnerUsername.isEmpty)
+                .padding(20)
+                if showSuccess {
+                    Text(successMessage)
+                        .foregroundColor(.green)
+                        .padding()
                 }
             }
+            .alert(isPresented: $showAlert) {
+                Alert(title: Text("Confirmation"), message: Text("Are you sure you want to save this partner?"), primaryButton: .default(Text("Save"), action: {
+                    self.addPartner()
+                    self.showSuccess = true
+                }), secondaryButton: .cancel())
+            }
+        }.padding(30)
+    }
+    
+    func handleUpdateData(error: Error?) {
+        if let error = error {
+            print("Error adding partner: \(error)")
+        } else {
+            self.showSuccess = true
         }
-        .onAppear {
-            getPartner()
-        }
-        .padding(30)
     }
     
     func searchForPartner() {
-            // Get all users from Firestore
-            let usersRef = Firestore.firestore().collection("Users")
-            usersRef.getDocuments { (querySnapshot, error) in
-                if let error = error {
-                    print("Error getting users: \(error)")
-                    return
-                }
-                // Iterate through all users to find the one with the matching username
-                for document in querySnapshot!.documents {
-                    if  document.data().keys.contains("username") && document.data().keys.contains("userProfileURL") && document.data().keys.contains("userUID") && document.data().keys.contains("userEmail") && document.data().keys.contains("id") && document.data().keys.contains("partner") {
-                        let usersPartner = try! Firestore.Decoder().decode(User.self, from: document.data())
-                        if usersPartner.username == self.partnerUsername {
-                            self.partnerUser = usersPartner
-                            break
-                        }
-                    }
-                }
-            }
-        }
-
-    func addPartner() {
-        guard let partnerUser = self.partnerUser else {
-            print("Error: partnerUser is nil")
-            return
-        }
-        // Add the selected partner user to the current user's "partners" list in Firestore
-        let currentUserUID = Auth.auth().currentUser?.uid
-        let currentUserRef = Firestore.firestore().collection("Users").document(currentUserUID!)
-        let partner = PartnerModel(username: partnerUser.username, userProfileURL: partnerUser.userProfileURL)
-        currentUserRef.updateData(["partner": partner]) { (error) in
+        let usersRef = Firestore.firestore().collection("Users")
+        let query = usersRef.whereField("username", isEqualTo: partnerUsername)
+        query.getDocuments { (querySnapshot, error) in
             if let error = error {
-                print("Error adding partner: \(error)")
-                return
+                print("Error getting documents: \(error)")
+            } else if let querySnapshot = querySnapshot, let document = querySnapshot.documents.first, let usersPartner = try? Firestore.Decoder().decode(User.self, from: document.data()) {
+                self.partnerUser = usersPartner
+                print("partner found : \(self.partnerUser)")
+            } else {
+                print("Partner not found")
             }
-            print("Partner added successfully!")
         }
     }
     
-    func getPartner() {
-        let db = Firestore.firestore()
-        let uid = Auth.auth().currentUser?.uid
-        db.collection("Users").document(uid!).getDocument { (document, error) in
-            if let document = document, document.exists {
-                self.partnerUsername = document["partner"] as? String ?? ""
+    
+    func addPartnerToFirestore(partner: User) {
+        let currentUserUID = Auth.auth().currentUser?.uid
+        let currentUserRef = Firestore.firestore().collection("Users").document(currentUserUID!)
+        let partnerModel = PartnerModel(username: partner.username, userProfileURL: partner.userProfileURL)
+        currentUserRef.updateData(["partner": partnerModel.username]) { (error) in
+            if let error = error {
+                print("Error adding partner: (error)")
             } else {
-                print("Error getting user data: \(error)")
+                self.showSuccess = true
             }
         }
     }
+    
+    func addPartner() {
+          if let partnerUser = self.partnerUser {
+              //call the function to add the selected partner user to the current user's "partners" list in Firestore
+              addPartnerToFirestore(partner: partnerUser)
+          } else {
+              self.showError = true
+              self.errorMessage = "Error: partnerUser is nil"
+          }
+      }
 
+    func updatePartner() {
+            // Add the selected partner user to the current user's "partners" list in Firestore
+            let currentUserUID = Auth.auth().currentUser?.uid
+            let currentUserRef = Firestore.firestore().collection("Users").document(currentUserUID!)
+
+            if let partnerUser = partnerUser {
+                let partner = PartnerModel(username: partnerUser.username, userProfileURL: partnerUser.userProfileURL)
+                currentUserRef.updateData(["partner": partner]) { (error) in
+                    if let error = error {
+                        print("Error adding partner: (error)")
+                        return
+                    }
+                    print("Partner added successfully!")
+                }
+            } else {
+                // Handle the case where partnerUser is nil
+            }
+        }
+    
+    func savePartner() {
+            addPartner()
+            updatePartner()
+        }
 }

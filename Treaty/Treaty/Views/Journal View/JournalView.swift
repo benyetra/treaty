@@ -93,7 +93,6 @@ struct JournalView: View {
         }
         .ignoresSafeArea(.container, edges: .top)
         .overlay(
-            
             Button(action: {
                 entryModel.addNewTask.toggle()
             }, label: {
@@ -119,20 +118,15 @@ struct JournalView: View {
     
     // MARK: Tasks View
     func EntriesView()->some View{
-        
         LazyVStack(spacing: 20){
-            
             if let entries = entryModel.filteredEntries{
-                
                 if entries.isEmpty{
-                    
                     Text("No tasks found!")
                         .font(.system(size: 16))
                         .fontWeight(.light)
                         .offset(y: 100)
                 }
                 else{
-                    
                     ForEach(entries){entry in
                         EntryCardView(entry: entry)
                     }
@@ -154,7 +148,6 @@ struct JournalView: View {
     
     // MARK: Task Card View
     func EntryCardView(entry: Entry)->some View{
-        
         HStack(alignment: .top,spacing: 30){
             VStack(spacing: 10){
                 Circle()
@@ -172,54 +165,39 @@ struct JournalView: View {
                     .fill(colorScheme == .light ? Color.black : Color("Sand"))
                     .frame(width: 3)
             }
-            
             VStack{
                 
                 HStack(alignment: .top, spacing: 10) {
-                    
                     VStack(alignment: .leading, spacing: 12) {
-                        
                         Text(entry.product)
                             .font(.title2.bold())
                             .foregroundColor(colorScheme == .light ? Color.white : Color.white)
-                        
-//                        Text(entry.taskParticipants)
-//                            .font(.callout)
-//                            .foregroundStyle(colorScheme == .light ? Color.white : Color.white)
                     }
                     .hLeading()
-                    
                     Text(entry.taskDate.formatted(date: .omitted, time: .shortened))
                 }
                 
                 if entryModel.isCurrentHour(date: entry.taskDate){
-                    
                     // MARK: Team Members
                     HStack(spacing: 0){
-                        
                         HStack(spacing: -10){
-                            
                             ForEach(["User1","User2","User3"],id: \.self){user in
-                                
                                 Image(user)
                                     .resizable()
                                     .aspectRatio(contentMode: .fill)
                                     .frame(width: 45, height: 45)
                                     .clipShape(Circle())
                                     .background(
-                                    
                                         Circle()
                                             .stroke((colorScheme == .light ? Color.black : Color.white),lineWidth: 5)
                                     )
                             }
                         }
                         .hLeading()
-                        
                         // MARK: Check Button
                         Button {
-                            
+                            deleteEntry(entry: entry)
                         } label: {
-                            
                             Image(systemName: "trash")
                                 .foregroundStyle(colorScheme == .light ? Color.black : Color.white)
                                 .padding(10)
@@ -242,23 +220,30 @@ struct JournalView: View {
         .hLeading()
     }
     
+    func deleteEntry(entry: Entry) {
+        Task {
+            do {
+                /// Step 2: Delete Firestore Document
+                let entryID =  entry.id
+                try await Firestore.firestore().collection("Entries").document(entryID!).delete()
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
     // MARK: Header
     func HeaderView()->some View{
-        
         HStack(spacing: 10){
-            
             VStack(alignment: .leading, spacing: 10) {
-                
                 Text(Date().formatted(date: .abbreviated, time: .omitted))
                     .foregroundColor(.gray)
-                
                 Text("Today")
                     .font(.largeTitle.bold())
             }
             .hLeading()
-            
             Button {
-                
+
             } label: {
                 WebImage(url: user.userProfileURL).placeholder{
                     // MARK: Placeholder Imgae
@@ -270,7 +255,6 @@ struct JournalView: View {
                 .frame(width: 35, height: 35)
                 .clipShape(Circle())
             }
-
         }
         .padding()
         .padding(.top,getSafeArea().top)
@@ -280,32 +264,26 @@ struct JournalView: View {
 
 // MARK: UI Design Helper functions
 extension View{
-    
     func hLeading()->some View{
         self
             .frame(maxWidth: .infinity,alignment: .leading)
     }
-    
     func hTrailing()->some View{
         self
             .frame(maxWidth: .infinity,alignment: .trailing)
     }
-    
     func hCenter()->some View{
         self
             .frame(maxWidth: .infinity,alignment: .center)
     }
-    
     // MARK: Safe Area
     func getSafeArea()->UIEdgeInsets{
         guard let screen = UIApplication.shared.connectedScenes.first as? UIWindowScene else{
             return .zero
         }
-        
         guard let safeArea = screen.windows.first?.safeAreaInsets else{
             return .zero
         }
-        
         return safeArea
     }
 }
