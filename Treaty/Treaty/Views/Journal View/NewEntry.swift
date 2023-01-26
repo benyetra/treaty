@@ -92,21 +92,14 @@ struct NewEntry: View {
                     Group {
                         HStack {
                             Button(action: {
+                                self.isButton1Selected.toggle()
                                 if self.isButton1Selected {
                                     self.selectedUsers.append(self.userWrapper.user)
-                                    print(self.userWrapper.user)
-                                    print(self.selectedUsers)
-                                    print(selectedUsers)
                                 } else {
                                     self.selectedUsers.removeAll(where: { $0.username == self.userWrapper.user.username })
-                                    print(self.userWrapper.user)
-                                    print(self.selectedUsers)
-                                    print(selectedUsers)
                                 }
-                                self.isButton1Selected.toggle()
                             }) {
                                 WebImage(url: user.userProfileURL).placeholder{
-                                    // MARK: Placeholder Imgae
                                     Image("NullProfile")
                                         .resizable()
                                 }
@@ -122,22 +115,13 @@ struct NewEntry: View {
                             HStack {
                                 Button(action: {
                                     if let partner = self.userWrapper.partner {
+                                        self.isButton2Selected.toggle()
                                         if self.isButton2Selected {
-                                            if !self.selectedUsers.contains(where: { $0.username == partner.username }) {
-                                                let newUser = User(id: "", username: partner.username, userUID: "", userEmail: "", userProfileURL: partner.userProfileURL)
-                                                self.selectedUsers.append(newUser)
-                                                print(partner)
-                                                print(self.selectedUsers)
-                                                print(newUser)
-                                            }
+                                            self.selectedUsers.append(User(id: "", username: partner.username, userUID: "", userEmail: "", userProfileURL: partner.userProfileURL))
                                         } else {
                                             self.selectedUsers.removeAll(where: { $0.username == partner.username })
-                                            print(self.userWrapper.user)
-                                            print(self.selectedUsers)
-                                            print(selectedUsers)
                                         }
                                     }
-                                    self.isButton2Selected.toggle()
                                 }) {
                                     if let userProfileURL = userWrapper.partner?.userProfileURL {
                                         WebImage(url: userProfileURL).placeholder {
@@ -157,15 +141,14 @@ struct NewEntry: View {
                                     Text("Your Partner")
                                 }
                             }
-                            
-                            
                         } else {
-                            Text("No partner linked.").opacity(0)
+                            Text("No partner currently linked. Add your partner on the Profile screen.")
                         }
                     }
                 } header: {
                     Text("Participants")
                 }
+
                 
                 Section {
                     DatePicker("", selection: $taskDate)
@@ -194,18 +177,24 @@ struct NewEntry: View {
                         save()
                         print("Array count: \(self.selectedUsers.count)")
                     }
+//                    .disableWithOpacity(taskParticipants == "" || product == "")
                 }
             }
         }
     }
     
     func save(){
-        let newEntry = Entry(product: self.selectedType, taskParticipants: self.selectedUsers, taskDate: self.taskDate)
+        let newEntry = Entry(id: UUID().uuidString, product: self.selectedType, taskParticipants: self.selectedUsers, taskDate: self.taskDate)
         let db = Firestore.firestore()
         var ref: DocumentReference? = nil
+        var taskParticipants = [[String: Any]]()
+        for user in newEntry.taskParticipants {
+            taskParticipants.append(["username": user.username, "userProfileURL": user.userProfileURL.absoluteString])
+        }
         ref = db.collection("entries").addDocument(data: [
+            "id": newEntry.id,
             "product": newEntry.product,
-            "taskParticipants": newEntry.taskParticipants,
+            "taskParticipants": taskParticipants,
             "taskDate": newEntry.taskDate
         ]) { err in
             if let err = err {
@@ -216,6 +205,8 @@ struct NewEntry: View {
         }
         self.dismiss()
     }
+
+
 
     /// - Transaction Card View
     @ViewBuilder
