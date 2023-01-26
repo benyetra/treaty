@@ -76,7 +76,10 @@ struct AddPartnerView: View {
                     self.showSuccess = true
                 }), secondaryButton: .cancel())
             }
-        }.padding(30)
+        }.onAppear {
+            getPartnerData()
+        }
+        .padding(30)
     }
     
     func handleUpdateData(error: Error?) {
@@ -103,6 +106,17 @@ struct AddPartnerView: View {
         }
     }
     
+    func getPartnerData() {
+        let db = Firestore.firestore()
+        let uid = Auth.auth().currentUser?.uid
+        db.collection("Users").document(uid!).getDocument { (document, error) in
+            if let document = document, document.exists {
+                self.partnerUsername = document["partners"] as? String ?? ""
+            } else {
+                print("Error getting user data: \(error)")
+            }
+        }
+      }
     
     func addPartnerToFirestore(partner: User) {
         let currentUserUID = Auth.auth().currentUser?.uid
