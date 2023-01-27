@@ -142,7 +142,7 @@ struct NewEntry: View {
                                 }
                             }
                         } else {
-                            Text("No partner currently linked. Add your partner on the Profile screen.")
+                            Text("No partner currently linked. If you have a partner add them on the Profile screen.")
                         }
                     }
                 } header: {
@@ -177,7 +177,7 @@ struct NewEntry: View {
                         save()
                         print("Array count: \(self.selectedUsers.count)")
                     }
-//                    .disableWithOpacity(taskParticipants == "" || product == "")
+                    .disableWithOpacity(self.selectedUsers.isEmpty || self.selectedType == "")
                 }
             }
         }
