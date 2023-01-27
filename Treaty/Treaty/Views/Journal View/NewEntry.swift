@@ -175,6 +175,7 @@ struct NewEntry: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save"){
                         save()
+                        entryModel.filterTodayEntries(userUID: user.userUID)
                         print("Array count: \(self.selectedUsers.count)")
                     }
                     .disableWithOpacity(self.selectedUsers.isEmpty || self.selectedType == "")
