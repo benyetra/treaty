@@ -202,6 +202,7 @@ struct JournalView: View {
                         // MARK: Check Button
                         Button {
                             deleteEntry(entry: entry)
+                            entryModel.filterTodayEntries(userUID: user.userUID)
                             print("deleting post \(entry)")
                         } label: {
                             Image(systemName: "trash")
