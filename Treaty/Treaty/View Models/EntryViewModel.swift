@@ -114,43 +114,59 @@ class EntryViewModel: ObservableObject{
                     let data = document.data()
                     let product = data["product"] as! String
                     let taskDate = data["taskDate"] as! Timestamp
-                    if let taskParticipants = data["taskParticipants"] as? [String] {
+                    if let taskParticipants = data["taskParticipants"] as? [[String: Any]] {
                         self.getTaskParticipants(taskParticipants: taskParticipants) { (users) in
                             let entry = Entry(id: document.documentID, product: product, taskParticipants: users, taskDate:taskDate.dateValue())
                             entries.append(entry)
-                            completion(entries)
+                            if entries.count == querySnapshot!.count {
+                                completion(entries)
+                            }
                         }
                     } else {
                         print("No taskparticipants present or is nil")
                         let taskParticipants: [User] = []
                         let entry = Entry(id: document.documentID, product: product, taskParticipants: taskParticipants, taskDate:taskDate.dateValue())
                         entries.append(entry)
-                        completion(entries)
+                        if entries.count == querySnapshot!.documents.count {
+                            completion(entries)
+                        }
                     }
                 }
             }
         }
     }
+
     
-    func getTaskParticipants(taskParticipants: [String], completion: @escaping ([User]) -> Void) {
+    
+    
+    func getTaskParticipants(taskParticipants: [[String:Any]], completion: @escaping ([User]) -> Void) {
         var users: [User] = []
         let db = Firestore.firestore()
-        for id in taskParticipants {
-            db.collection("users").document(id).getDocument { (document, error) in
-                if let error = error {
-                    print("Error getting document: (error)")
-                } else {
-                    if let document = document, document.exists {
-                        let data = document.data()
-                        if let user = try? Firestore.Decoder().decode(User.self, from: data!) {
-                            users.append(user)
-                        }
+        var count = 0
+        for participant in taskParticipants {
+            if let username = participant["username"] as? String {
+                db.collection("Users").whereField("username", isEqualTo: username).getDocuments { (querySnapshot, error) in
+                    if let error = error {
+                        print("Error getting document: (error)")
                     } else {
-                        print("No such document")
+                        if let documents = querySnapshot?.documents {
+                            for document in documents {
+                                let data = document.data()
+                                if let user = try? Firestore.Decoder().decode(User.self, from: data) {
+                                    users.append(user)
+                                }
+                            }
+                        } else {
+                            print("No such document")
+                        }
+                    }
+                    count += 1
+                    if count == taskParticipants.count {
+                        completion(users)
                     }
                 }
             }
         }
-        completion(users)
     }
 }
+

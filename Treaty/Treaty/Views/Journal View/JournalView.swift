@@ -171,18 +171,19 @@ struct JournalView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text(entry.product)
                             .font(.title2.bold())
-                            .foregroundColor(colorScheme == .light ? Color.white : Color.white)
+                            .foregroundColor(colorScheme == .light ? Color.black : Color.white)
                     }
                     .hLeading()
                     Text(entry.taskDate.formatted(date: .omitted, time: .shortened))
                 }
                 
-                if entryModel.isCurrentHour(date: entry.taskDate){
+//                if entryModel.isCurrentHour(date: entry.taskDate){
                     // MARK: Team Members
                     HStack(spacing: 0){
                         HStack(spacing: -10){
-                            ForEach(["User1","User2","User3"],id: \.self){user in
-                                Image(user)
+                            ForEach(entry.taskParticipants, id: \.id){ participant in
+                                WebImage(url: participant.userProfileURL)
+                                    .placeholder(Image("NullProfile"))
                                     .resizable()
                                     .aspectRatio(contentMode: .fill)
                                     .frame(width: 45, height: 45)
@@ -205,16 +206,16 @@ struct JournalView: View {
                         }
                     }
                     .padding(.top)
-                }
+//                }
             }
-            .foregroundColor(entryModel.isCurrentHour(date: entry.taskDate) ? .white : .black)
-            .padding(entryModel.isCurrentHour(date: entry.taskDate) ? 15 : 0)
-            .padding(.bottom,entryModel.isCurrentHour(date: entry.taskDate) ? 0 : 10)
+            .foregroundColor(entryModel.isCurrentHour(date: entry.taskDate) ? .black : .black)
+            .padding(entryModel.isCurrentHour(date: entry.taskDate) ? 15 : 15)
+            .padding(.bottom,entryModel.isCurrentHour(date: entry.taskDate) ? 10 : 10)
             .hLeading()
             .background(
-                Color("Black")
+                Color("Sand")
                     .cornerRadius(25)
-                    .opacity(entryModel.isCurrentHour(date: entry.taskDate) ? 1 : 0)
+                    .opacity(entryModel.isCurrentHour(date: entry.taskDate) ? 1 : 1)
             )
         }
         .hLeading()
