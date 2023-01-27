@@ -202,6 +202,7 @@ struct JournalView: View {
                         // MARK: Check Button
                         Button {
                             deleteEntry(entry: entry)
+                            print("deleting post \(entry)")
                         } label: {
                             Image(systemName: "trash")
                                 .foregroundStyle(colorScheme == .light ? Color.black : Color.white)
@@ -230,7 +231,7 @@ struct JournalView: View {
             do {
                 /// Step 2: Delete Firestore Document
                 guard let entryID =  entry.id else {return}
-                try await Firestore.firestore().collection("Entries").document(entryID).delete()
+                try await Firestore.firestore().collection("entries").document(entryID).delete()
             } catch {
                 print(error.localizedDescription)
             }
