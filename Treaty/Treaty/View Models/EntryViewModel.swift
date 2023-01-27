@@ -9,7 +9,8 @@ import SwiftUI
 import FirebaseFirestore
 
 class EntryViewModel: ObservableObject{
-    
+    @AppStorage("user_UID") var userUID: String = ""
+
     // Sample Tasks
     @Published var storedEntries: [Entry] = []
     
@@ -28,22 +29,22 @@ class EntryViewModel: ObservableObject{
     // MARK: Intializing
     init(){
         fetchCurrentWeek()
-        filterTodayEntries()
+        filterTodayEntries(userUID: userUID)
     }
     
     // MARK: Filter Today Tasks
-    func filterTodayEntries(){
+    func filterTodayEntries(userUID: String) {
         fetchEntries { (entries) in
             // use the entries here
             for entry in entries {
                 self.storedEntries = entries
             }
             DispatchQueue.global(qos: .userInteractive).async {
-                
+
                 let calendar = Calendar.current
-                
+
                 let filtered = self.storedEntries.filter{
-                    return calendar.isDate($0.taskDate, inSameDayAs: self.currentDay)
+                    return calendar.isDate($0.taskDate, inSameDayAs: self.currentDay) && $0.userUID == userUID
                 }.sorted { task1, task2 in
                     return task2.taskDate < task1.taskDate
                 }
@@ -55,6 +56,7 @@ class EntryViewModel: ObservableObject{
             }
         }
     }
+
     
     func fetchCurrentWeek(){
         
@@ -114,9 +116,10 @@ class EntryViewModel: ObservableObject{
                     let data = document.data()
                     let product = data["product"] as! String
                     let taskDate = data["taskDate"] as! Timestamp
+                    let userUID = data["userUID"] as! String
                     if let taskParticipants = data["taskParticipants"] as? [[String: Any]] {
                         self.getTaskParticipants(taskParticipants: taskParticipants) { (users) in
-                            let entry = Entry(id: document.documentID, product: product, taskParticipants: users, taskDate:taskDate.dateValue())
+                            let entry = Entry(id: document.documentID, product: product, taskParticipants: users, taskDate:taskDate.dateValue(), userUID: userUID)
                             entries.append(entry)
                             if entries.count == querySnapshot!.count {
                                 completion(entries)
@@ -125,7 +128,7 @@ class EntryViewModel: ObservableObject{
                     } else {
                         print("No taskparticipants present or is nil")
                         let taskParticipants: [User] = []
-                        let entry = Entry(id: document.documentID, product: product, taskParticipants: taskParticipants, taskDate:taskDate.dateValue())
+                        let entry = Entry(id: document.documentID, product: product, taskParticipants: taskParticipants, taskDate:taskDate.dateValue(), userUID: userUID)
                         entries.append(entry)
                         if entries.count == querySnapshot!.documents.count {
                             completion(entries)

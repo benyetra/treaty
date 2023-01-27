@@ -184,7 +184,7 @@ struct NewEntry: View {
     }
     
     func save(){
-        let newEntry = Entry(id: UUID().uuidString, product: self.selectedType, taskParticipants: self.selectedUsers, taskDate: self.taskDate)
+        let newEntry = Entry(id: UUID().uuidString, product: self.selectedType, taskParticipants: self.selectedUsers, taskDate: self.taskDate, userUID: user.userUID)
         let db = Firestore.firestore()
         var ref: DocumentReference? = nil
         var taskParticipants = [[String: Any]]()
@@ -195,7 +195,8 @@ struct NewEntry: View {
             "id": newEntry.id,
             "product": newEntry.product,
             "taskParticipants": taskParticipants,
-            "taskDate": newEntry.taskDate
+            "taskDate": newEntry.taskDate,
+            "userUID": newEntry.userUID
         ]) { err in
             if let err = err {
                 print("Error adding document: \(err)")

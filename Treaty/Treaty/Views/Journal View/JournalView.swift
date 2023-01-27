@@ -11,6 +11,8 @@ import FirebaseFirestore
 import Firebase
 
 struct JournalView: View {
+    var basedOnUID: Bool = false
+    var uid: String = ""
     @StateObject var entryModel: EntryViewModel = EntryViewModel()
     @Environment(\.colorScheme) private var colorScheme
     @Namespace var animation
@@ -20,6 +22,8 @@ struct JournalView: View {
     @State private var expandMenu: Bool = false
     @State private var dimContent: Bool = false
     var user: User
+    @AppStorage("user_UID") var userUID: String = ""
+
     
     init(userWrapper: UserWrapper) {
         self.userWrapper = userWrapper
@@ -142,7 +146,7 @@ struct JournalView: View {
         .padding(.top)
         // MARK: Updating Tasks
         .onChange(of: entryModel.currentDay) { newValue in
-            entryModel.filterTodayEntries()
+            entryModel.filterTodayEntries(userUID: user.userUID)
         }
     }
     
