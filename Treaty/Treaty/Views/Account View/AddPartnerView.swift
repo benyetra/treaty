@@ -105,25 +105,40 @@ struct AddPartnerView: View {
         let uid = Auth.auth().currentUser?.uid
         db.collection("Users").document(uid!).getDocument { (document, error) in
             if let document = document, document.exists {
-                self.partnerUsername = document["partners"] as? String ?? ""
+                let partnerUID = document["partners"] as? String ?? ""
+                db.collection("Users").document(partnerUID).getDocument { (partnerDocument, error) in
+                    if let partnerDocument = partnerDocument, partnerDocument.exists {
+                        self.partnerUsername = partnerDocument["username"] as? String ?? ""
+                    } else {
+                        print("Error getting partner data: \(error)")
+                    }
+                }
             } else {
                 print("Error getting user data: \(error)")
             }
         }
-      }
+    }
+
     
     func addOrUpdatePartner(partner: User) {
-        let currentUserUID = Auth.auth().currentUser?.uid
-        let currentUserRef = Firestore.firestore().collection("Users").document(currentUserUID!)
-        let partnerModel = PartnerModel(username: partner.username, userProfileURL: partner.userProfileURL)
-        currentUserRef.updateData(["partners": partnerModel.username]) { (error) in
-            if let error = error {
-                print("Error adding/updating partner: \(error)")
-            } else {
-                self.showSuccess = true
+            let currentUserUID = Auth.auth().currentUser?.uid
+            let currentUserRef = Firestore.firestore().collection("Users").document(currentUserUID!)
+            currentUserRef.updateData(["partners": partner.userUID]) { (error) in
+                if let error = error {
+                    print("Error adding/updating partner: \(error)")
+                } else {
+                    // Also update the partner's document with the current user as their partner
+                    let partnerRef = Firestore.firestore().collection("Users").document(partner.userUID)
+                    partnerRef.updateData(["partners": currentUserUID]) { (error) in
+                        if let error = error {
+                            print("Error adding/updating partner: \(error)")
+                        } else {
+                            self.showSuccess = true
+                        }
+                    }
+                }
             }
         }
-    }
 
     func addPartner() {
         if let partnerUser = self.partnerUser {

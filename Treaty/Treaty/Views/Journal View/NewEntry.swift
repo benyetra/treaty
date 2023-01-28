@@ -224,13 +224,13 @@ struct NewEntry: View {
                     .foregroundColor(colorScheme == .light ? Color.black : Color.black)
             }
             HStack {
+                Image("treat")
+                    .resizable()
+                    .frame(width: 11, height: 11)
                 Text("\(entry.amountSpent)")
                     .font(.custom(ubuntu, size: 15, relativeTo: .title3))
                     .fontWeight(.medium)
                     .foregroundColor(colorScheme == .light ? Color.black : Color.black)
-                Image("treat")
-                    .resizable()
-                    .frame(width: 11, height: 11)
             }
         }
         .padding(8)
