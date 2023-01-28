@@ -44,55 +44,6 @@ struct MainView: View {
         .tint(colorScheme == .light ? Color.black : Color.white)
     }
     
-    
-    //    func fetchUserData() {
-    //        let db = Firestore.firestore()
-    //        guard let uid = Auth.auth().currentUser?.uid else { return }
-    //        let userRef = db.collection("Users").document(uid)
-    //        userRef.getDocument { (document, error) in
-    //            if let document = document, document.exists, let data = document.data() {
-    //                let username = data["username"] as? String ?? ""
-    //                let userUID = data["userUID"] as? String ?? ""
-    //                let userEmail = data["userEmail"] as? String ?? ""
-    //                let userProfileURL = data["userProfileURL"] as? String ?? ""
-    //                if let url = URL(string: userProfileURL) {
-    //                    self.userWrapper.user = User(id: "", username: username, userUID: userUID, userEmail: userEmail, userProfileURL: url)
-    //
-    //                } else {
-    //                    let defaultURL = URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!
-    //                    self.userWrapper.user = User(id: "", username: username, userUID: userUID, userEmail: userEmail, userProfileURL: defaultURL)
-    //                }
-    //                if let partnerUsername = data["partners"] as? String {
-    //                    let partnerRef = db.collection("Users").whereField("username", isEqualTo: partnerUsername)
-    //                    print("partnerRef:",partnerRef)
-    //                    partnerRef.getDocuments { (querySnapshot, error) in
-    //                        print("querySnapshot:",querySnapshot)
-    //                        print("error:",error)
-    //                        print(querySnapshot!.documents.count)
-    //                        if let querySnapshot = querySnapshot, !querySnapshot.isEmpty {
-    //                            let partnerData = querySnapshot.documents[0].data()
-    //                            print("partnerData:",partnerData)
-    //                            let partnerUsername = partnerData["username"] as? String ?? ""
-    //                            let partnerProfileURL = partnerData["userProfileURL"] as? String ?? ""
-    //                            if let partnerURL = URL(string: partnerProfileURL) {
-    //                                self.userWrapper.partner = PartnerModel(username: partnerUsername, userProfileURL: partnerURL.absoluteString)
-    //                            } else {
-    //                                let defaultPartnerURL = URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!
-    //                                self.userWrapper.partner = PartnerModel(username: partnerUsername, userProfileURL: defaultPartnerURL.absoluteString)
-    //                            }
-    //                        } else {
-    //                            self.userWrapper.partner = nil
-    //                        }
-    //                    }
-    //                } else {
-    //                    self.userWrapper.partner = nil
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
-    
-    // Move this code into a new function
     func fetchUserData() {
         let db = Firestore.firestore()
         guard let uid = Auth.auth().currentUser?.uid else { return }
