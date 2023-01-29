@@ -62,25 +62,16 @@ struct MainView: View {
                     self.userWrapper.user = User(id: "", username: username, userUID: userUID, userEmail: userEmail, userProfileURL: defaultURL)
                 }
                 if let partnerUsername = data["partners"] as? String {
-                    let partnerRef = db.collection("Users").whereField("username", isEqualTo: partnerUsername)
-                    print("partnerRef:",partnerRef)
-                    partnerRef.getDocuments { (querySnapshot, error) in
-                        print("querySnapshot:",querySnapshot)
-                        print("error:",error)
-                        print(querySnapshot!.documents.count)
-                        if let querySnapshot = querySnapshot, !querySnapshot.isEmpty {
-                            let partnerData = querySnapshot.documents[0].data()
-                            print("partnerData:",partnerData)
-                            let partnerUsername = partnerData["username"] as? String ?? ""
-                            let partnerProfileURL = partnerData["userProfileURL"] as? String ?? ""
-                            if let partnerURL = URL(string: partnerProfileURL) {
-                                self.userWrapper.partner = PartnerModel(username: partnerUsername, userProfileURL: partnerURL)
-                            } else {
-                                let defaultPartnerURL = URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!
-                                self.userWrapper.partner = PartnerModel(username: partnerUsername, userProfileURL: defaultPartnerURL)
-                            }
+                    db.collection("Users").whereField("username", isEqualTo: partnerUsername).getDocuments { (querySnapshot, error) in
+                        if let querySnapshot = querySnapshot, !querySnapshot.isEmpty,
+                           let partnerData = querySnapshot.documents.first?.data(),
+                           let partnerUsername = partnerData["username"] as? String,
+                           let partnerProfileURL = partnerData["userProfileURL"] as? String,
+                           let partnerURL = URL(string: partnerProfileURL) {
+                            self.userWrapper.partner = PartnerModel(username: partnerUsername, userProfileURL: partnerURL)
                         } else {
-                            self.userWrapper.partner = nil
+                            let defaultPartnerURL = URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!
+                            self.userWrapper.partner = PartnerModel(username: partnerUsername, userProfileURL: defaultPartnerURL)
                         }
                     }
                 } else {
