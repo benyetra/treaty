@@ -185,17 +185,19 @@ struct JournalView: View {
                     // MARK: Team Members
                     HStack(spacing: 0){
                         HStack(spacing: -10){
-                            ForEach(entry.taskParticipants, id: \.id){ participant in
-                                WebImage(url: participant.userProfileURL)
-                                    .placeholder(Image("NullProfile"))
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: 45, height: 45)
-                                    .clipShape(Circle())
-                                    .background(
-                                        Circle()
-                                            .stroke((colorScheme == .light ? Color.black : Color.white),lineWidth: 5)
-                                    )
+                            HStack {
+                                ForEach(0..<entry.taskParticipants.count, id: \.self) { i in
+                                    WebImage(url: entry.taskParticipants[i].userProfileURL)
+                                        .placeholder(Image("NullProfile"))
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 45, height: 45)
+                                        .clipShape(Circle())
+                                        .background(
+                                            Circle()
+                                                .stroke((colorScheme == .light ? Color.black : Color.white), lineWidth: 5)
+                                        )
+                                }
                             }
                         }
                         .hLeading()
