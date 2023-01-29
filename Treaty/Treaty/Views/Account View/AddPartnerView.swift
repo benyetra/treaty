@@ -102,10 +102,17 @@ struct AddPartnerView: View {
     
     func getPartnerData() {
         let db = Firestore.firestore()
-        let uid = Auth.auth().currentUser?.uid
-        db.collection("Users").document(uid!).getDocument { (document, error) in
+        guard let uid = Auth.auth().currentUser?.uid else {
+            print("nil")
+            return
+        }
+        db.collection("Users").document(uid).getDocument { (document, error) in
             if let document = document, document.exists {
                 let partnerUID = document["partners"] as? String ?? ""
+                if partnerUID.isEmpty {
+                    print("Partner UID not found in user document")
+                    return
+                }
                 db.collection("Users").document(partnerUID).getDocument { (partnerDocument, error) in
                     if let partnerDocument = partnerDocument, partnerDocument.exists {
                         self.partnerUsername = partnerDocument["username"] as? String ?? ""
@@ -118,6 +125,8 @@ struct AddPartnerView: View {
             }
         }
     }
+
+
 
     
     func addOrUpdatePartner(partner: User) {
