@@ -22,6 +22,8 @@
 		352C02F12978AB17008E77DF /* PhoneRegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352C02F02978AB17008E77DF /* PhoneRegisterView.swift */; };
 		352C02F32978C379008E77DF /* UserNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352C02F22978C379008E77DF /* UserNameView.swift */; };
 		352C02F529798A94008E77DF /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352C02F429798A94008E77DF /* AuthService.swift */; };
+		3544C8AC29874C4800957435 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 3544C8AB29874C4800957435 /* FirebaseAnalytics */; };
+		3544C8AE29874C4800957435 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 3544C8AD29874C4800957435 /* FirebaseMessaging */; };
 		358BCF142978329F000A7F9C /* TreatyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF132978329F000A7F9C /* TreatyApp.swift */; };
 		358BCF162978329F000A7F9C /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF152978329F000A7F9C /* Persistence.swift */; };
 		358BCF192978329F000A7F9C /* Treaty.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF172978329F000A7F9C /* Treaty.xcdatamodeld */; };
@@ -109,8 +111,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3544C8AE29874C4800957435 /* FirebaseMessaging in Frameworks */,
 				358BCF52297833F9000A7F9C /* SDWebImageSwiftUI in Frameworks */,
 				358BCF49297833C1000A7F9C /* FirebaseAuth in Frameworks */,
+				3544C8AC29874C4800957435 /* FirebaseAnalytics in Frameworks */,
 				352C02EB2978A9B0008E77DF /* GoogleSignInSwift in Frameworks */,
 				358BCF4F297833C1000A7F9C /* FirebaseStorage in Frameworks */,
 				358BCF4B297833C1000A7F9C /* FirebaseFirestore in Frameworks */,
@@ -154,6 +158,13 @@
 			path = "View Models";
 			sourceTree = "<group>";
 		};
+		3544C8AA29874C4800957435 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		358BCF072978329F000A7F9C = {
 			isa = PBXGroup;
 			children = (
@@ -161,6 +172,7 @@
 				358BCF29297832A1000A7F9C /* TreatyTests */,
 				358BCF33297832A1000A7F9C /* TreatyUITests */,
 				358BCF112978329F000A7F9C /* Products */,
+				3544C8AA29874C4800957435 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -314,6 +326,8 @@
 				358BCF51297833F9000A7F9C /* SDWebImageSwiftUI */,
 				352C02E82978A9B0008E77DF /* GoogleSignIn */,
 				352C02EA2978A9B0008E77DF /* GoogleSignInSwift */,
+				3544C8AB29874C4800957435 /* FirebaseAnalytics */,
+				3544C8AD29874C4800957435 /* FirebaseMessaging */,
 			);
 			productName = Treaty;
 			productReference = 358BCF102978329F000A7F9C /* Treaty.app */;
@@ -866,6 +880,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 352C02E72978A9B0008E77DF /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
+		};
+		3544C8AB29874C4800957435 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 358BCF47297833C1000A7F9C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		3544C8AD29874C4800957435 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 358BCF47297833C1000A7F9C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 		358BCF48297833C1000A7F9C /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
