@@ -10,7 +10,7 @@ import Firebase
 import FirebaseFirestore
 
 struct MainView: View {
-    @ObservedObject var userWrapper = UserWrapper(user: User(id: "", username: "", userUID: "", userEmail: "", userProfileURL: URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!))
+    @ObservedObject var userWrapper = UserWrapper(user: User(id: "", username: "", userUID: "", userEmail: "", userProfileURL: URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!, token: ""))
     @Environment(\.colorScheme) private var colorScheme
     
     init() {
@@ -54,19 +54,21 @@ struct MainView: View {
                 let userUID = data["userUID"] as? String ?? ""
                 let userEmail = data["userEmail"] as? String ?? ""
                 let userProfileURL = data["userProfileURL"] as? String ?? ""
+                let userToken = data["token"] as? String ?? ""
                 if let url = URL(string: userProfileURL) {
-                    self.userWrapper.user = User(id: "", username: username, userUID: userUID, userEmail: userEmail, userProfileURL: url)
+                    self.userWrapper.user = User(id: "", username: username, userUID: userUID, userEmail: userEmail, userProfileURL: url, token: userToken)
                 } else {
                     let defaultURL = URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!
-                    self.userWrapper.user = User(id: "", username: username, userUID: userUID, userEmail: userEmail, userProfileURL: defaultURL)
+                    self.userWrapper.user = User(id: "", username: username, userUID: userUID, userEmail: userEmail, userProfileURL: defaultURL, token: userToken)
                 }
                 if let partnerUID = data["partners"] as? String {
                     db.collection("Users").document(partnerUID).getDocument { (partnerDocument, error) in
-                        if let partnerDocument = partnerDocument, partnerDocument.exists, let partnerData = partnerDocument.data(), let partnerUsername = partnerData["username"] as? String, let partnerProfileURL = partnerData["userProfileURL"] as? String, let partnerURL = URL(string: partnerProfileURL) {
-                            self.userWrapper.partner = PartnerModel(username: partnerUsername, userProfileURL: partnerURL)
+                        if let partnerDocument = partnerDocument, partnerDocument.exists, let partnerData = partnerDocument.data(), let partnerUsername = partnerData["username"] as? String, let partnerProfileURL = partnerData["userProfileURL"] as? String, let partnerURL = URL(string: partnerProfileURL),
+                           let partnerToken = partnerData["token"] as? String {
+                            self.userWrapper.partner = PartnerModel(username: partnerUsername, userProfileURL: partnerURL, token: partnerToken)
                         } else {
                             let defaultPartnerURL = URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!
-                            self.userWrapper.partner = PartnerModel(username: "", userProfileURL: defaultPartnerURL)
+                            self.userWrapper.partner = PartnerModel(username: "", userProfileURL: defaultPartnerURL, token: "")
                         }
                     }
                 } else {

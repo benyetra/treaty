@@ -28,6 +28,7 @@ struct LoginView: View {
     @AppStorage("user_profile_url") var profileURL: URL?
     @AppStorage("user_name") var userNameStored: String = ""
     @AppStorage("user_UID") var userUID: String = ""
+    @AppStorage("user_token") var userTokenStored: String = ""
     @AppStorage("log_status") var logStatus: Bool = false
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {

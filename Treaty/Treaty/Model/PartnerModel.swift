@@ -10,5 +10,6 @@ import SwiftUI
 struct PartnerModel:Codable {
     var username: String
     var userProfileURL: URL
+    var token: String
 }
 

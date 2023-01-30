@@ -15,13 +15,15 @@ struct User: Identifiable,Codable {
     var userEmail: String
     var userProfileURL: URL
     var partner: PartnerModel?
-    init(id: String?, username: String, userUID: String, userEmail: String, userProfileURL: URL, partner: PartnerModel? = nil) {
+    var token: String?
+    init(id: String?, username: String, userUID: String, userEmail: String, userProfileURL: URL, partner: PartnerModel? = nil, token: String?) {
         self.id = id
         self.username = username
         self.userUID = userUID
         self.userEmail = userEmail
         self.userProfileURL = userProfileURL
         self.partner = partner
+        self.token = token
     }
 
     func toDict() -> [String: Any] {
@@ -40,5 +42,6 @@ struct User: Identifiable,Codable {
         case userEmail
         case userProfileURL
         case partner
+        case token
     }
 }
