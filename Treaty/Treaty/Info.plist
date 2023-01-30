@@ -4,6 +4,8 @@
 <dict>
 	<key>ATSApplicationFontsPath</key>
 	<string></string>
+	<key>CFBundleGetInfoString</key>
+	<array/>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -27,7 +29,6 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
-		<string>processing</string>
 		<string>remote-notification</string>
 	</array>
 </dict>
