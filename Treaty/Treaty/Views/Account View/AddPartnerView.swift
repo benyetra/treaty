@@ -78,25 +78,6 @@ struct AddPartnerView: View {
             self.getPartnerData()
         }
         .padding(30)
-        
-        NavigationView{
-            
-            List{
-                Button {
-                    sendPushNotification(to: self.partnerToken, title: self.titleText, body: self.bodyText)
-                } label: {
-                    Text("Send Push Notification")
-                }
-            }
-            padding()
-            .background(Color.blue)
-            .foregroundColor(.white)
-            .cornerRadius(40)
-
-
-            .listStyle(.insetGrouped)
-            .navigationTitle("Push Notification")
-        }
     }
     
     func handleUpdateData(error: Error?) {
