@@ -47,7 +47,7 @@ struct ReusableProfileContent: View {
                     .hAlign(.leading)
                 }
                 
-                Text("Post's")
+                Text("Pet Information")
                     .font(.title2)
                     .fontWeight(.semibold)
                     .foregroundColor(.black)
