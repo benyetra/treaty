@@ -11,6 +11,7 @@ import Firebase
 import FirebaseStorage
 import FirebaseFirestore
 import GoogleSignIn
+import FirebaseFirestoreSwift
 
 class UserCredentials: ObservableObject {
     @Published var email: String = ""
@@ -21,6 +22,8 @@ class UserCredentials: ObservableObject {
 struct AccountView: View {
     // MARK: My Profile Data
     @State private var myProfile: User?
+    @State private var partnerUsername: String = ""
+    @State private var partnerUser: User?
     // MARK: User Defaults Data
     @ObservedObject var credentials = UserCredentials()
     @AppStorage("user_profile_url") var profileURL: URL?
@@ -28,9 +31,12 @@ struct AccountView: View {
     @AppStorage("user_UID") var userUID: String = ""
     @AppStorage("log_status") var logStatus: Bool = false
     // MARK: View Properties
+    @Environment(\.colorScheme) private var colorScheme
     @State var errorMessage: String = ""
     @State var showError: Bool = false
     @State var isLoading: Bool = false
+    @State var addPartnerSheet: Bool = false
+
     var body: some View {
         NavigationStack{
             VStack{
@@ -52,16 +58,20 @@ struct AccountView: View {
                         // MARK: Two Action's
                         // 1. Logout
                         // 2. Delete Account
+                        
+                        Button("Add Partner") { addPartnerSheet.toggle() }
                         Button("Logout",action: logOutUser)
-                            
                         Button("Delete Account",role: .destructive,action: deleteAccount)
                     } label: {
                         Image(systemName: "ellipsis")
                             .rotationEffect(.init(degrees: 90))
-                            .tint(.black)
+                            .tint(colorScheme == .light ? Color.black : Color("Sand"))
                             .scaleEffect(0.8)
                     }
                 }
+            }
+            .sheet(isPresented: $addPartnerSheet){
+                AddPartnerView()
             }
         }
         .overlay {

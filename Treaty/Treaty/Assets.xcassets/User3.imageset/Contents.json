@@ -1,17 +1,15 @@
 {
   "images" : [
     {
-      "filename" : "treat.png",
+      "filename" : "User3.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "treat 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "treat 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

@@ -12,14 +12,19 @@ import SDWebImageSwiftUI
 
 class UserWrapper: ObservableObject {
     @Published var user: User
+    @Published var partner: PartnerModel?
     
     init(user: User) {
         self.user = user
+        self.partner = nil
     }
 }
 
+
 let ubuntu = "Ubuntu"
 struct BarterView: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     @ObservedObject var userWrapper: UserWrapper
     /// - Animation Properties
     @State private var expandMenu: Bool = false
@@ -39,7 +44,7 @@ struct BarterView: View {
                 HeaderView()
                 
                 VStack(spacing: 10){
-                    Text("@\(userWrapper.user.username)'s Treat Jar")
+                    Text("My Treat Jar")
                         .font(.custom(ubuntu, size: 30, relativeTo: .title))
                         .foregroundColor(expandMenu ? Color("Blue") : .white)
                         .contentTransition(.interpolate)
@@ -53,8 +58,8 @@ struct BarterView: View {
                     
                     ScrollView(.vertical, showsIndicators: false) {
                         VStack(spacing: 12){
-                            ForEach(transactions){transaction in
-                                TransactionCardView(transaction)
+                            ForEach(types){transactionType in
+                                TransactionCardView(transactionType)
                             }
                         }
                         .padding(.top,40)
@@ -75,7 +80,7 @@ struct BarterView: View {
             }
             .frame(maxHeight: .infinity,alignment: .top)
             .background {
-                Color("BG")
+                (colorScheme == .light ? Color("BG") : Color.black)
                     .ignoresSafeArea()
             }
         }
@@ -181,6 +186,7 @@ struct BarterView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Total")
                         .font(.custom(ubuntu, size: 16, relativeTo: .body))
+                        .foregroundColor(colorScheme == .light ? Color.black : Color.white)
                     HStack {
                         Image("treat")
                             .resizable()
@@ -193,6 +199,7 @@ struct BarterView: View {
                     }
                     Text("-25 today")
                         .font(.custom(ubuntu, size: 12, relativeTo: .caption))
+                        .fontWeight(.bold)
                         .foregroundColor(.red)
                 }
                 .frame(maxWidth: .infinity,alignment: .leading)
@@ -211,7 +218,7 @@ struct BarterView: View {
                 }
             }
             .padding(15)
-            .background(Color.white)
+            .background(colorScheme == .light ? Color.white : Color("Sand"))
             .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
             .shadow(color: .black.opacity(0.15), radius: 10, x: 5, y: 5)
             .padding(.horizontal,15)
@@ -220,7 +227,7 @@ struct BarterView: View {
         
         /// - Transaction Card View
         @ViewBuilder
-        func TransactionCardView(_ transaction: Transaction)->some View{
+        func TransactionCardView(_ transaction: TransactionType)->some View{
             HStack(spacing: 12){
                 Image(transaction.productIcon)
                     .resizable()
@@ -229,14 +236,14 @@ struct BarterView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(transaction.product)
                         .font(.custom(ubuntu, size: 16, relativeTo: .body))
-                    Text(transaction.spendType)
+                    Text("Earned")
                         .font(.custom(ubuntu, size: 12, relativeTo: .caption))
                         .foregroundColor(.gray)
                 }
                 .frame(maxWidth: .infinity,alignment: .leading)
                 
                 HStack {
-                    Text(transaction.amountSpent)
+                    Text("\(transaction.amountSpent)")
                         .font(.custom(ubuntu, size: 18, relativeTo: .title3))
                         .fontWeight(.medium)
                         .foregroundColor(Color("Blue"))
@@ -246,7 +253,7 @@ struct BarterView: View {
                 }
             }
             .padding(10)
-            .background(Color.white)
+            .background(colorScheme == .light ? Color.white : Color("Sand"))
             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             .shadow(color: .black.opacity(0.05), radius: 5, x: 5, y: 5)
         }
