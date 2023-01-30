@@ -62,7 +62,7 @@ class AppDelegate: NSObject,UIApplicationDelegate{
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any],
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
 
-        // DO Something With Message Data Here....
+        // Do Something With Message Data Here....
       if let messageID = userInfo[gcmMessageIDKey] {
         print("Message ID: \(messageID)")
       }
@@ -85,19 +85,28 @@ class AppDelegate: NSObject,UIApplicationDelegate{
 
 }
 
-// CLoud Messaging...
+// Cloud Messaging...
 extension AppDelegate: MessagingDelegate{
-    
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-    
+        
         // Store this token to firebase and retrieve when to send message to someone....
         let dataDict:[String: String] = ["token": fcmToken ?? ""]
         
-        // Store token in Firestore For Sending Notifications From Server in Future...
+        // Get current user's unique ID
+        let userID = Auth.auth().currentUser?.uid
         
-        print(dataDict)
+        // Store token in Firestore For Sending Notifications From Server in Future...
+        let db = Firestore.firestore()
+        db.collection("Users").document(userID!).setData(dataDict, merge: true) { (error) in
+            if let error = error {
+                print("Error storing FCM token in Firestore: \(error)")
+            } else {
+                print("Successfully stored FCM token in Firestore")
+            }
+        }
     }
 }
+
 
 // User Notifications...[AKA InApp Notifications...]
 
