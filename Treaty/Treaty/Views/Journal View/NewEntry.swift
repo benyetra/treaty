@@ -27,7 +27,7 @@ struct NewEntry: View {
     @State var selectedIndex: Int? = nil
     @State private var partnerUser: User?
     @State private var partnerModel: PartnerModel?
-    @State private var partnerUsername: String = ""
+    @State var partnerUsername: String = ""
     @State private var partnerProfileURL: String = ""
     
     var user: User

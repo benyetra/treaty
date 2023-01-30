@@ -14,7 +14,7 @@ import FirebaseFirestore
 
 struct ReusableProfileContent: View {
     var user: User
-    @State private var partnerUsername: String = ""
+    @State var partnerUsername: String = ""
     @State private var partnerToken: String = ""
 
     var body: some View {

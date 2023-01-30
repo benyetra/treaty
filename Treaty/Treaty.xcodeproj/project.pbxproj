@@ -22,8 +22,10 @@
 		352C02F12978AB17008E77DF /* PhoneRegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352C02F02978AB17008E77DF /* PhoneRegisterView.swift */; };
 		352C02F32978C379008E77DF /* UserNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352C02F22978C379008E77DF /* UserNameView.swift */; };
 		352C02F529798A94008E77DF /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352C02F429798A94008E77DF /* AuthService.swift */; };
+		353DF54E29887FAC0088237A /* PartnerRequestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353DF54D29887FAC0088237A /* PartnerRequestModel.swift */; };
 		3544C8AC29874C4800957435 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 3544C8AB29874C4800957435 /* FirebaseAnalytics */; };
 		3544C8AE29874C4800957435 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 3544C8AD29874C4800957435 /* FirebaseMessaging */; };
+		3544C8B0298865A800957435 /* PartnerRequestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3544C8AF298865A800957435 /* PartnerRequestView.swift */; };
 		358BCF142978329F000A7F9C /* TreatyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF132978329F000A7F9C /* TreatyApp.swift */; };
 		358BCF162978329F000A7F9C /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF152978329F000A7F9C /* Persistence.swift */; };
 		358BCF192978329F000A7F9C /* Treaty.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF172978329F000A7F9C /* Treaty.xcdatamodeld */; };
@@ -81,6 +83,8 @@
 		352C02F02978AB17008E77DF /* PhoneRegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneRegisterView.swift; sourceTree = "<group>"; };
 		352C02F22978C379008E77DF /* UserNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNameView.swift; sourceTree = "<group>"; };
 		352C02F429798A94008E77DF /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		353DF54D29887FAC0088237A /* PartnerRequestModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerRequestModel.swift; sourceTree = "<group>"; };
+		3544C8AF298865A800957435 /* PartnerRequestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerRequestView.swift; sourceTree = "<group>"; };
 		358BCF102978329F000A7F9C /* Treaty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Treaty.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		358BCF132978329F000A7F9C /* TreatyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreatyApp.swift; sourceTree = "<group>"; };
 		358BCF152978329F000A7F9C /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
@@ -236,6 +240,7 @@
 				3518189F297B3E9200230753 /* TransactionType.swift */,
 				351818AD297D9B0D00230753 /* Entry.swift */,
 				3506E03E2980139F005F0771 /* PartnerModel.swift */,
+				353DF54D29887FAC0088237A /* PartnerRequestModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -259,6 +264,7 @@
 			isa = PBXGroup;
 			children = (
 				358BCF5829783654000A7F9C /* MainView.swift */,
+				3544C8AF298865A800957435 /* PartnerRequestView.swift */,
 			);
 			path = "Main View";
 			sourceTree = "<group>";
@@ -453,11 +459,13 @@
 				351818B1297D9B5900230753 /* EntryViewModel.swift in Sources */,
 				358BCF192978329F000A7F9C /* Treaty.xcdatamodeld in Sources */,
 				352C02F32978C379008E77DF /* UserNameView.swift in Sources */,
+				3544C8B0298865A800957435 /* PartnerRequestView.swift in Sources */,
 				358BCF62297839F6000A7F9C /* RegisterView.swift in Sources */,
 				352C02F529798A94008E77DF /* AuthService.swift in Sources */,
 				358BCF5929783655000A7F9C /* MainView.swift in Sources */,
 				358BCF142978329F000A7F9C /* TreatyApp.swift in Sources */,
 				358BCF712978609B000A7F9C /* ReusableProfileContent.swift in Sources */,
+				353DF54E29887FAC0088237A /* PartnerRequestModel.swift in Sources */,
 				351818AE297D9B0D00230753 /* Entry.swift in Sources */,
 				358BCF5629783624000A7F9C /* ContentView.swift in Sources */,
 				3506E03F2980139F005F0771 /* PartnerModel.swift in Sources */,

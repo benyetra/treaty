@@ -13,12 +13,19 @@ import GoogleSignIn
 @main
 struct TreatyApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject private var viewModel = PartnerRequestViewModel()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if viewModel.partnerRequests.count > 0 {
+                PartnerRequestView(viewModel: viewModel)
+            } else {
+                ContentView()
+            }
         }
     }
 }
+
 
 // Configuring Firebase Push Notifications...
 // See my Full Push Notification Video..
@@ -27,7 +34,8 @@ struct TreatyApp: App {
 // Intializng Firebase And CLoud Messaging...
 
 class AppDelegate: NSObject,UIApplicationDelegate{
-    
+    @StateObject private var viewModel = PartnerRequestViewModel()
+
     let gcmMessageIDKey = "gcm.message_id"
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
@@ -66,6 +74,7 @@ class AppDelegate: NSObject,UIApplicationDelegate{
       if let messageID = userInfo[gcmMessageIDKey] {
         print("Message ID: \(messageID)")
       }
+        viewModel.fetchPartnerRequest()
 
       // Print full message.
       print(userInfo)

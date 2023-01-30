@@ -22,7 +22,7 @@ class UserCredentials: ObservableObject {
 struct AccountView: View {
     // MARK: My Profile Data
     @State private var myProfile: User?
-    @State private var partnerUsername: String = ""
+    @State var partnerUsername: String = ""
     @State private var partnerUser: User?
     // MARK: User Defaults Data
     @ObservedObject var credentials = UserCredentials()

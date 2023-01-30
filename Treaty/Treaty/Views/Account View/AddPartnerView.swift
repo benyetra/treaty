@@ -12,7 +12,7 @@ import FirebaseStorage
 import FirebaseFirestore
 
 struct AddPartnerView: View {
-    @State private var partnerUsername: String = ""
+    @State var partnerUsername: String = ""
     @State private var partnerToken: String = ""
     @State private var partnerUser: User?
     @State var showError: Bool = false
@@ -234,70 +234,6 @@ struct AddPartnerView: View {
             } else if let response = response as? HTTPURLResponse {
                 print("Push notification sent with response: \(response)")
             }
-            }.resume()
+        }.resume()
     }
-
-    
-//    func sendMessageToDevice(){
-//
-//        // Simple Logic
-//        // Using Firebase API to send Push Notification to another device using token
-//        // Without having server....
-//
-//        // Converting That to URL Request Format....
-//        guard let url = URL(string: "https://fcm.googleapis.com/fcm/send") else{
-//            return
-//        }
-//
-//        let json: [String: Any] = [
-//
-//            "to": partnerUser,
-//            "notification": [
-//
-//                "title": titleText,
-//                "body": bodyText
-//            ],
-//            "data": [
-//
-//                // Data to be Sent....
-//                // Dont pass empty or remove the block..
-//                "user_name": "\(partnerUsername)"
-//            ]
-//        ]
-//
-//
-//        // Use Your Firebase Server Key !!!
-//        let serverKey = "AAAAtmf3cpE:APA91bGYuNqm0U9i_TM6UNuze11Vwk813RNQs8LZvGYKMl9QcYgSxGy-EUeccJs1_3GSRiJKwq39xNH0Ji3CN2nQ7WiPgrdnhMIBIs6M2GBaCnJl2gEmsOdyCnlco4bU9GwK4OBF6obA"
-//
-//        // URL Request...
-//        var request = URLRequest(url: url)
-//        request.httpMethod = "POST"
-//        // COnverting json Dict to JSON...
-//        request.httpBody = try? JSONSerialization.data(withJSONObject: json, options: [.prettyPrinted])
-//        // Setting COntent Type and Authoritzation...
-//        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-//        // Authorization key will be Your Server Key...
-//        request.setValue("key=\(serverKey)", forHTTPHeaderField: "Authorization")
-//
-//        // Passing request using URL session...
-//        let session = URLSession(configuration: .default)
-//
-//        session.dataTask(with: request) { _, _, err in
-//            if let err = err {
-//                print(err.localizedDescription)
-//                return
-//            }
-//
-//            // Else Success
-//            // Clearing Fields..
-//            // Or Your Action when message sends...
-//            print("Success")
-//            DispatchQueue.main.async {[self] in
-//                titleText = ""
-//                bodyText = ""
-//                deviceToken = ""
-//            }
-//        }
-//        .resume()
-//    }
 }
