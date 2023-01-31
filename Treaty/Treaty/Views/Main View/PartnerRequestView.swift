@@ -32,30 +32,34 @@ struct PartnerRequestView: View {
                         viewModel.dismiss()
                     }) {
                         Text("Accept")
-                            .foregroundColor(colorScheme == .light ? Color.white : Color.black)
-                            .hAlign(.center)
-                            .fillView(colorScheme == .light ? Color.black : Color.white)
-                    }.foregroundColor(.white)
-                        .padding(.horizontal,50)
-                        .background {
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .fill(.black)
-                        }
-                        .padding(.top,10)
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .frame(width: 100, height: 40)
+                            .fillView(Color("Blue"))
+                    }
+                    .foregroundColor(.white)
+                    .background {
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .fill(.black)
+                    }
+                    .padding(.top,10)
+                   
+                    
                     Button(action: {
                         viewModel.declinePartnerRequest(at: 0)
                         viewModel.dismiss()
                     }) {
                         Text("Decline")
-                            .foregroundColor(colorScheme == .light ? Color.white : Color.black)
-                            .hAlign(.center)
-                            .fillView(colorScheme == .light ? Color.black : Color.white)
-                    }.foregroundColor(.white)
-                        .padding(.horizontal,50)
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .frame(width: 100, height: 40)
+                            .fillView(Color("Sand"))
+                    }
+                    .foregroundColor(.white)
                         .background {
                             RoundedRectangle(cornerRadius: 10, style: .continuous)
                                 .fill(.black)
-                        }
+                       }
                         .padding(.top,10)
                 }
             } else {

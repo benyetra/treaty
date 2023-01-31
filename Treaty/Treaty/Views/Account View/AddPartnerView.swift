@@ -22,6 +22,7 @@ struct AddPartnerView: View {
     @State private var successMessage = "Partner saved successfully!"
     @State private var successDeleteMessage = "Your partner has been succeessfully removed!"
     @State var showSuccess = false
+    @State var showSuccessDelete = false
     @State var titleText = "want to be "
     @State var bodyText = "Open the app to accept or decline the partnership request!"
     @Environment(\.colorScheme) private var colorScheme
@@ -58,52 +59,56 @@ struct AddPartnerView: View {
                         }
                         self.partnerUsername = filteredValue
                     })
+                
                 Button(action: {
                     self.searchForPartner()
                     showAlert.toggle()
                 }) {
-                    Text("Save")
-                        .foregroundColor(colorScheme == .light ? Color.white : Color.black)
-                        .hAlign(.center)
-                        .fillView(colorScheme == .light ? Color.black : Color.white)
+                    VStack {
+                        Text("Save")
+                            .foregroundColor(colorScheme == .light ? Color.white : Color.black)
+                            .hAlign(.center)
+                            .fillView(colorScheme == .light ? Color.black : Color.white)
+                    }
+                    .disabled(partnerUsername.isEmpty)
+                    .padding(20)
+                    if showSuccess {
+                        Text(successMessage)
+                            .foregroundColor(.green)
+                            .padding()
+                    }
+                }.alert(isPresented: $showAlert) {
+                    Alert(title: Text("Confirmation"), message: Text("Are you sure you want to save this partner?"), primaryButton: .default(Text("Save"), action: {
+                        self.savePartner()
+                        self.showSuccess = true
+                    }), secondaryButton: .cancel())
                 }
-                .disabled(partnerUsername.isEmpty)
-                .padding(20)
-                if showSuccess {
-                    Text(successMessage)
-                        .foregroundColor(.green)
-                        .padding()
-                }
+                
                 Button(action: {
                     self.searchForPartner()
                     showAlertDelete.toggle()
                 }) {
-                    Text("Remove Partner")
-                        .foregroundColor(colorScheme == .light ? Color.white : Color.black)
-                        .hAlign(.center)
-                        .fillView(colorScheme == .light ? Color.red : Color.red)
+                    VStack {
+                        Text("Remove Partner")
+                            .foregroundColor(colorScheme == .light ? Color.white : Color.black)
+                            .hAlign(.center)
+                            .fillView(colorScheme == .light ? Color.red : Color.red)
+                    }
+                    .disabled(partnerUsername.isEmpty)
+                    .padding(20)
+                    .vAlign(.bottom)
+                    if showSuccessDelete {
+                        Text(successDeleteMessage)
+                            .foregroundColor(.red)
+                            .padding()
+                    }
                 }
-                .disabled(partnerUsername.isEmpty)
-                .padding(20)
-                .vAlign(.bottom)
-                if showSuccess {
-                    Text(successDeleteMessage)
-                        .foregroundColor(.red)
-                        .padding()
+                .alert(isPresented: $showAlertDelete) {
+                    Alert(title: Text("Confirmation"), message: Text("Are you sure you want to remove this partner?"), primaryButton: .default(Text("Remove"), action: {
+                        self.deletePartner()
+                        self.showSuccessDelete = true
+                    }), secondaryButton: .cancel())
                 }
-                
-            }
-            .alert(isPresented: $showAlert) {
-                Alert(title: Text("Confirmation"), message: Text("Are you sure you want to save this partner?"), primaryButton: .default(Text("Save"), action: {
-                    self.savePartner()
-                    self.showSuccess = true
-                }), secondaryButton: .cancel())
-            }
-            .alert(isPresented: $showAlertDelete) {
-                Alert(title: Text("Confirmation"), message: Text("Are you sure you want to remove this partner?"), primaryButton: .default(Text("Remove"), action: {
-                    self.deletePartner()
-                    self.showSuccess = true
-                }), secondaryButton: .cancel())
             }
         }
         .onAppear {
