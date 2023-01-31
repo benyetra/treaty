@@ -18,7 +18,9 @@ struct AddPartnerView: View {
     @State var showError: Bool = false
     @State var errorMessage: String = ""
     @State private var showAlert = false
+    @State private var showAlertDelete = false
     @State private var successMessage = "Partner saved successfully!"
+    @State private var successDeleteMessage = "Your partner has been succeessfully removed!"
     @State var showSuccess = false
     @State var titleText = "want to be "
     @State var bodyText = "Open the app to accept or decline the partnership request!"
@@ -72,10 +74,34 @@ struct AddPartnerView: View {
                         .foregroundColor(.green)
                         .padding()
                 }
+                Button(action: {
+                    self.searchForPartner()
+                    showAlertDelete.toggle()
+                }) {
+                    Text("Remove Partner")
+                        .foregroundColor(colorScheme == .light ? Color.white : Color.black)
+                        .hAlign(.center)
+                        .fillView(colorScheme == .light ? Color.red : Color.red)
+                }
+                .disabled(partnerUsername.isEmpty)
+                .padding(20)
+                .vAlign(.bottom)
+                if showSuccess {
+                    Text(successDeleteMessage)
+                        .foregroundColor(.red)
+                        .padding()
+                }
+                
             }
             .alert(isPresented: $showAlert) {
                 Alert(title: Text("Confirmation"), message: Text("Are you sure you want to save this partner?"), primaryButton: .default(Text("Save"), action: {
                     self.savePartner()
+                    self.showSuccess = true
+                }), secondaryButton: .cancel())
+            }
+            .alert(isPresented: $showAlertDelete) {
+                Alert(title: Text("Confirmation"), message: Text("Are you sure you want to remove this partner?"), primaryButton: .default(Text("Remove"), action: {
+                    self.deletePartner()
                     self.showSuccess = true
                 }), secondaryButton: .cancel())
             }
@@ -207,7 +233,7 @@ struct AddPartnerView: View {
                 self.showSuccess = true
                 self.titleText = "Hey \(partnerUser.username),  \(titleText) \(user.username)'s partner?"
                 sendPushNotification(to: partnerToken, title: titleText, body: bodyText)
-                print("Partner request sent successfully")  
+                print("Partner request sent successfully")
             }
         }
     }
@@ -216,6 +242,32 @@ struct AddPartnerView: View {
         searchForPartner()
         sendPartnerRequest()
     }
+    
+    func deletePartner() {
+        let currentUserID = Auth.auth().currentUser?.uid
+        let db = Firestore.firestore()
+        db.collection("Users").document(currentUserID!).getDocument { (document, error) in
+            if let document = document, document.exists {
+                let partnerID = document.data()?["partners"] as? String
+                db.collection("Users").document(currentUserID!).updateData(["partners": FieldValue.delete()]) { error in
+                    if let error = error {
+                        print("Error removing partner for current user: \(error)")
+                    } else {
+                        db.collection("Users").document(partnerID!).updateData(["partners": FieldValue.delete()]) { error in
+                            if let error = error {
+                                print("Error removing partner for partner user: \(error)")
+                            } else {
+                                print("Successfully deleted partner for both users.")
+                            }
+                        }
+                    }
+                }
+            } else {
+                print("Error fetching document: \(error)")
+            }
+        }
+    }
+
     
     func sendPushNotification(to token: String, title: String, body: String) {
         let url = URL(string: "https://fcm.googleapis.com/fcm/send")!

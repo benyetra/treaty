@@ -62,11 +62,7 @@ struct AccountView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
-                        // MARK: Two Action's
-                        // 1. Logout
-                        // 2. Delete Account
-                        
-                        Button("Add Partner") { addPartnerSheet.toggle() }
+                        Button("Manage Partner") { addPartnerSheet.toggle() }
                         Button("Logout",action: logOutUser)
                         Button("Delete Account",role: .destructive,action: deleteAccount)
                     } label: {
