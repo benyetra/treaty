@@ -207,7 +207,7 @@ struct AddPartnerView: View {
                 self.showSuccess = true
                 self.titleText = "Hey \(partnerUser.username),  \(titleText) \(user.username)'s partner?"
                 sendPushNotification(to: partnerToken, title: titleText, body: bodyText)
-                print("Partner request sent successfully")
+                print("Partner request sent successfully")  
             }
         }
     }

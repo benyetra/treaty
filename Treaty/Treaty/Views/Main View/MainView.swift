@@ -12,6 +12,7 @@ import FirebaseFirestore
 struct MainView: View {
     @ObservedObject var userWrapper = UserWrapper(user: User(id: "", username: "", userUID: "", userEmail: "", userProfileURL: URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!, token: ""))
     @Environment(\.colorScheme) private var colorScheme
+    @AppStorage("partnerUsernameStored") var partnerUsernameStored: String = ""
     
     init() {
         fetchUserData()
@@ -66,6 +67,7 @@ struct MainView: View {
                         if let partnerDocument = partnerDocument, partnerDocument.exists, let partnerData = partnerDocument.data(), let partnerUsername = partnerData["username"] as? String, let partnerProfileURL = partnerData["userProfileURL"] as? String, let partnerURL = URL(string: partnerProfileURL),
                            let partnerToken = partnerData["token"] as? String {
                             self.userWrapper.partner = PartnerModel(username: partnerUsername, userProfileURL: partnerURL, token: partnerToken)
+                            self.partnerUsernameStored = partnerUsername
                         } else {
                             let defaultPartnerURL = URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!
                             self.userWrapper.partner = PartnerModel(username: "", userProfileURL: defaultPartnerURL, token: "")

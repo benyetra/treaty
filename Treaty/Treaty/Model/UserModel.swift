@@ -16,6 +16,7 @@ struct User: Identifiable,Codable {
     var userProfileURL: URL
     var partner: PartnerModel?
     var token: String?
+
     init(id: String?, username: String, userUID: String, userEmail: String, userProfileURL: URL, partner: PartnerModel? = nil, token: String?) {
         self.id = id
         self.username = username
@@ -27,14 +28,15 @@ struct User: Identifiable,Codable {
     }
 
     func toDict() -> [String: Any] {
-            return [
-                "username": username,
-                "userUID": userUID,
-                "userEmail": userEmail,
-                "userProfileURL": userProfileURL
-            ]
-        }
-    
+        return [
+            "username": username,
+            "userUID": userUID,
+            "userEmail": userEmail,
+            "userProfileURL": userProfileURL,
+            "token": token
+        ]
+    }
+
     enum CodingKeys: CodingKey {
         case id
         case username
@@ -45,3 +47,4 @@ struct User: Identifiable,Codable {
         case token
     }
 }
+

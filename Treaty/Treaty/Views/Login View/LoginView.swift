@@ -25,6 +25,7 @@ struct LoginView: View {
     @State var isLoading: Bool = false
     @Environment(\.colorScheme) private var colorScheme
     // MARK: User Defaults
+    @AppStorage("partner_UID") var partnerUID: String = ""
     @AppStorage("user_profile_url") var profileURL: URL?
     @AppStorage("user_name") var userNameStored: String = ""
     @AppStorage("user_UID") var userUID: String = ""

@@ -15,10 +15,17 @@ struct PartnerRequestView: View {
     @ObservedObject var viewModel: PartnerRequestViewModel
     @EnvironmentObject var userWrapper: UserWrapper
     @Environment(\.colorScheme) private var colorScheme
+    
     var body: some View {
         VStack {
             if viewModel.partnerRequests.count > 0 {
-                Text("You have a partner request")
+                VStack {
+                    Text("You have a partner request from: ")
+                        .font(.custom(ubuntu, size: 30, relativeTo: .title))
+                    Text("@\(viewModel.partnerRequests[0].receiverUsername)")
+                        .foregroundColor(colorScheme == .light ? Color.blue : Color.yellow)
+                        .font(.custom(ubuntu, size: 30, relativeTo: .title))
+                }
                 HStack {
                     Button(action: {
                         viewModel.acceptPartnerRequest(at: 0)
@@ -55,12 +62,15 @@ struct PartnerRequestView: View {
                 Text("No partner requests")
             }
         }
+        .frame(maxWidth: .infinity)
+        .padding(15)
     }
 }
 
 class PartnerRequestViewModel: ObservableObject {
     @Published var partnerRequests = [PartnerRequestModel]()
     @Environment(\.presentationMode) var presentationMode
+    @State var receiverUsername: String = ""
     
     init() {
         fetchPartnerRequests()
@@ -79,6 +89,7 @@ class PartnerRequestViewModel: ObservableObject {
                     let data = document.data()
                     let senderUsername = data["senderUsername"] as! String
                     let receiverUsername = data["receiverUsername"] as! String
+                    self.receiverUsername = receiverUsername
                     let senderUID = data["senderUID"] as! String
                     let receiverUID = data["receiverUID"] as! String
                     let partnerRequest = PartnerRequestModel(id: document.documentID, senderUsername: senderUsername,
@@ -102,7 +113,7 @@ class PartnerRequestViewModel: ObservableObject {
         Firestore.firestore().collection("Users").document(receiverUID!).updateData([
             "partners": senderUID
         ]) { (error) in
-            if let error = error {
+            if error != nil {
                 print("Error adding partner to user document: (error)")
                 return
             }
@@ -110,14 +121,14 @@ class PartnerRequestViewModel: ObservableObject {
             Firestore.firestore().collection("Users").document(senderUID).updateData([
                 "partners": receiverUID!
             ]) { (error) in
-                if let error = error {
+                if error != nil {
                     print("Error adding partner to other user document: (error)")
                     return
                 }
                 // Delete the partner request in Firestore
                 guard let id = partnerRequest.id else { return }
                 Firestore.firestore().collection("PartnerRequests").document(id).delete { (error) in
-                    if let error = error {
+                    if error != nil {
                         print("Error deleting partner request: (error)")
                         return
                     }
@@ -127,6 +138,7 @@ class PartnerRequestViewModel: ObservableObject {
                 }
             }
         }
+        fetchPartnerRequests()
     }
     
     func declinePartnerRequest(at index: Int) {
@@ -142,6 +154,7 @@ class PartnerRequestViewModel: ObservableObject {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             self.dismiss()
         }
+        fetchPartnerRequests()
     }
     
     func dismiss() {
