@@ -34,7 +34,7 @@ struct MainView: View {
                 }
                 .environmentObject(userWrapper)
             
-            AccountView()
+            AccountView(userWrapper: userWrapper)
                 .tabItem {
                     Image(systemName: "figure.2.arms.open")
                     Text("Profile")

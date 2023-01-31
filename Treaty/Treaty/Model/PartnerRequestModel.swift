@@ -6,15 +6,20 @@
 //
 
 import SwiftUI
+import FirebaseFirestoreSwift
 
-struct PartnerRequestModel {
-    let id: String
-    let username: String
-    let status: Bool
-
-    init(dictionary: [String: Any]) {
-        id = dictionary["id"] as? String ?? ""
-        username = dictionary["name"] as? String ?? ""
-        status = dictionary["status"] as? Bool ?? false
+struct PartnerRequestModel: Identifiable,Codable {
+    @DocumentID var id: String?
+    let senderUsername: String
+    let receiverUsername: String
+    let senderUID: String
+    let receiverUID: String
+    
+    init(id: String?, senderUsername: String, receiverUsername: String, senderUID: String, receiverUID: String) {
+        self.id = id
+        self.senderUsername = senderUsername
+        self.receiverUsername = receiverUsername
+        self.senderUID = senderUID
+        self.receiverUID = receiverUID
     }
 }

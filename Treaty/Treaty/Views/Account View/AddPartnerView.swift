@@ -20,10 +20,16 @@ struct AddPartnerView: View {
     @State private var showAlert = false
     @State private var successMessage = "Partner saved successfully!"
     @State var showSuccess = false
-    @State var titleText = "Want to be my Partner?"
+    @State var titleText = "want to be "
     @State var bodyText = "Open the app to accept or decline the partnership request!"
     @Environment(\.colorScheme) private var colorScheme
-      
+    @ObservedObject var userWrapper: UserWrapper
+
+    var user: User
+    init(userWrapper: UserWrapper) {
+        self.userWrapper = userWrapper
+        self.user = userWrapper.user
+    }
     
     var body: some View {
         VStack {
@@ -142,15 +148,15 @@ struct AddPartnerView: View {
     
     
     func addOrUpdatePartner(partner: User) {
-        let currentUserUID = Auth.auth().currentUser?.uid
-        let currentUserRef = Firestore.firestore().collection("Users").document(currentUserUID!)
+        let senderUserUID = Auth.auth().currentUser?.uid
+        let currentUserRef = Firestore.firestore().collection("Users").document(senderUserUID!)
         currentUserRef.updateData(["partners": partner.userUID]) { (error) in
             if let error = error {
                 print("Error adding/updating partner: \(error)")
             } else {
                 // Also update the partner's document with the current user as their partner
                 let partnerRef = Firestore.firestore().collection("Users").document(partner.userUID)
-                partnerRef.updateData(["partners": currentUserUID]) { (error) in
+                partnerRef.updateData(["partners": senderUserUID]) { (error) in
                     if let error = error {
                         print("Error adding/updating partner: \(error)")
                     } else {
@@ -183,32 +189,32 @@ struct AddPartnerView: View {
     
     func sendPartnerRequest() {
         if let partnerUser = self.partnerUser, let currentUser = Auth.auth().currentUser {
-            let request = [
-                "from": currentUser.uid,
-                "username": currentUser.displayName ?? ""
+            let requestData: [String: Any] = [
+                "senderUsername": user.username,
+                "receiverUsername": partnerUser.username,
+                "senderUID": currentUser.uid,
+                "receiverUID": partnerUser.userUID
             ]
             let db = Firestore.firestore()
-            db.collection("Users").document(partnerUser.userUID).collection("PartnerRequests").document(currentUser.uid).setData(request) { (error) in
+            db.collection("PartnerRequests").addDocument(data: requestData) { (error) in
                 if let error = error {
                     self.errorMessage = error.localizedDescription
                     self.showError = true
-                    print("Error sending request: \(error)")
-                } else {
-                    self.successMessage = "Partner request sent successfully!"
-                    self.showSuccess = true
-                    print("Request sent successfully")
-                    // send APNS notification to partnerUser
+                    print("Error sending partner request: (error)")
+                    return
                 }
+                self.successMessage = "Partner request sent successfully! \nSwipe down to dismiss"
+                self.showSuccess = true
+                self.titleText = "Hey \(partnerUser.username),  \(titleText) \(user.username)'s partner?"
+                sendPushNotification(to: partnerToken, title: titleText, body: bodyText)
+                print("Partner request sent successfully")
             }
         }
     }
     
-    
-    
     func savePartner() {
         searchForPartner()
         sendPartnerRequest()
-        sendPushNotification(to: partnerToken, title: titleText, body: bodyText)
     }
     
     func sendPushNotification(to token: String, title: String, body: String) {
@@ -220,7 +226,7 @@ struct AddPartnerView: View {
         let data: [String: Any] = [
             "to": token,
             "notification": [
-                "title": title,
+                "title": (title),
                 "body": body
             ],
             "priority": "high"

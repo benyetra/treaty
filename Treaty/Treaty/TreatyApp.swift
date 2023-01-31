@@ -17,10 +17,10 @@ struct TreatyApp: App {
     
     var body: some Scene {
         WindowGroup {
-            if viewModel.partnerRequests.count > 0 {
-                PartnerRequestView(viewModel: viewModel)
-            } else {
+            if viewModel.partnerRequests.isEmpty{
                 ContentView()
+            } else {
+                PartnerRequestView(viewModel: viewModel)
             }
         }
     }
@@ -31,7 +31,7 @@ struct TreatyApp: App {
 // See my Full Push Notification Video..
 // Link in Description...
 
-// Intializng Firebase And CLoud Messaging...
+// Intializng Firebase And Cloud Messaging...
 
 class AppDelegate: NSObject,UIApplicationDelegate{
     @StateObject private var viewModel = PartnerRequestViewModel()
@@ -42,6 +42,11 @@ class AppDelegate: NSObject,UIApplicationDelegate{
         
         
         FirebaseApp.configure()
+        
+        if let clientID = FirebaseApp.app()?.options.clientID{
+            let config = GIDConfiguration(clientID: clientID)
+            GIDSignIn.sharedInstance.configuration = config
+        }
         
         // Setting Up Cloud Messaging...
         
@@ -74,7 +79,7 @@ class AppDelegate: NSObject,UIApplicationDelegate{
       if let messageID = userInfo[gcmMessageIDKey] {
         print("Message ID: \(messageID)")
       }
-        viewModel.fetchPartnerRequest()
+        viewModel.fetchPartnerRequests()
 
       // Print full message.
       print(userInfo)
@@ -101,20 +106,22 @@ extension AppDelegate: MessagingDelegate{
         // Store this token to firebase and retrieve when to send message to someone....
         let dataDict:[String: String] = ["token": fcmToken ?? ""]
         
-        // Get current user's unique ID
-        let userID = Auth.auth().currentUser?.uid
-        
-        // Store token in Firestore For Sending Notifications From Server in Future...
-        let db = Firestore.firestore()
-        db.collection("Users").document(userID!).setData(dataDict, merge: true) { (error) in
-            if let error = error {
-                print("Error storing FCM token in Firestore: \(error)")
-            } else {
-                print("Successfully stored FCM token in Firestore")
+        if let currentUser = Auth.auth().currentUser {
+            let userID = currentUser.uid
+            let db = Firestore.firestore()
+            db.collection("Users").document(userID).setData(dataDict, merge: true) { (error) in
+                if let error = error {
+                    print("Error storing FCM token in Firestore: \(error)")
+                } else {
+                    print("Successfully stored FCM token in Firestore")
+                }
             }
+        } else {
+            print("No user is logged in")
         }
     }
 }
+
 
 
 // User Notifications...[AKA InApp Notifications...]

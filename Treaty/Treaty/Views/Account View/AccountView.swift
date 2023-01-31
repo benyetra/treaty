@@ -36,7 +36,14 @@ struct AccountView: View {
     @State var showError: Bool = false
     @State var isLoading: Bool = false
     @State var addPartnerSheet: Bool = false
+    @ObservedObject var userWrapper: UserWrapper
+    var user: User
 
+    init(userWrapper: UserWrapper) {
+        self.userWrapper = userWrapper
+        self.user = userWrapper.user
+    }
+    
     var body: some View {
         NavigationStack{
             VStack{
@@ -71,7 +78,7 @@ struct AccountView: View {
                 }
             }
             .sheet(isPresented: $addPartnerSheet){
-                AddPartnerView()
+                AddPartnerView(userWrapper: userWrapper)
             }
         }
         .overlay {
@@ -102,6 +109,13 @@ struct AccountView: View {
     func logOutUser(){
         try? Auth.auth().signOut()
         GIDSignIn.sharedInstance.signOut()
+        Firestore.firestore().clearPersistence { (error) in
+            if let error = error {
+                print("Error clearing Firestore instance cache: \(error)")
+            } else {
+                print("Successfully cleared Firestore instance cache")
+            }
+        }
         withAnimation(.easeInOut){
             userUID = ""
             userName = ""
@@ -131,6 +145,14 @@ struct AccountView: View {
                 
                 // Final Step: Deleting Auth Account and Setting Log Status to False
                 try await Auth.auth().currentUser?.delete()
+                Firestore.firestore().clearPersistence { (error) in
+                    if let error = error {
+                        print("Error clearing Firestore instance cache: \(error)")
+                    } else {
+                        print("Successfully cleared Firestore instance cache")
+                    }
+                }
+
                 logStatus = false
             }catch{
                 await setError(error)
