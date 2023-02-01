@@ -59,7 +59,7 @@ struct PartnerRequestView: View {
                         .background {
                             RoundedRectangle(cornerRadius: 10, style: .continuous)
                                 .fill(.black)
-                       }
+                        }
                         .padding(.top,10)
                 }
             } else {

@@ -16,6 +16,7 @@ struct ReusableProfileContent: View {
     var user: User
     @State var partnerUsername: String = ""
     @State private var partnerToken: String = ""
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -50,7 +51,7 @@ struct ReusableProfileContent: View {
                 Text("Pet Information")
                     .font(.title2)
                     .fontWeight(.semibold)
-                    .foregroundColor(.black)
+                    .foregroundColor(colorScheme == .light ? Color.black : Color.white)
                     .hAlign(.leading)
                     .padding(.vertical,15)
                 

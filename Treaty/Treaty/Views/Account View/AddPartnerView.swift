@@ -74,7 +74,7 @@ struct AddPartnerView: View {
                     .padding(20)
                     if showSuccess {
                         Text(successMessage)
-                            .foregroundColor(.green)
+                            .foregroundColor(Color("Blue"))
                             .padding()
                     }
                 }.alert(isPresented: $showAlert) {
@@ -234,7 +234,7 @@ struct AddPartnerView: View {
                     print("Error sending partner request: (error)")
                     return
                 }
-                self.successMessage = "Partner request sent successfully! \nSwipe down to dismiss"
+                self.successMessage = "Partner request sent successfully! \n \nSwipe down to dismiss"
                 self.showSuccess = true
                 self.titleText = "Hey \(partnerUser.username),  \(titleText) \(user.username)'s partner?"
                 sendPushNotification(to: partnerToken, title: titleText, body: bodyText)

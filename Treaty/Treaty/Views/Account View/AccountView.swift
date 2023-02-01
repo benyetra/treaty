@@ -36,6 +36,8 @@ struct AccountView: View {
     @State var showError: Bool = false
     @State var isLoading: Bool = false
     @State var addPartnerSheet: Bool = false
+    @State var pendingPartnerSheet: Bool = false
+    @StateObject private var viewModel = PartnerRequestViewModel()
     @ObservedObject var userWrapper: UserWrapper
     var user: User
 
@@ -69,12 +71,30 @@ struct AccountView: View {
                         Image(systemName: "ellipsis")
                             .rotationEffect(.init(degrees: 90))
                             .tint(colorScheme == .light ? Color.black : Color("Sand"))
-                            .scaleEffect(0.8)
+                            .scaleEffect(1)
                     }
                 }
             }
             .sheet(isPresented: $addPartnerSheet){
                 AddPartnerView(userWrapper: userWrapper)
+            }
+            .sheet(isPresented: $pendingPartnerSheet){
+                PartnerRequestView(viewModel: PartnerRequestViewModel())
+            }
+            if viewModel.partnerRequests.isEmpty {
+            } else {
+                HStack {
+                    Button("\(viewModel.partnerRequests.count) Pending Partner Request") {
+                        pendingPartnerSheet.toggle()
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal,20)
+                    .background {
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .fill(Color("Blue"))
+                    }
+                }
+                .vAlign(.top)
             }
         }
         .overlay {

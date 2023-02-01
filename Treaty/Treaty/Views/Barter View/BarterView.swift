@@ -186,7 +186,7 @@ struct BarterView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Total")
                         .font(.custom(ubuntu, size: 16, relativeTo: .body))
-                        .foregroundColor(colorScheme == .light ? Color.black : Color.white)
+                        .foregroundColor(colorScheme == .light ? Color.black : Color("Blue"))
                     HStack {
                         Image("treat")
                             .resizable()
@@ -246,14 +246,14 @@ struct BarterView: View {
                     Text("\(transaction.amountSpent)")
                         .font(.custom(ubuntu, size: 18, relativeTo: .title3))
                         .fontWeight(.medium)
-                        .foregroundColor(Color("Blue"))
+                        .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                     Image("treat")
                         .resizable()
                         .frame(width: 18, height: 18)
                 }
             }
             .padding(10)
-            .background(colorScheme == .light ? Color.white : Color("Sand"))
+            .background(colorScheme == .light ? Color.white : Color("Blue"))
             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             .shadow(color: .black.opacity(0.05), radius: 5, x: 5, y: 5)
         }

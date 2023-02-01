@@ -13,15 +13,10 @@ import GoogleSignIn
 @main
 struct TreatyApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    @StateObject private var viewModel = PartnerRequestViewModel()
     
     var body: some Scene {
         WindowGroup {
-            if viewModel.partnerRequests.isEmpty{
-                ContentView()
-            } else {
-                PartnerRequestView(viewModel: viewModel)
-            }
+            ContentView()
         }
     }
 }
@@ -34,7 +29,6 @@ struct TreatyApp: App {
 // Intializng Firebase And Cloud Messaging...
 
 class AppDelegate: NSObject,UIApplicationDelegate{
-    @StateObject private var viewModel = PartnerRequestViewModel()
 
     let gcmMessageIDKey = "gcm.message_id"
     
@@ -79,7 +73,6 @@ class AppDelegate: NSObject,UIApplicationDelegate{
       if let messageID = userInfo[gcmMessageIDKey] {
         print("Message ID: \(messageID)")
       }
-        viewModel.fetchPartnerRequests()
 
       // Print full message.
       print(userInfo)
