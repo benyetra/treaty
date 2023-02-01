@@ -19,6 +19,7 @@ struct JournalView: View {
     @ObservedObject var userWrapper: UserWrapper
     
     /// - Animation Properties
+    @State var currentDate: Date = Date()
     @State private var currentWeek: [Date] = []
     @State private var selectedDate: Date = Date()
     @State private var expandMenu: Bool = false
@@ -184,8 +185,7 @@ struct JournalView: View {
                     Text(entry.taskDate.formatted(date: .omitted, time: .shortened))
                         .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                 }
-                
-                //                if entryModel.isCurrentHour(date: entry.taskDate){
+
                 // MARK: Team Members
                 HStack(spacing: 0){
                     HStack(spacing: -10){
@@ -264,13 +264,11 @@ struct JournalView: View {
             }.sheet(isPresented: $isShowingDatePicker) {
                 VStack {
                     Text("Select A Date")
-                        .font(.custom(ubuntu, size: 40, relativeTo: .headline))
+                        .font(.custom(ubuntu, size: 20, relativeTo: .callout))
                         .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
-                    DatePicker(
-                        selection: $selectedDate,
-                        in: ...Date(),
-                        displayedComponents: .date) {
-                        }.hAlign(.center)
+                        .padding(.top, 5)
+                        .vAlign(.topLeading)
+                    CustomDatePicker(currentDate: $selectedDate)
                     Button(action: {
                         withAnimation {
                             self.entryModel.currentWeek = self.entryModel.generateWeek(for: self.selectedDate)
@@ -281,10 +279,10 @@ struct JournalView: View {
                         Text("Done")
                             .font(.custom(ubuntu, size: 20, relativeTo: .headline))
                             .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
-                            .padding(.top, 10)
                             .fillView(colorScheme == .light ? Color("Sand") : Color("Blue"))
                             .hAlign(.center)
                     }
+                    .vAlign(.bottom)
                 }.hAlign(.center)
             }
         }

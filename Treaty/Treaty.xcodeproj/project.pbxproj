@@ -22,6 +22,8 @@
 		352C02F12978AB17008E77DF /* PhoneRegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352C02F02978AB17008E77DF /* PhoneRegisterView.swift */; };
 		352C02F32978C379008E77DF /* UserNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352C02F22978C379008E77DF /* UserNameView.swift */; };
 		352C02F529798A94008E77DF /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352C02F429798A94008E77DF /* AuthService.swift */; };
+		352F3022298ACFBA006857CB /* CustomDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352F3021298ACFBA006857CB /* CustomDatePicker.swift */; };
+		352F3024298AD08A006857CB /* DateValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352F3023298AD08A006857CB /* DateValue.swift */; };
 		353DF54E29887FAC0088237A /* PartnerRequestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353DF54D29887FAC0088237A /* PartnerRequestModel.swift */; };
 		3544C8AC29874C4800957435 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 3544C8AB29874C4800957435 /* FirebaseAnalytics */; };
 		3544C8AE29874C4800957435 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 3544C8AD29874C4800957435 /* FirebaseMessaging */; };
@@ -83,6 +85,8 @@
 		352C02F02978AB17008E77DF /* PhoneRegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneRegisterView.swift; sourceTree = "<group>"; };
 		352C02F22978C379008E77DF /* UserNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNameView.swift; sourceTree = "<group>"; };
 		352C02F429798A94008E77DF /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		352F3021298ACFBA006857CB /* CustomDatePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDatePicker.swift; sourceTree = "<group>"; };
+		352F3023298AD08A006857CB /* DateValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateValue.swift; sourceTree = "<group>"; };
 		353DF54D29887FAC0088237A /* PartnerRequestModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerRequestModel.swift; sourceTree = "<group>"; };
 		3544C8AF298865A800957435 /* PartnerRequestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerRequestView.swift; sourceTree = "<group>"; };
 		358BCF102978329F000A7F9C /* Treaty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Treaty.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -241,6 +245,7 @@
 				351818AD297D9B0D00230753 /* Entry.swift */,
 				3506E03E2980139F005F0771 /* PartnerModel.swift */,
 				353DF54D29887FAC0088237A /* PartnerRequestModel.swift */,
+				352F3023298AD08A006857CB /* DateValue.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -286,6 +291,7 @@
 				352C02F429798A94008E77DF /* AuthService.swift */,
 				358BCF6429783A27000A7F9C /* View+Extension.swift */,
 				352C02EE2978AA60008E77DF /* CustomTextField.swift */,
+				352F3021298ACFBA006857CB /* CustomDatePicker.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -468,6 +474,7 @@
 				353DF54E29887FAC0088237A /* PartnerRequestModel.swift in Sources */,
 				351818AE297D9B0D00230753 /* Entry.swift in Sources */,
 				358BCF5629783624000A7F9C /* ContentView.swift in Sources */,
+				352F3022298ACFBA006857CB /* CustomDatePicker.swift in Sources */,
 				3506E03F2980139F005F0771 /* PartnerModel.swift in Sources */,
 				352C02ED2978AA3D008E77DF /* LoginViewModel.swift in Sources */,
 				358BCF4629783349000A7F9C /* UserModel.swift in Sources */,
@@ -479,6 +486,7 @@
 				358BCF6829783AA8000A7F9C /* BarterView.swift in Sources */,
 				351818A0297B3E9200230753 /* TransactionType.swift in Sources */,
 				352C02F12978AB17008E77DF /* PhoneRegisterView.swift in Sources */,
+				352F3024298AD08A006857CB /* DateValue.swift in Sources */,
 				358BCF6D29783ACE000A7F9C /* AccountView.swift in Sources */,
 				358BCF60297839D8000A7F9C /* LoadingView.swift in Sources */,
 				3518189C2979C33400230753 /* JournalView.swift in Sources */,
