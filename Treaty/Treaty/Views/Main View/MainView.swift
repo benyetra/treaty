@@ -8,6 +8,7 @@
 import SwiftUI
 import Firebase
 import FirebaseFirestore
+import FirebaseMessaging
 
 struct MainView: View {
     @ObservedObject var userWrapper = UserWrapper(user: User(id: "", username: "", userUID: "", userEmail: "", userProfileURL: URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!, token: ""))
@@ -16,6 +17,7 @@ struct MainView: View {
     
     init() {
         fetchUserData()
+        storeFCMToken()
     }
     
     var body: some View {
@@ -79,6 +81,23 @@ struct MainView: View {
             } else {
                 print("Document does not exist")
             }
+        }
+    }
+    
+    func storeFCMToken() {
+        let fcmToken = Messaging.messaging().fcmToken
+        let dataDict: [String: String] = ["token": fcmToken ?? ""]
+        
+        if let currentUser = Auth.auth().currentUser {
+            let userID = currentUser.uid
+            let db = Firestore.firestore()
+            db.collection("Users").document(userID).updateData(dataDict, completion: { (error) in
+                if error != nil {
+                    print("Error saving FCM token: (error!.localizedDescription)")
+                } else {
+                    print("Successfully saved FCM token to Firebase")
+                }
+            })
         }
     }
 }

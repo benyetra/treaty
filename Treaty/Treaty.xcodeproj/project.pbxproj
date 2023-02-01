@@ -269,7 +269,6 @@
 			isa = PBXGroup;
 			children = (
 				358BCF5829783654000A7F9C /* MainView.swift */,
-				3544C8AF298865A800957435 /* PartnerRequestView.swift */,
 			);
 			path = "Main View";
 			sourceTree = "<group>";
@@ -309,6 +308,7 @@
 			children = (
 				358BCF6C29783ACE000A7F9C /* AccountView.swift */,
 				358BCF702978609B000A7F9C /* ReusableProfileContent.swift */,
+				3544C8AF298865A800957435 /* PartnerRequestView.swift */,
 				3506E0402980262A005F0771 /* AddPartnerView.swift */,
 			);
 			path = "Account View";
