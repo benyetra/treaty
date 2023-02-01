@@ -19,8 +19,11 @@ struct JournalView: View {
     @ObservedObject var userWrapper: UserWrapper
     
     /// - Animation Properties
+    @State private var currentWeek: [Date] = []
+    @State private var selectedDate: Date = Date()
     @State private var expandMenu: Bool = false
     @State private var dimContent: Bool = false
+    @State private var isShowingDatePicker: Bool = false
     var user: User
     @AppStorage("user_UID") var userUID: String = ""
 
@@ -160,13 +163,13 @@ struct JournalView: View {
                     .background(
                     
                         Circle()
-                            .stroke((colorScheme == .light ? Color.black : Color.white), lineWidth: 1)
+                            .stroke((colorScheme == .light ? Color("Blue") : Color("Sand")), lineWidth: 1)
                             .padding(-3)
                     )
                     .scaleEffect(!entryModel.isCurrentHour(date: entry.taskDate) ? 0.8 : 1)
                 
                 Rectangle()
-                    .fill(colorScheme == .light ? Color.black : Color("Sand"))
+                    .fill(colorScheme == .light ? Color("Blue") : Color("Sand"))
                     .frame(width: 3)
             }
             VStack{
@@ -175,46 +178,46 @@ struct JournalView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text(entry.product)
                             .font(.title2.bold())
-                            .foregroundColor(colorScheme == .light ? Color.black : Color.white)
+                            .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                     }
                     .hLeading()
                     Text(entry.taskDate.formatted(date: .omitted, time: .shortened))
+                        .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                 }
                 
-//                if entryModel.isCurrentHour(date: entry.taskDate){
-                    // MARK: Team Members
-                    HStack(spacing: 0){
-                        HStack(spacing: -10){
-                            HStack {
-                                ForEach(0..<entry.taskParticipants.count, id: \.self) { i in
-                                    WebImage(url: entry.taskParticipants[i].userProfileURL)
-                                        .placeholder(Image("NullProfile"))
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 45, height: 45)
-                                        .clipShape(Circle())
-                                        .background(
-                                            Circle()
-                                                .stroke((colorScheme == .light ? Color.black : Color.white), lineWidth: 5)
-                                        )
-                                }
+                //                if entryModel.isCurrentHour(date: entry.taskDate){
+                // MARK: Team Members
+                HStack(spacing: 0){
+                    HStack(spacing: -10){
+                        HStack {
+                            ForEach(0..<entry.taskParticipants.count, id: \.self) { i in
+                                WebImage(url: entry.taskParticipants[i].userProfileURL)
+                                    .placeholder(Image("NullProfile"))
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 45, height: 45)
+                                    .clipShape(Circle())
+                                    .background(
+                                        Circle()
+                                            .stroke((colorScheme == .light ? Color("Sand") : Color("Blue")), lineWidth: 5)
+                                    )
                             }
                         }
-                        .hLeading()
-                        // MARK: Check Button
-                        Button {
-                            deleteEntry(entry: entry)
-                            entryModel.filterTodayEntries(userUID: user.userUID)
-                            print("deleting post \(entry)")
-                        } label: {
-                            Image(systemName: "trash")
-                                .foregroundStyle(colorScheme == .light ? Color.black : Color.white)
-                                .padding(10)
-                                .background((colorScheme == .light ? Color.white : Color.black), in: RoundedRectangle(cornerRadius: 10))
-                        }
                     }
-                    .padding(.top)
-//                }
+                    .hLeading()
+                    // MARK: Check Button
+                    Button {
+                        deleteEntry(entry: entry)
+                        entryModel.filterTodayEntries(userUID: user.userUID)
+                        print("deleting post \(entry)")
+                    } label: {
+                        Image(systemName: "trash")
+                            .foregroundStyle(colorScheme == .light ? Color.black : Color.white)
+                            .padding(10)
+                            .background((colorScheme == .light ? Color.white : Color.black), in: RoundedRectangle(cornerRadius: 10))
+                    }
+                }
+                .padding(.top)
             }
             .foregroundColor(entryModel.isCurrentHour(date: entry.taskDate) ? .black : .black)
             .padding(entryModel.isCurrentHour(date: entry.taskDate) ? 15 : 15)
@@ -228,7 +231,7 @@ struct JournalView: View {
         }
         .hLeading()
     }
-    
+
     func deleteEntry(entry: Entry) {
         Task {
             do {
@@ -241,33 +244,95 @@ struct JournalView: View {
         }
     }
     
-    // MARK: Header
+    let ubuntu = "Ubuntu"
     func HeaderView()->some View{
-        HStack(spacing: 10){
+        return HStack(spacing: 10){
             VStack(alignment: .leading, spacing: 10) {
-                Text(Date().formatted(date: .abbreviated, time: .omitted))
+                Text("Selected Date: \(selectedDate.formatted(date: .abbreviated, time: .omitted))")
                     .foregroundColor(.gray)
-                Text("Today")
+                Text("Journal Entries")
                     .font(.largeTitle.bold())
             }
             .hLeading()
-            Button {
-
-            } label: {
-                WebImage(url: user.userProfileURL).placeholder{
-                    // MARK: Placeholder Imgae
-                    Image("NullProfile")
-                        .resizable()
-                }
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 35, height: 35)
-                .clipShape(Circle())
+            Button(action: {
+                self.isShowingDatePicker = true
+            }) {
+                Image(systemName: "calendar.circle")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 35, height: 35)
+            }.sheet(isPresented: $isShowingDatePicker) {
+                VStack {
+                    Text("Select A Date")
+                        .font(.custom(ubuntu, size: 40, relativeTo: .headline))
+                        .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
+                    DatePicker(
+                        selection: $selectedDate,
+                        in: ...Date(),
+                        displayedComponents: .date) {
+                        }.hAlign(.center)
+                    Button(action: {
+                        withAnimation {
+                            self.entryModel.currentWeek = self.entryModel.generateWeek(for: self.selectedDate)
+                            self.entryModel.currentDay = self.selectedDate
+                        }
+                        self.isShowingDatePicker = false
+                    }) {
+                        Text("Done")
+                            .font(.custom(ubuntu, size: 20, relativeTo: .headline))
+                            .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
+                            .padding(.top, 10)
+                            .fillView(colorScheme == .light ? Color("Sand") : Color("Blue"))
+                            .hAlign(.center)
+                    }
+                }.hAlign(.center)
             }
         }
         .padding()
         .padding(.top,getSafeArea().top)
         .background(colorScheme == .light ? Color.white : Color.black)
+    }
+
+
+    
+    func extractDate(date: Date, format: String) -> Date {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = format
+        let dateString = dateFormatter.string(from: date)
+        if let extractedDate = dateFormatter.date(from: dateString) {
+            return extractedDate
+        }
+        return date
+    }
+    
+    func updateCurrentWeek() {
+        withAnimation {
+            let today = Date()
+            let calendar = Calendar.current
+            
+            let week = calendar.dateInterval(of: .weekOfMonth, for: today)
+            
+            guard let firstWeekDay = week?.start else {
+                return
+            }
+            
+            currentWeek = (0..<7).compactMap { day in
+                return calendar.date(byAdding: .day, value: day, to: firstWeekDay)
+            }
+        }
+    }
+    
+    func updateCurrentDay(selectedDate: Date) {
+        withAnimation {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+
+            let selectedDateString = dateFormatter.string(from: selectedDate)
+
+            if let currentDay = dateFormatter.date(from: selectedDateString) {
+                entryModel.currentDay = currentDay
+            }
+        }
     }
 }
 

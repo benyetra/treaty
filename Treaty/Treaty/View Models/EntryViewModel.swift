@@ -61,29 +61,24 @@ class EntryViewModel: ObservableObject{
         }
     }
 
-
-
-
-
-    
-    func fetchCurrentWeek(){
-        
+    func fetchCurrentWeek() {
         let today = Date()
         let calendar = Calendar.current
-        
         let week = calendar.dateInterval(of: .weekOfMonth, for: today)
-        
-        guard let firstWeekDay = week?.start else{
+
+        guard let firstWeekDay = week?.start else {
             return
         }
-        
+
+        currentWeek.removeAll()
         (0..<7).forEach { day in
-            
-            if let weekday = calendar.date(byAdding: .day, value: day, to: firstWeekDay){
+            if let weekday = calendar.date(byAdding: .day, value: day, to: firstWeekDay) {
                 currentWeek.append(weekday)
             }
         }
     }
+
+
     
     // MARK: Extracting Date
     func extractDate(date: Date,format: String)->String{
@@ -113,6 +108,24 @@ class EntryViewModel: ObservableObject{
         return hour == currentHour
     }
     
+    func generateWeek(for date: Date) -> [Date] {
+        let calendar = Calendar.current
+        let week = calendar.dateInterval(of: .weekOfMonth, for: date)
+
+        guard let firstWeekDay = week?.start else {
+            return []
+        }
+
+        var weekDays: [Date] = []
+        (0..<7).forEach { day in
+            if let weekday = calendar.date(byAdding: .day, value: day, to: firstWeekDay) {
+                weekDays.append(weekday)
+            }
+        }
+
+        return weekDays
+    }
+
     func fetchEntries(completion: @escaping ([Entry]) -> Void) {
         var entries: [Entry] = []
         let db = Firestore.firestore()
@@ -145,9 +158,6 @@ class EntryViewModel: ObservableObject{
             }
         }
     }
-
-    
-    
     
     func getTaskParticipants(taskParticipants: [[String:Any]], completion: @escaping ([User]) -> Void) {
         var users: [User] = []
