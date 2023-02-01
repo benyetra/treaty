@@ -136,11 +136,12 @@ class EntryViewModel: ObservableObject{
                 for document in querySnapshot!.documents {
                     let data = document.data()
                     let product = data["product"] as! String
+                    let amountSpent = data["amountSpent"] as! Int
                     let taskDate = data["taskDate"] as! Timestamp
                     let userUID = data["userUID"] as! String
                     if let taskParticipants = data["taskParticipants"] as? [[String: Any]] {
                         self.getTaskParticipants(taskParticipants: taskParticipants) { (users) in
-                            let entry = Entry(id: document.documentID, product: product, taskParticipants: users, taskDate:taskDate.dateValue(), userUID: userUID)
+                            let entry = Entry(id: document.documentID, product: product, amountSpent: amountSpent, taskParticipants: users, taskDate:taskDate.dateValue(), userUID: userUID)
                             entries.append(entry)
                             if entries.count == querySnapshot!.count {
                                 completion(entries)
@@ -148,7 +149,7 @@ class EntryViewModel: ObservableObject{
                         }
                     } else {
                         print("No taskparticipants present or is nil")
-                        let entry = Entry(id: document.documentID, product: product, taskParticipants: [], taskDate: taskDate.dateValue(), userUID: userUID)
+                        let entry = Entry(id: document.documentID, product: product, amountSpent: amountSpent, taskParticipants: [], taskDate: taskDate.dateValue(), userUID: userUID)
                         entries.append(entry)
                         if entries.count == querySnapshot!.count {
                             completion(entries)

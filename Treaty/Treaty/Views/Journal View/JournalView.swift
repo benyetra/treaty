@@ -177,13 +177,21 @@ struct JournalView: View {
                 
                 HStack(alignment: .top, spacing: 10) {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text(entry.product)
-                            .font(.title2.bold())
-                            .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
+                        HStack {
+                            Text(entry.product)
+                                .font(.title2.bold())
+                                .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Blue"))
+                            Text("\(entry.amountSpent)")
+                                .font(.title3.bold())
+                                .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Blue"))
+                                .hAlign(.trailingLastTextBaseline)
+                            Image("treat")
+                                .resizable()
+                                .frame(width: 15, height: 15)
+//                                .hAlign(.trailingLastTextBaseline)
+                        }
                     }
                     .hLeading()
-                    Text(entry.taskDate.formatted(date: .omitted, time: .shortened))
-                        .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                 }
 
                 // MARK: Team Members
@@ -205,7 +213,10 @@ struct JournalView: View {
                         }
                     }
                     .hLeading()
-                    // MARK: Check Button
+                    Text(entry.taskDate.formatted(date: .omitted, time: .shortened))
+                        .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Blue"))
+                        .padding(.horizontal, 5)
+                    // MARK: Delete Button
                     Button {
                         deleteEntry(entry: entry)
                         entryModel.filterTodayEntries(userUID: user.userUID)

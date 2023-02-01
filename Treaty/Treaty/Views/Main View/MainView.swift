@@ -11,7 +11,7 @@ import FirebaseFirestore
 import FirebaseMessaging
 
 struct MainView: View {
-    @ObservedObject var userWrapper = UserWrapper(user: User(id: "", username: "", userUID: "", userEmail: "", userProfileURL: URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!, token: ""))
+    @ObservedObject var userWrapper = UserWrapper(user: User(id: "", username: "", userUID: "", userEmail: "", userProfileURL: URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")! ,token: ""))
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("partnerUsernameStored") var partnerUsernameStored: String = ""
     

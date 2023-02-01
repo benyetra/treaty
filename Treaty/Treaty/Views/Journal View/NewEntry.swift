@@ -18,6 +18,7 @@ struct NewEntry: View {
     // MARK: Task Values
     @State var selectedUsers = [User]()
     @State var selectedType: String = ""
+    @State var selectedAmount: Int = 0
     @State var product: String = ""
     @State var taskParticipants: String = ""
     @State var taskDate: Date = Date()
@@ -71,6 +72,7 @@ struct NewEntry: View {
                                 Button(action: {
                                     self.selectedIndex = index
                                     self.selectedType = self.types[index].product
+                                    self.selectedAmount = self.types[index].amountSpent
                                     print("Button with tag: \(self.types[index].product) pressed")
                                 }) {
                                     EntryButtonView(types[index])
@@ -185,7 +187,7 @@ struct NewEntry: View {
     }
     
     func save(){
-        let newEntry = Entry(id: UUID().uuidString, product: self.selectedType, taskParticipants: self.selectedUsers, taskDate: self.taskDate, userUID: user.userUID)
+        let newEntry = Entry(id: UUID().uuidString, product: self.selectedType, amountSpent: self.selectedAmount, taskParticipants: self.selectedUsers, taskDate: self.taskDate, userUID: user.userUID)
         let db = Firestore.firestore()
         var ref: DocumentReference? = nil
         var taskParticipants = [[String: Any]]()
@@ -195,6 +197,7 @@ struct NewEntry: View {
         ref = db.collection("entries").addDocument(data: [
             "id": newEntry.id,
             "product": newEntry.product,
+            "amountSpent": newEntry.amountSpent,
             "taskParticipants": taskParticipants,
             "taskDate": newEntry.taskDate,
             "userUID": newEntry.userUID
