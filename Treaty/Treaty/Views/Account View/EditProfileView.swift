@@ -165,7 +165,7 @@ struct EditProfileView: View {
                     }
                 }) {
                     Text("Save Changes")
-                        .foregroundColor(colorScheme == .light ? Color("Sand") : Color("Blue"))
+                        .foregroundColor(colorScheme == .light ? Color.white : Color("Blue"))
                         .hAlign(.center)
                         .fillView(colorScheme == .light ? Color("Blue") : Color("Sand"))
                         .hAlign(.center)
