@@ -28,6 +28,7 @@
 		352F3028298B611F006857CB /* Loading.json in Resources */ = {isa = PBXBuildFile; fileRef = 352F3027298B611E006857CB /* Loading.json */; };
 		352F302B298B617E006857CB /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 352F302A298B617E006857CB /* Lottie */; };
 		352F302D298B618D006857CB /* CustomCurveShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352F302C298B618D006857CB /* CustomCurveShape.swift */; };
+		352F302F298BF7A6006857CB /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352F302E298BF7A6006857CB /* EditProfileView.swift */; };
 		353DF54E29887FAC0088237A /* PartnerRequestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353DF54D29887FAC0088237A /* PartnerRequestModel.swift */; };
 		3544C8AC29874C4800957435 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 3544C8AB29874C4800957435 /* FirebaseAnalytics */; };
 		3544C8AE29874C4800957435 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 3544C8AD29874C4800957435 /* FirebaseMessaging */; };
@@ -94,6 +95,7 @@
 		352F3025298B5B2E006857CB /* CustomRefreshView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CustomRefreshView.swift; path = Treaty/Views/Helpers/CustomRefreshView.swift; sourceTree = SOURCE_ROOT; };
 		352F3027298B611E006857CB /* Loading.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Loading.json; sourceTree = "<group>"; };
 		352F302C298B618D006857CB /* CustomCurveShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCurveShape.swift; sourceTree = "<group>"; };
+		352F302E298BF7A6006857CB /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
 		353DF54D29887FAC0088237A /* PartnerRequestModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerRequestModel.swift; sourceTree = "<group>"; };
 		3544C8AF298865A800957435 /* PartnerRequestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerRequestView.swift; sourceTree = "<group>"; };
 		358BCF102978329F000A7F9C /* Treaty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Treaty.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -318,6 +320,7 @@
 			isa = PBXGroup;
 			children = (
 				358BCF6C29783ACE000A7F9C /* AccountView.swift */,
+				352F302E298BF7A6006857CB /* EditProfileView.swift */,
 				358BCF702978609B000A7F9C /* ReusableProfileContent.swift */,
 				3544C8AF298865A800957435 /* PartnerRequestView.swift */,
 				3506E0402980262A005F0771 /* AddPartnerView.swift */,
@@ -478,6 +481,7 @@
 			files = (
 				351818B1297D9B5900230753 /* EntryViewModel.swift in Sources */,
 				358BCF192978329F000A7F9C /* Treaty.xcdatamodeld in Sources */,
+				352F302F298BF7A6006857CB /* EditProfileView.swift in Sources */,
 				352C02F32978C379008E77DF /* UserNameView.swift in Sources */,
 				3544C8B0298865A800957435 /* PartnerRequestView.swift in Sources */,
 				358BCF62297839F6000A7F9C /* RegisterView.swift in Sources */,
