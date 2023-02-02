@@ -22,6 +22,16 @@
 		352C02F12978AB17008E77DF /* PhoneRegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352C02F02978AB17008E77DF /* PhoneRegisterView.swift */; };
 		352C02F32978C379008E77DF /* UserNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352C02F22978C379008E77DF /* UserNameView.swift */; };
 		352C02F529798A94008E77DF /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352C02F429798A94008E77DF /* AuthService.swift */; };
+		352F3022298ACFBA006857CB /* CustomDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352F3021298ACFBA006857CB /* CustomDatePicker.swift */; };
+		352F3024298AD08A006857CB /* DateValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352F3023298AD08A006857CB /* DateValue.swift */; };
+		352F3026298B5B2E006857CB /* CustomRefreshView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352F3025298B5B2E006857CB /* CustomRefreshView.swift */; };
+		352F3028298B611F006857CB /* Loading.json in Resources */ = {isa = PBXBuildFile; fileRef = 352F3027298B611E006857CB /* Loading.json */; };
+		352F302B298B617E006857CB /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 352F302A298B617E006857CB /* Lottie */; };
+		352F302D298B618D006857CB /* CustomCurveShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352F302C298B618D006857CB /* CustomCurveShape.swift */; };
+		353DF54E29887FAC0088237A /* PartnerRequestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353DF54D29887FAC0088237A /* PartnerRequestModel.swift */; };
+		3544C8AC29874C4800957435 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 3544C8AB29874C4800957435 /* FirebaseAnalytics */; };
+		3544C8AE29874C4800957435 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 3544C8AD29874C4800957435 /* FirebaseMessaging */; };
+		3544C8B0298865A800957435 /* PartnerRequestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3544C8AF298865A800957435 /* PartnerRequestView.swift */; };
 		358BCF142978329F000A7F9C /* TreatyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF132978329F000A7F9C /* TreatyApp.swift */; };
 		358BCF162978329F000A7F9C /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF152978329F000A7F9C /* Persistence.swift */; };
 		358BCF192978329F000A7F9C /* Treaty.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF172978329F000A7F9C /* Treaty.xcdatamodeld */; };
@@ -79,6 +89,13 @@
 		352C02F02978AB17008E77DF /* PhoneRegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneRegisterView.swift; sourceTree = "<group>"; };
 		352C02F22978C379008E77DF /* UserNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNameView.swift; sourceTree = "<group>"; };
 		352C02F429798A94008E77DF /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		352F3021298ACFBA006857CB /* CustomDatePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDatePicker.swift; sourceTree = "<group>"; };
+		352F3023298AD08A006857CB /* DateValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateValue.swift; sourceTree = "<group>"; };
+		352F3025298B5B2E006857CB /* CustomRefreshView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CustomRefreshView.swift; path = Treaty/Views/Helpers/CustomRefreshView.swift; sourceTree = SOURCE_ROOT; };
+		352F3027298B611E006857CB /* Loading.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Loading.json; sourceTree = "<group>"; };
+		352F302C298B618D006857CB /* CustomCurveShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCurveShape.swift; sourceTree = "<group>"; };
+		353DF54D29887FAC0088237A /* PartnerRequestModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerRequestModel.swift; sourceTree = "<group>"; };
+		3544C8AF298865A800957435 /* PartnerRequestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerRequestView.swift; sourceTree = "<group>"; };
 		358BCF102978329F000A7F9C /* Treaty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Treaty.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		358BCF132978329F000A7F9C /* TreatyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreatyApp.swift; sourceTree = "<group>"; };
 		358BCF152978329F000A7F9C /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
@@ -109,9 +126,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3544C8AE29874C4800957435 /* FirebaseMessaging in Frameworks */,
 				358BCF52297833F9000A7F9C /* SDWebImageSwiftUI in Frameworks */,
 				358BCF49297833C1000A7F9C /* FirebaseAuth in Frameworks */,
+				3544C8AC29874C4800957435 /* FirebaseAnalytics in Frameworks */,
 				352C02EB2978A9B0008E77DF /* GoogleSignInSwift in Frameworks */,
+				352F302B298B617E006857CB /* Lottie in Frameworks */,
 				358BCF4F297833C1000A7F9C /* FirebaseStorage in Frameworks */,
 				358BCF4B297833C1000A7F9C /* FirebaseFirestore in Frameworks */,
 				358BCF4D297833C1000A7F9C /* FirebaseFirestoreSwift in Frameworks */,
@@ -154,6 +174,13 @@
 			path = "View Models";
 			sourceTree = "<group>";
 		};
+		3544C8AA29874C4800957435 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		358BCF072978329F000A7F9C = {
 			isa = PBXGroup;
 			children = (
@@ -161,6 +188,7 @@
 				358BCF29297832A1000A7F9C /* TreatyTests */,
 				358BCF33297832A1000A7F9C /* TreatyUITests */,
 				358BCF112978329F000A7F9C /* Products */,
+				3544C8AA29874C4800957435 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -177,6 +205,7 @@
 		358BCF122978329F000A7F9C /* Treaty */ = {
 			isa = PBXGroup;
 			children = (
+				352F3027298B611E006857CB /* Loading.json */,
 				351818AF297D9B4700230753 /* View Models */,
 				35E3FCE029787C1A00B2E97A /* GoogleService-Info.plist */,
 				3518189D297B3E4100230753 /* Fonts */,
@@ -224,6 +253,8 @@
 				3518189F297B3E9200230753 /* TransactionType.swift */,
 				351818AD297D9B0D00230753 /* Entry.swift */,
 				3506E03E2980139F005F0771 /* PartnerModel.swift */,
+				353DF54D29887FAC0088237A /* PartnerRequestModel.swift */,
+				352F3023298AD08A006857CB /* DateValue.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -265,9 +296,12 @@
 		358BCF6329783A12000A7F9C /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				352F3025298B5B2E006857CB /* CustomRefreshView.swift */,
 				352C02F429798A94008E77DF /* AuthService.swift */,
 				358BCF6429783A27000A7F9C /* View+Extension.swift */,
 				352C02EE2978AA60008E77DF /* CustomTextField.swift */,
+				352F3021298ACFBA006857CB /* CustomDatePicker.swift */,
+				352F302C298B618D006857CB /* CustomCurveShape.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -285,6 +319,7 @@
 			children = (
 				358BCF6C29783ACE000A7F9C /* AccountView.swift */,
 				358BCF702978609B000A7F9C /* ReusableProfileContent.swift */,
+				3544C8AF298865A800957435 /* PartnerRequestView.swift */,
 				3506E0402980262A005F0771 /* AddPartnerView.swift */,
 			);
 			path = "Account View";
@@ -314,6 +349,9 @@
 				358BCF51297833F9000A7F9C /* SDWebImageSwiftUI */,
 				352C02E82978A9B0008E77DF /* GoogleSignIn */,
 				352C02EA2978A9B0008E77DF /* GoogleSignInSwift */,
+				3544C8AB29874C4800957435 /* FirebaseAnalytics */,
+				3544C8AD29874C4800957435 /* FirebaseMessaging */,
+				352F302A298B617E006857CB /* Lottie */,
 			);
 			productName = Treaty;
 			productReference = 358BCF102978329F000A7F9C /* Treaty.app */;
@@ -391,6 +429,7 @@
 				358BCF47297833C1000A7F9C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				358BCF50297833F9000A7F9C /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				352C02E72978A9B0008E77DF /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				352F3029298B617E006857CB /* XCRemoteSwiftPackageReference "lottie-ios" */,
 			);
 			productRefGroup = 358BCF112978329F000A7F9C /* Products */;
 			projectDirPath = "";
@@ -412,6 +451,7 @@
 				358BCF1D297832A1000A7F9C /* Assets.xcassets in Resources */,
 				35E3FCE129787C1A00B2E97A /* GoogleService-Info.plist in Resources */,
 				3518189E297B3E4100230753 /* Fonts in Resources */,
+				352F3028298B611F006857CB /* Loading.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -439,17 +479,22 @@
 				351818B1297D9B5900230753 /* EntryViewModel.swift in Sources */,
 				358BCF192978329F000A7F9C /* Treaty.xcdatamodeld in Sources */,
 				352C02F32978C379008E77DF /* UserNameView.swift in Sources */,
+				3544C8B0298865A800957435 /* PartnerRequestView.swift in Sources */,
 				358BCF62297839F6000A7F9C /* RegisterView.swift in Sources */,
 				352C02F529798A94008E77DF /* AuthService.swift in Sources */,
 				358BCF5929783655000A7F9C /* MainView.swift in Sources */,
 				358BCF142978329F000A7F9C /* TreatyApp.swift in Sources */,
 				358BCF712978609B000A7F9C /* ReusableProfileContent.swift in Sources */,
+				353DF54E29887FAC0088237A /* PartnerRequestModel.swift in Sources */,
+				352F302D298B618D006857CB /* CustomCurveShape.swift in Sources */,
 				351818AE297D9B0D00230753 /* Entry.swift in Sources */,
 				358BCF5629783624000A7F9C /* ContentView.swift in Sources */,
+				352F3022298ACFBA006857CB /* CustomDatePicker.swift in Sources */,
 				3506E03F2980139F005F0771 /* PartnerModel.swift in Sources */,
 				352C02ED2978AA3D008E77DF /* LoginViewModel.swift in Sources */,
 				358BCF4629783349000A7F9C /* UserModel.swift in Sources */,
 				3506E0412980262A005F0771 /* AddPartnerView.swift in Sources */,
+				352F3026298B5B2E006857CB /* CustomRefreshView.swift in Sources */,
 				358BCF6529783A27000A7F9C /* View+Extension.swift in Sources */,
 				358BCF5C2978367F000A7F9C /* LoginView.swift in Sources */,
 				351818B7297E0C3C00230753 /* NewEntry.swift in Sources */,
@@ -457,6 +502,7 @@
 				358BCF6829783AA8000A7F9C /* BarterView.swift in Sources */,
 				351818A0297B3E9200230753 /* TransactionType.swift in Sources */,
 				352C02F12978AB17008E77DF /* PhoneRegisterView.swift in Sources */,
+				352F3024298AD08A006857CB /* DateValue.swift in Sources */,
 				358BCF6D29783ACE000A7F9C /* AccountView.swift in Sources */,
 				358BCF60297839D8000A7F9C /* LoadingView.swift in Sources */,
 				3518189C2979C33400230753 /* JournalView.swift in Sources */,
@@ -838,6 +884,14 @@
 				kind = branch;
 			};
 		};
+		352F3029298B617E006857CB /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		358BCF47297833C1000A7F9C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -866,6 +920,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 352C02E72978A9B0008E77DF /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
+		};
+		352F302A298B617E006857CB /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 352F3029298B617E006857CB /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
+		3544C8AB29874C4800957435 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 358BCF47297833C1000A7F9C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		3544C8AD29874C4800957435 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 358BCF47297833C1000A7F9C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 		358BCF48297833C1000A7F9C /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;

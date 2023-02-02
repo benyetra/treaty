@@ -10,6 +10,9 @@ import FirebaseFirestore
 
 class EntryViewModel: ObservableObject{
     @AppStorage("user_UID") var userUID: String = ""
+    @AppStorage("partnerUsernameStored") var partnerUsernameStored: String = ""
+    @AppStorage("partnerTokenStored") var tokenStored: String = ""
+    @AppStorage("user_name") var usernameStored: String = ""
 
     // Sample Tasks
     @Published var storedEntries: [Entry] = []
@@ -40,11 +43,12 @@ class EntryViewModel: ObservableObject{
                 self.storedEntries = entries
             }
             DispatchQueue.global(qos: .userInteractive).async {
-
+                
                 let calendar = Calendar.current
-
+                
                 let filtered = self.storedEntries.filter{
-                    return calendar.isDate($0.taskDate, inSameDayAs: self.currentDay) && $0.userUID == userUID
+                    return calendar.isDate($0.taskDate, inSameDayAs: self.currentDay) &&
+                    ($0.userUID == userUID || $0.taskParticipants.contains(where: { $0.username == self.usernameStored}) || $0.taskParticipants.contains(where: { $0.username == self.partnerUsernameStored}))
                 }.sorted { task1, task2 in
                     return task2.taskDate < task1.taskDate
                 }
@@ -57,25 +61,24 @@ class EntryViewModel: ObservableObject{
         }
     }
 
-    
-    func fetchCurrentWeek(){
-        
+    func fetchCurrentWeek() {
         let today = Date()
         let calendar = Calendar.current
-        
         let week = calendar.dateInterval(of: .weekOfMonth, for: today)
-        
-        guard let firstWeekDay = week?.start else{
+
+        guard let firstWeekDay = week?.start else {
             return
         }
-        
+
+        currentWeek.removeAll()
         (0..<7).forEach { day in
-            
-            if let weekday = calendar.date(byAdding: .day, value: day, to: firstWeekDay){
+            if let weekday = calendar.date(byAdding: .day, value: day, to: firstWeekDay) {
                 currentWeek.append(weekday)
             }
         }
     }
+
+
     
     // MARK: Extracting Date
     func extractDate(date: Date,format: String)->String{
@@ -105,6 +108,24 @@ class EntryViewModel: ObservableObject{
         return hour == currentHour
     }
     
+    func generateWeek(for date: Date) -> [Date] {
+        let calendar = Calendar.current
+        let week = calendar.dateInterval(of: .weekOfMonth, for: date)
+
+        guard let firstWeekDay = week?.start else {
+            return []
+        }
+
+        var weekDays: [Date] = []
+        (0..<7).forEach { day in
+            if let weekday = calendar.date(byAdding: .day, value: day, to: firstWeekDay) {
+                weekDays.append(weekday)
+            }
+        }
+
+        return weekDays
+    }
+
     func fetchEntries(completion: @escaping ([Entry]) -> Void) {
         var entries: [Entry] = []
         let db = Firestore.firestore()
@@ -115,11 +136,12 @@ class EntryViewModel: ObservableObject{
                 for document in querySnapshot!.documents {
                     let data = document.data()
                     let product = data["product"] as! String
+                    let amountSpent = data["amountSpent"] as! Int
                     let taskDate = data["taskDate"] as! Timestamp
                     let userUID = data["userUID"] as! String
                     if let taskParticipants = data["taskParticipants"] as? [[String: Any]] {
                         self.getTaskParticipants(taskParticipants: taskParticipants) { (users) in
-                            let entry = Entry(id: document.documentID, product: product, taskParticipants: users, taskDate:taskDate.dateValue(), userUID: userUID)
+                            let entry = Entry(id: document.documentID, product: product, amountSpent: amountSpent, taskParticipants: users, taskDate:taskDate.dateValue(), userUID: userUID)
                             entries.append(entry)
                             if entries.count == querySnapshot!.count {
                                 completion(entries)
@@ -127,10 +149,9 @@ class EntryViewModel: ObservableObject{
                         }
                     } else {
                         print("No taskparticipants present or is nil")
-                        let taskParticipants: [User] = []
-                        let entry = Entry(id: document.documentID, product: product, taskParticipants: taskParticipants, taskDate:taskDate.dateValue(), userUID: userUID)
+                        let entry = Entry(id: document.documentID, product: product, amountSpent: amountSpent, taskParticipants: [], taskDate: taskDate.dateValue(), userUID: userUID)
                         entries.append(entry)
-                        if entries.count == querySnapshot!.documents.count {
+                        if entries.count == querySnapshot!.count {
                             completion(entries)
                         }
                     }
@@ -138,9 +159,6 @@ class EntryViewModel: ObservableObject{
             }
         }
     }
-
-    
-    
     
     func getTaskParticipants(taskParticipants: [[String:Any]], completion: @escaping ([User]) -> Void) {
         var users: [User] = []

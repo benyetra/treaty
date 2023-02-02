@@ -12,6 +12,7 @@ import FirebaseFirestoreSwift
 struct Entry: Identifiable,Codable{
     @DocumentID var id: String?
     var product: String
+    var amountSpent: Int
     var taskParticipants: [User]
     var taskDate: Date
     var userUID: String
@@ -19,6 +20,7 @@ struct Entry: Identifiable,Codable{
     enum CodingKeys: CodingKey {
         case id
         case product
+        case amountSpent
         case taskParticipants
         case taskDate
         case userUID

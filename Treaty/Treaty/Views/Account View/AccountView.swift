@@ -22,7 +22,7 @@ class UserCredentials: ObservableObject {
 struct AccountView: View {
     // MARK: My Profile Data
     @State private var myProfile: User?
-    @State private var partnerUsername: String = ""
+    @State var partnerUsername: String = ""
     @State private var partnerUser: User?
     // MARK: User Defaults Data
     @ObservedObject var credentials = UserCredentials()
@@ -36,17 +36,21 @@ struct AccountView: View {
     @State var showError: Bool = false
     @State var isLoading: Bool = false
     @State var addPartnerSheet: Bool = false
+    @State var pendingPartnerSheet: Bool = false
+    @StateObject private var viewModel = PartnerRequestViewModel()
+    @ObservedObject var userWrapper: UserWrapper
+    var user: User
 
+    init(userWrapper: UserWrapper) {
+        self.userWrapper = userWrapper
+        self.user = userWrapper.user
+    }
+    
     var body: some View {
         NavigationStack{
             VStack{
                 if let myProfile{
-                    ReusableProfileContent(user: myProfile)
-                        .refreshable {
-                            // MARK: Refresh User Data
-                            self.myProfile = nil
-                            await fetchUserData()
-                        }
+                    ReusableProfileContent(user: myProfile, userWrapper: userWrapper)
                 }else{
                     ProgressView()
                 }
@@ -55,23 +59,37 @@ struct AccountView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
-                        // MARK: Two Action's
-                        // 1. Logout
-                        // 2. Delete Account
-                        
-                        Button("Add Partner") { addPartnerSheet.toggle() }
+                        Button("Manage Partner") { addPartnerSheet.toggle() }
                         Button("Logout",action: logOutUser)
                         Button("Delete Account",role: .destructive,action: deleteAccount)
                     } label: {
                         Image(systemName: "ellipsis")
                             .rotationEffect(.init(degrees: 90))
                             .tint(colorScheme == .light ? Color.black : Color("Sand"))
-                            .scaleEffect(0.8)
+                            .scaleEffect(1)
                     }
                 }
             }
             .sheet(isPresented: $addPartnerSheet){
-                AddPartnerView()
+                AddPartnerView(userWrapper: userWrapper)
+            }
+            .sheet(isPresented: $pendingPartnerSheet){
+                PartnerRequestView(viewModel: PartnerRequestViewModel())
+            }
+            if viewModel.partnerRequests.isEmpty {
+            } else {
+                HStack {
+                    Button("\(viewModel.partnerRequests.count) Pending Partner Request") {
+                        pendingPartnerSheet.toggle()
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal,20)
+                    .background {
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .fill(Color("Blue"))
+                    }
+                }
+                .vAlign(.top)
             }
         }
         .overlay {
@@ -102,6 +120,13 @@ struct AccountView: View {
     func logOutUser(){
         try? Auth.auth().signOut()
         GIDSignIn.sharedInstance.signOut()
+        Firestore.firestore().clearPersistence { (error) in
+            if let error = error {
+                print("Error clearing Firestore instance cache: \(error)")
+            } else {
+                print("Successfully cleared Firestore instance cache")
+            }
+        }
         withAnimation(.easeInOut){
             userUID = ""
             userName = ""
@@ -131,6 +156,14 @@ struct AccountView: View {
                 
                 // Final Step: Deleting Auth Account and Setting Log Status to False
                 try await Auth.auth().currentUser?.delete()
+                Firestore.firestore().clearPersistence { (error) in
+                    if let error = error {
+                        print("Error clearing Firestore instance cache: \(error)")
+                    } else {
+                        print("Successfully cleared Firestore instance cache")
+                    }
+                }
+
                 logStatus = false
             }catch{
                 await setError(error)

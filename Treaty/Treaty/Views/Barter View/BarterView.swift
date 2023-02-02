@@ -13,82 +13,92 @@ import SDWebImageSwiftUI
 class UserWrapper: ObservableObject {
     @Published var user: User
     @Published var partner: PartnerModel?
-    
+
     init(user: User) {
         self.user = user
         self.partner = nil
     }
 }
 
-
 let ubuntu = "Ubuntu"
 struct BarterView: View {
     @Environment(\.colorScheme) private var colorScheme
-
     @ObservedObject var userWrapper: UserWrapper
     /// - Animation Properties
     @State private var expandMenu: Bool = false
     @State private var dimContent: Bool = false
-    var user: User
+    @State private var isLoading = false
+    @AppStorage("partnerUsernameStored") var partnerUsernameStored: String = ""
 
+    var user: User
+    
     init(userWrapper: UserWrapper) {
         self.userWrapper = userWrapper
         self.user = userWrapper.user
     }
-
+    
     var body: some View {
-        if userWrapper.user.username.isEmpty {
-            UserNameView()
-        } else {
-            VStack(spacing: 0){
-                HeaderView()
-                
-                VStack(spacing: 10){
-                    Text("My Treat Jar")
-                        .font(.custom(ubuntu, size: 30, relativeTo: .title))
-                        .foregroundColor(expandMenu ? Color("Blue") : .white)
-                        .contentTransition(.interpolate)
-                        .frame(maxWidth: .infinity,alignment: .leading)
-                        .padding(.horizontal,15)
-                        .padding(.top,10)
+        CustomRefreshView(lottieFileName: "Loading", backgroundColor: Color("Blue"), content:  {
+            if userWrapper.user.username.isEmpty {
+                UserNameView()
+            } else {
+                VStack(spacing: 0){
+                    HeaderView()
                     
-                    CardView()
-                    /// - Making it Above the ScrollView
-                        .zIndex(1)
-                    
-                    ScrollView(.vertical, showsIndicators: false) {
-                        VStack(spacing: 12){
-                            ForEach(types){transactionType in
-                                TransactionCardView(transactionType)
+                    VStack(spacing: 10){
+                        Text("My Treat Jar")
+                            .font(.custom(ubuntu, size: 30, relativeTo: .title))
+                            .foregroundColor(expandMenu ? Color("Blue") : .white)
+                            .contentTransition(.interpolate)
+                            .frame(maxWidth: .infinity,alignment: .leading)
+                            .padding(.horizontal,15)
+                            .padding(.top,10)
+                        
+                        CardView()
+                        /// - Making it Above the ScrollView
+                            .zIndex(1)
+                        
+                        ScrollView(.vertical, showsIndicators: false) {
+                            VStack(spacing: 12){
+                                ForEach(types){transactionType in
+                                    TransactionCardView(transactionType)
+                                }
                             }
+                            .padding(.top,40)
+                            .padding([.horizontal,.bottom],15)
                         }
-                        .padding(.top,40)
-                        .padding([.horizontal,.bottom],15)
+                        .padding(.top,-20)
+                        .zIndex(0)
                     }
-                    .padding(.top,-20)
-                    .zIndex(0)
+                    /// - Moving View Up By Negative Padding
+                    .padding(.top,expandMenu ? 10 : -130)
+                    /// - Dimming Content
+                    .overlay {
+                        Rectangle()
+                            .fill(.black)
+                            .opacity(dimContent ? 0.45 : 0)
+                            .ignoresSafeArea()
+                    }
+                    if isLoading {
+                        ActivityIndicator($isLoading, style: .large)
+                            .foregroundColor(.gray)
+                            .ignoresSafeArea()
+                    }
                 }
-                /// - Moving View Up By Negative Padding
-                .padding(.top,expandMenu ? 10 : -130)
-                /// - Dimming Content
-                .overlay {
-                    Rectangle()
-                        .fill(.black)
-                        .opacity(dimContent ? 0.45 : 0)
+                .frame(maxHeight: .infinity,alignment: .top)
+                .background {
+                    (colorScheme == .light ? Color("BG") : Color.black)
                         .ignoresSafeArea()
                 }
             }
-            .frame(maxHeight: .infinity,alignment: .top)
-            .background {
-                (colorScheme == .light ? Color("BG") : Color.black)
-                    .ignoresSafeArea()
-            }
-        }
+        }, onRefresh: {
+            fetchUserData()
+        })
     }
-        
-        /// - Header View
-        @ViewBuilder
-        func HeaderView()->some View{
+
+    /// - Header View
+    @ViewBuilder
+    func HeaderView()->some View{
             GeometryReader{
                 let size = $0.size
                 let offset = (size.height + 200.0) * 0.21
@@ -178,7 +188,45 @@ struct BarterView: View {
                 }
             }
         }
-        
+    func fetchUserData() {
+        let db = Firestore.firestore()
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        let userRef = db.collection("Users").document(uid)
+        userRef.getDocument { (document, error) in
+            if let document = document, document.exists, let data = document.data() {
+                let username = data["username"] as? String ?? ""
+                let userUID = data["userUID"] as? String ?? ""
+                let userEmail = data["userEmail"] as? String ?? ""
+                let userProfileURL = data["userProfileURL"] as? String ?? ""
+                let userToken = data["token"] as? String ?? ""
+                let credits = data["credits"] as? Int ?? 50
+                if let url = URL(string: userProfileURL) {
+                    self.userWrapper.user = User(id: "", username: username, userUID: userUID, userEmail: userEmail, userProfileURL: url, token: userToken, credits: credits)
+                } else {
+                    let defaultURL = URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!
+                    self.userWrapper.user = User(id: "", username: username, userUID: userUID, userEmail: userEmail, userProfileURL: defaultURL, token: userToken, credits: credits)
+                }
+                if let partnerUID = data["partners"] as? String {
+                    db.collection("Users").document(partnerUID).getDocument { (partnerDocument, error) in
+                        if let partnerDocument = partnerDocument, partnerDocument.exists, let partnerData = partnerDocument.data(), let partnerUsername = partnerData["username"] as? String, let partnerProfileURL = partnerData["userProfileURL"] as? String, let partnerURL = URL(string: partnerProfileURL),
+                           let partnerToken = partnerData["token"] as? String,
+                           let partnerCredits = partnerData["credits"] as? Int
+                        {
+                            self.userWrapper.partner = PartnerModel(username: partnerUsername, userProfileURL: partnerURL, token: partnerToken, credits: partnerCredits, partnerUID: partnerUID)
+                            self.partnerUsernameStored = partnerUsername
+                        } else {
+                            let defaultPartnerURL = URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!
+                            self.userWrapper.partner = PartnerModel(username: "", userProfileURL: defaultPartnerURL, token: "", credits: 50, partnerUID: partnerUID)
+                        }
+                    }
+                } else {
+                    self.userWrapper.partner = nil
+                }
+            } else {
+                print("Document does not exist")
+            }
+        }
+    }
         /// - CardView
         @ViewBuilder
         func CardView()->some View{
@@ -186,13 +234,13 @@ struct BarterView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Total")
                         .font(.custom(ubuntu, size: 16, relativeTo: .body))
-                        .foregroundColor(colorScheme == .light ? Color.black : Color.white)
+                        .foregroundColor(colorScheme == .light ? Color.black : Color("Blue"))
                     HStack {
                         Image("treat")
                             .resizable()
                             .frame(width: 40, height: 40)
                 
-                        Text("67")
+                        Text("\(user.credits)")
                             .font(.custom(ubuntu, size: 40, relativeTo: .largeTitle))
                             .fontWeight(.medium)
                             .foregroundColor(Color("Blue"))
@@ -222,7 +270,7 @@ struct BarterView: View {
             .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
             .shadow(color: .black.opacity(0.15), radius: 10, x: 5, y: 5)
             .padding(.horizontal,15)
-            .padding(.top,10)
+//            .padding(.top,10)
         }
         
         /// - Transaction Card View
@@ -246,14 +294,14 @@ struct BarterView: View {
                     Text("\(transaction.amountSpent)")
                         .font(.custom(ubuntu, size: 18, relativeTo: .title3))
                         .fontWeight(.medium)
-                        .foregroundColor(Color("Blue"))
+                        .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                     Image("treat")
                         .resizable()
                         .frame(width: 18, height: 18)
                 }
             }
             .padding(10)
-            .background(colorScheme == .light ? Color.white : Color("Sand"))
+            .background(colorScheme == .light ? Color.white : Color("Blue"))
             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             .shadow(color: .black.opacity(0.05), radius: 5, x: 5, y: 5)
         }

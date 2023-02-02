@@ -7,32 +7,101 @@
 
 import SwiftUI
 import FirebaseFirestoreSwift
+import Firebase
+import FirebaseFirestore
 
-struct User: Identifiable,Codable {
+extension User: Equatable {
+    static func == (lhs: User, rhs: User) -> Bool {
+        return lhs.userUID == rhs.userUID
+    }
+}
+
+class User: Identifiable, Codable {
     @DocumentID var id: String?
     var username: String
     var userUID: String
     var userEmail: String
     var userProfileURL: URL
     var partner: PartnerModel?
-    init(id: String?, username: String, userUID: String, userEmail: String, userProfileURL: URL, partner: PartnerModel? = nil) {
+    var token: String?
+    var credits: Int
+
+    func addCredits(amount: Int) {
+        let db = Firestore.firestore()
+        let userRef = db.collection("Users").document(userUID)
+        db.runTransaction({ (transaction, errorPointer) -> Any? in
+            do {
+                let userData = try transaction.getDocument(userRef)
+                guard var user = userData.data() else {
+                    return nil
+                }
+                let oldCredits = user["credits"] as? Int ?? 0
+                user["credits"] = oldCredits + amount
+                transaction.setData(user, forDocument: userRef)
+            } catch let error as NSError {
+                errorPointer?.pointee = error
+            }
+            return nil
+        }) { (object, error) in
+            if let error = error {
+                print("Transaction failed: \(error)")
+            } else {
+                print("Transaction succeeded.")
+            }
+        }
+    }
+
+    func removeCredits(amount: Int) {
+        let db = Firestore.firestore()
+        let userRef = db.collection("Users").document(userUID)
+        db.runTransaction({ (transaction, errorPointer) -> Any? in
+            do {
+                let userData = try transaction.getDocument(userRef)
+                guard var user = userData.data() else {
+                    return nil
+                }
+                let oldCredits = user["credits"] as? Int ?? 0
+                user["credits"] = oldCredits - amount
+                transaction.setData(user, forDocument: userRef)
+            } catch let error as NSError {
+                errorPointer?.pointee = error
+            }
+            return nil
+        }) { (object, error) in
+            if let error = error {
+                print("Transaction failed: \(error)")
+            } else {
+                print("Transaction succeeded.")
+            }
+        }
+    }
+
+    func getTotalCredits() -> Int {
+        return credits
+    }
+
+    init(id: String?, username: String, userUID: String, userEmail: String, userProfileURL: URL, partner: PartnerModel? = nil, token: String?, credits: Int) {
         self.id = id
         self.username = username
         self.userUID = userUID
         self.userEmail = userEmail
         self.userProfileURL = userProfileURL
         self.partner = partner
+        self.token = token
+        self.credits = credits
     }
 
     func toDict() -> [String: Any] {
-            return [
-                "username": username,
-                "userUID": userUID,
-                "userEmail": userEmail,
-                "userProfileURL": userProfileURL
-            ]
-        }
-    
+        return [
+            "username": username,
+            "userUID": userUID,
+            "userEmail": userEmail,
+            "userProfileURL": userProfileURL,
+            "token": token,
+            "credits": credits
+        ]
+    }
+
     enum CodingKeys: CodingKey {
         case id
         case username
@@ -40,5 +109,9 @@ struct User: Identifiable,Codable {
         case userEmail
         case userProfileURL
         case partner
+        case token
+        case credits
     }
 }
+
+

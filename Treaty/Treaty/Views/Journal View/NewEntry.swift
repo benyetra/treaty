@@ -18,6 +18,7 @@ struct NewEntry: View {
     // MARK: Task Values
     @State var selectedUsers = [User]()
     @State var selectedType: String = ""
+    @State var selectedAmount: Int = 0
     @State var product: String = ""
     @State var taskParticipants: String = ""
     @State var taskDate: Date = Date()
@@ -27,7 +28,7 @@ struct NewEntry: View {
     @State var selectedIndex: Int? = nil
     @State private var partnerUser: User?
     @State private var partnerModel: PartnerModel?
-    @State private var partnerUsername: String = ""
+    @State var partnerUsername: String = ""
     @State private var partnerProfileURL: String = ""
     
     var user: User
@@ -71,6 +72,7 @@ struct NewEntry: View {
                                 Button(action: {
                                     self.selectedIndex = index
                                     self.selectedType = self.types[index].product
+                                    self.selectedAmount = self.types[index].amountSpent
                                     print("Button with tag: \(self.types[index].product) pressed")
                                 }) {
                                     EntryButtonView(types[index])
@@ -117,7 +119,7 @@ struct NewEntry: View {
                                     if let partner = self.userWrapper.partner {
                                         self.isButton2Selected.toggle()
                                         if self.isButton2Selected {
-                                            self.selectedUsers.append(User(id: "", username: partner.username, userUID: "", userEmail: "", userProfileURL: partner.userProfileURL))
+                                            self.selectedUsers.append(User(id: "", username: partner.username, userUID: "", userEmail: "", userProfileURL: partner.userProfileURL, token: partner.token, credits: partner.credits))
                                         } else {
                                             self.selectedUsers.removeAll(where: { $0.username == partner.username })
                                         }
@@ -175,17 +177,27 @@ struct NewEntry: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save"){
                         save()
+                        if selectedUsers.count == 1 {
+                            if selectedUsers.first == userWrapper.user {
+                                user.addCredits(amount: selectedAmount)
+                            } else {
+                                userWrapper.partner?.addCredits(amount: selectedAmount)
+                            }
+                        } else if selectedUsers.count == 2 {
+                            user.addCredits(amount: selectedAmount)
+                            userWrapper.partner?.addCredits(amount: selectedAmount)
+                        }
                         entryModel.filterTodayEntries(userUID: user.userUID)
                         print("Array count: \(self.selectedUsers.count)")
                     }
-                    .disableWithOpacity(self.selectedUsers.isEmpty || self.selectedType == "")
+                    .disabled(self.selectedUsers.isEmpty || self.selectedType == "")
                 }
             }
         }
     }
     
     func save(){
-        let newEntry = Entry(id: UUID().uuidString, product: self.selectedType, taskParticipants: self.selectedUsers, taskDate: self.taskDate, userUID: user.userUID)
+        let newEntry = Entry(id: UUID().uuidString, product: self.selectedType, amountSpent: self.selectedAmount, taskParticipants: self.selectedUsers, taskDate: self.taskDate, userUID: user.userUID)
         let db = Firestore.firestore()
         var ref: DocumentReference? = nil
         var taskParticipants = [[String: Any]]()
@@ -195,6 +207,7 @@ struct NewEntry: View {
         ref = db.collection("entries").addDocument(data: [
             "id": newEntry.id,
             "product": newEntry.product,
+            "amountSpent": newEntry.amountSpent,
             "taskParticipants": taskParticipants,
             "taskDate": newEntry.taskDate,
             "userUID": newEntry.userUID
