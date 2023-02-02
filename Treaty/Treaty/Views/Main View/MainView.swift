@@ -11,7 +11,7 @@ import FirebaseFirestore
 import FirebaseMessaging
 
 struct MainView: View {
-    @ObservedObject var userWrapper = UserWrapper(user: User(id: "", username: "", userUID: "", userEmail: "", userProfileURL: URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")! ,token: ""))
+    @ObservedObject var userWrapper = UserWrapper(user: User(id: "", username: "", userUID: "", userEmail: "", userProfileURL: URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")! ,token: "", credits: 50))
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("partnerUsernameStored") var partnerUsernameStored: String = ""
     
@@ -58,21 +58,24 @@ struct MainView: View {
                 let userEmail = data["userEmail"] as? String ?? ""
                 let userProfileURL = data["userProfileURL"] as? String ?? ""
                 let userToken = data["token"] as? String ?? ""
+                let credits = data["credits"] as? Int ?? 50
                 if let url = URL(string: userProfileURL) {
-                    self.userWrapper.user = User(id: "", username: username, userUID: userUID, userEmail: userEmail, userProfileURL: url, token: userToken)
+                    self.userWrapper.user = User(id: "", username: username, userUID: userUID, userEmail: userEmail, userProfileURL: url, token: userToken, credits: credits)
                 } else {
                     let defaultURL = URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!
-                    self.userWrapper.user = User(id: "", username: username, userUID: userUID, userEmail: userEmail, userProfileURL: defaultURL, token: userToken)
+                    self.userWrapper.user = User(id: "", username: username, userUID: userUID, userEmail: userEmail, userProfileURL: defaultURL, token: userToken, credits: credits)
                 }
                 if let partnerUID = data["partners"] as? String {
                     db.collection("Users").document(partnerUID).getDocument { (partnerDocument, error) in
                         if let partnerDocument = partnerDocument, partnerDocument.exists, let partnerData = partnerDocument.data(), let partnerUsername = partnerData["username"] as? String, let partnerProfileURL = partnerData["userProfileURL"] as? String, let partnerURL = URL(string: partnerProfileURL),
-                           let partnerToken = partnerData["token"] as? String {
-                            self.userWrapper.partner = PartnerModel(username: partnerUsername, userProfileURL: partnerURL, token: partnerToken)
+                           let partnerToken = partnerData["token"] as? String,
+                           let partnerCredits = partnerData["credits"] as? Int
+                        {
+                            self.userWrapper.partner = PartnerModel(username: partnerUsername, userProfileURL: partnerURL, token: partnerToken, credits: partnerCredits)
                             self.partnerUsernameStored = partnerUsername
                         } else {
                             let defaultPartnerURL = URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!
-                            self.userWrapper.partner = PartnerModel(username: "", userProfileURL: defaultPartnerURL, token: "")
+                            self.userWrapper.partner = PartnerModel(username: "", userProfileURL: defaultPartnerURL, token: "", credits: 50)
                         }
                     }
                 } else {

@@ -8,7 +8,7 @@
 import SwiftUI
 import FirebaseFirestoreSwift
 
-struct User: Identifiable,Codable {
+class User: Identifiable, Codable {
     @DocumentID var id: String?
     var username: String
     var userUID: String
@@ -16,8 +16,21 @@ struct User: Identifiable,Codable {
     var userProfileURL: URL
     var partner: PartnerModel?
     var token: String?
+    var credits: Int
 
-    init(id: String?, username: String, userUID: String, userEmail: String, userProfileURL: URL, partner: PartnerModel? = nil, token: String?) {
+    func addCredits(amount: Int) {
+        credits += amount
+    }
+
+    func removeCredits(amount: Int) {
+        credits -= amount
+    }
+
+    func getTotalCredits() -> Int {
+        return credits
+    }
+
+    init(id: String?, username: String, userUID: String, userEmail: String, userProfileURL: URL, partner: PartnerModel? = nil, token: String?, credits: Int) {
         self.id = id
         self.username = username
         self.userUID = userUID
@@ -25,6 +38,7 @@ struct User: Identifiable,Codable {
         self.userProfileURL = userProfileURL
         self.partner = partner
         self.token = token
+        self.credits = credits
     }
 
     func toDict() -> [String: Any] {
@@ -33,7 +47,8 @@ struct User: Identifiable,Codable {
             "userUID": userUID,
             "userEmail": userEmail,
             "userProfileURL": userProfileURL,
-            "token": token
+            "token": token,
+            "credits": credits
         ]
     }
 
@@ -45,6 +60,8 @@ struct User: Identifiable,Codable {
         case userProfileURL
         case partner
         case token
+        case credits
     }
 }
+
 

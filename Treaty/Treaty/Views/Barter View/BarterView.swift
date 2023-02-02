@@ -192,7 +192,7 @@ struct BarterView: View {
                             .resizable()
                             .frame(width: 40, height: 40)
                 
-                        Text("67")
+                        Text("\(user.credits)")
                             .font(.custom(ubuntu, size: 40, relativeTo: .largeTitle))
                             .fontWeight(.medium)
                             .foregroundColor(Color("Blue"))

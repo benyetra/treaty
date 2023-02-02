@@ -188,7 +188,6 @@ struct JournalView: View {
                             Image("treat")
                                 .resizable()
                                 .frame(width: 15, height: 15)
-//                                .hAlign(.trailingLastTextBaseline)
                         }
                     }
                     .hLeading()
@@ -215,7 +214,7 @@ struct JournalView: View {
                     .hLeading()
                     Text(entry.taskDate.formatted(date: .omitted, time: .shortened))
                         .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Blue"))
-                        .padding(.horizontal, 5)
+                        .padding(.horizontal, 10)
                     // MARK: Delete Button
                     Button {
                         deleteEntry(entry: entry)

@@ -119,7 +119,7 @@ struct NewEntry: View {
                                     if let partner = self.userWrapper.partner {
                                         self.isButton2Selected.toggle()
                                         if self.isButton2Selected {
-                                            self.selectedUsers.append(User(id: "", username: partner.username, userUID: "", userEmail: "", userProfileURL: partner.userProfileURL, token: partner.token))
+                                            self.selectedUsers.append(User(id: "", username: partner.username, userUID: "", userEmail: "", userProfileURL: partner.userProfileURL, token: partner.token, credits: partner.credits))
                                         } else {
                                             self.selectedUsers.removeAll(where: { $0.username == partner.username })
                                         }
