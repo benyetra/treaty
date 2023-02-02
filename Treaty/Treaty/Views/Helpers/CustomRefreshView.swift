@@ -115,6 +115,7 @@ struct CustomRefreshView<Content: View>: View {
                 }
             }
         }
+        .background(Color("Blue"))
     }
     
     @ViewBuilder
