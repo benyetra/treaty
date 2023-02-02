@@ -35,6 +35,8 @@ struct EditProfileView: View {
     @AppStorage("log_status") var logStatus: Bool = false
     @AppStorage("user_name") var userNameStored: String = ""
     @AppStorage("user_UID") var userUID: String = ""
+    @AppStorage("user_profile_url") var profileURL: URL?
+
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -178,19 +180,72 @@ struct EditProfileView: View {
         }
     }
     
-    func updateUserInfo(completion: @escaping (Error?) -> Void) {
+//    func updateUserInfo(completion: @escaping (Error?) -> Void) {
+//        isLoading = true
+//        closeKeyboard()
+//        // Get Firestore instance
+//        let db = Firestore.firestore()
+//
+//        // Get user's uid, if it exists
+//        if let uid = Auth.auth().currentUser?.uid {
+//            guard let imageData = userProfilePicData else {
+//                completion(nil)
+//                return
+//            }
+//            let storageRef = Storage.storage().reference().child("Profile_Images").child(userUID)
+//            storageRef.putData(imageData) { (metadata, error) in
+//                if let error = error {
+//                    completion(error)
+//                } else {
+//                    // Downloading Photo URL
+//                    storageRef.downloadURL { (url, error) in
+//                        if let error = error {
+//                            completion(error)
+//                        } else {
+//                            // Update user's data in Firebase Firestore
+//                            db.collection("Users").document(uid).updateData([
+//                                "userEmail": self.emailID,
+//                                "username": self.userName.lowercased(),
+//                                "userProfileURL": url?.absoluteString,
+//                            ]) { (error) in
+//                                if let error = error {
+//                                    // Show error message
+//                                    self.errorMessage = error.localizedDescription
+//                                    self.showError = true
+//                                    completion(error)
+//                                } else {
+//                                    // Update user's data in UserDefaults
+//                                    self.userNameStored = self.userName.lowercased()
+//                                    self.logStatus = true
+//                                    // Dismiss view
+//                                    self.dismiss()
+//                                    completion(nil)
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        } else {
+//            // Handle error: uid is nil
+//            self.errorMessage = "Error: Could not retrieve user's uid"
+//            self.showError = true
+//            completion(nil)
+//        }
+//    }
+
+    func updateUserInfo(completion: @escaping (Error?) -> Void){
         isLoading = true
         closeKeyboard()
-        // Get Firestore instance
         let db = Firestore.firestore()
         
         // Get user's uid, if it exists
         if let uid = Auth.auth().currentUser?.uid {
-            guard let imageData = userProfilePicData else {
-                completion(nil)
-                return
-            }
-            let storageRef = Storage.storage().reference().child("Profile_Images").child(userUID)
+        guard let imageData = userProfilePicData else {
+            completion(nil)
+            return
+        }
+        let storageRef = Storage.storage().reference().child("Profile_Images").child(userUID)
             storageRef.putData(imageData) { (metadata, error) in
                 if let error = error {
                     completion(error)
@@ -203,7 +258,8 @@ struct EditProfileView: View {
                             // Update user's data in Firebase Firestore
                             db.collection("Users").document(uid).updateData([
                                 "userEmail": self.emailID,
-                                "username": self.userName.lowercased()
+                                "username": self.userName.lowercased(),
+                                "userProfileURL": url?.absoluteString
                             ]) { (error) in
                                 if let error = error {
                                     // Show error message
@@ -229,6 +285,16 @@ struct EditProfileView: View {
             self.showError = true
             completion(nil)
         }
+    }
+    
+    // MARK: Displaying Errors VIA Alert
+    func setError(_ error: Error)async{
+        // MARK: UI Must be Updated on Main Thread
+        await MainActor.run(body: {
+            errorMessage = error.localizedDescription
+            showError.toggle()
+            isLoading = false
+        })
     }
     
     func getUserData() {
