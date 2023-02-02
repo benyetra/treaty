@@ -50,12 +50,7 @@ struct AccountView: View {
         NavigationStack{
             VStack{
                 if let myProfile{
-                    ReusableProfileContent(user: myProfile)
-                        .refreshable {
-                            // MARK: Refresh User Data
-                            self.myProfile = nil
-                            await fetchUserData()
-                        }
+                    ReusableProfileContent(user: myProfile, userWrapper: userWrapper)
                 }else{
                     ProgressView()
                 }

@@ -38,7 +38,7 @@ struct BarterView: View {
     }
     
     var body: some View {
-        CustomRefreshView(showsIndicator: false) {
+        CustomRefreshView(lottieFileName: "Loading", backgroundColor: Color("Blue"), content:  {
             if userWrapper.user.username.isEmpty {
                 UserNameView()
             } else {
@@ -91,17 +91,11 @@ struct BarterView: View {
                         .ignoresSafeArea()
                 }
             }
-        } onRefresh: {
+        }, onRefresh: {
             fetchUserData()
-        }
+        })
     }
-    
-    func refreshData() {
-        isLoading = true
-        fetchUserData()
-        isLoading = false
-    }
-    
+
     /// - Header View
     @ViewBuilder
     func HeaderView()->some View{
@@ -276,7 +270,7 @@ struct BarterView: View {
             .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
             .shadow(color: .black.opacity(0.15), radius: 10, x: 5, y: 5)
             .padding(.horizontal,15)
-            .padding(.top,10)
+//            .padding(.top,10)
         }
         
         /// - Transaction Card View

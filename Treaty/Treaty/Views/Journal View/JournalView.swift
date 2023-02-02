@@ -35,7 +35,6 @@ struct JournalView: View {
     }
     
     var body: some View {
-        
         ScrollView(.vertical, showsIndicators: false) {
             // MARK: Lazy Stack With Pinned Header
             LazyVStack(spacing: 15, pinnedViews: [.sectionHeaders]) {
