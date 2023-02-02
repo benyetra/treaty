@@ -7,6 +7,14 @@
 
 import SwiftUI
 import FirebaseFirestoreSwift
+import Firebase
+import FirebaseFirestore
+
+extension User: Equatable {
+    static func == (lhs: User, rhs: User) -> Bool {
+        return lhs.userUID == rhs.userUID
+    }
+}
 
 class User: Identifiable, Codable {
     @DocumentID var id: String?
@@ -19,11 +27,53 @@ class User: Identifiable, Codable {
     var credits: Int
 
     func addCredits(amount: Int) {
-        credits += amount
+        let db = Firestore.firestore()
+        let userRef = db.collection("Users").document(userUID)
+        db.runTransaction({ (transaction, errorPointer) -> Any? in
+            do {
+                let userData = try transaction.getDocument(userRef)
+                guard var user = userData.data() else {
+                    return nil
+                }
+                let oldCredits = user["credits"] as? Int ?? 0
+                user["credits"] = oldCredits + amount
+                transaction.setData(user, forDocument: userRef)
+            } catch let error as NSError {
+                errorPointer?.pointee = error
+            }
+            return nil
+        }) { (object, error) in
+            if let error = error {
+                print("Transaction failed: \(error)")
+            } else {
+                print("Transaction succeeded.")
+            }
+        }
     }
 
     func removeCredits(amount: Int) {
-        credits -= amount
+        let db = Firestore.firestore()
+        let userRef = db.collection("Users").document(userUID)
+        db.runTransaction({ (transaction, errorPointer) -> Any? in
+            do {
+                let userData = try transaction.getDocument(userRef)
+                guard var user = userData.data() else {
+                    return nil
+                }
+                let oldCredits = user["credits"] as? Int ?? 0
+                user["credits"] = oldCredits - amount
+                transaction.setData(user, forDocument: userRef)
+            } catch let error as NSError {
+                errorPointer?.pointee = error
+            }
+            return nil
+        }) { (object, error) in
+            if let error = error {
+                print("Transaction failed: \(error)")
+            } else {
+                print("Transaction succeeded.")
+            }
+        }
     }
 
     func getTotalCredits() -> Int {

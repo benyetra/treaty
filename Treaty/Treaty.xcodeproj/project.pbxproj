@@ -24,6 +24,7 @@
 		352C02F529798A94008E77DF /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352C02F429798A94008E77DF /* AuthService.swift */; };
 		352F3022298ACFBA006857CB /* CustomDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352F3021298ACFBA006857CB /* CustomDatePicker.swift */; };
 		352F3024298AD08A006857CB /* DateValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352F3023298AD08A006857CB /* DateValue.swift */; };
+		352F3026298B5B2E006857CB /* CustomRefreshView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352F3025298B5B2E006857CB /* CustomRefreshView.swift */; };
 		353DF54E29887FAC0088237A /* PartnerRequestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353DF54D29887FAC0088237A /* PartnerRequestModel.swift */; };
 		3544C8AC29874C4800957435 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 3544C8AB29874C4800957435 /* FirebaseAnalytics */; };
 		3544C8AE29874C4800957435 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 3544C8AD29874C4800957435 /* FirebaseMessaging */; };
@@ -87,6 +88,7 @@
 		352C02F429798A94008E77DF /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		352F3021298ACFBA006857CB /* CustomDatePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDatePicker.swift; sourceTree = "<group>"; };
 		352F3023298AD08A006857CB /* DateValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateValue.swift; sourceTree = "<group>"; };
+		352F3025298B5B2E006857CB /* CustomRefreshView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CustomRefreshView.swift; path = Treaty/Views/Helpers/CustomRefreshView.swift; sourceTree = SOURCE_ROOT; };
 		353DF54D29887FAC0088237A /* PartnerRequestModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerRequestModel.swift; sourceTree = "<group>"; };
 		3544C8AF298865A800957435 /* PartnerRequestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerRequestView.swift; sourceTree = "<group>"; };
 		358BCF102978329F000A7F9C /* Treaty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Treaty.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -287,6 +289,7 @@
 		358BCF6329783A12000A7F9C /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				352F3025298B5B2E006857CB /* CustomRefreshView.swift */,
 				352C02F429798A94008E77DF /* AuthService.swift */,
 				358BCF6429783A27000A7F9C /* View+Extension.swift */,
 				352C02EE2978AA60008E77DF /* CustomTextField.swift */,
@@ -479,6 +482,7 @@
 				352C02ED2978AA3D008E77DF /* LoginViewModel.swift in Sources */,
 				358BCF4629783349000A7F9C /* UserModel.swift in Sources */,
 				3506E0412980262A005F0771 /* AddPartnerView.swift in Sources */,
+				352F3026298B5B2E006857CB /* CustomRefreshView.swift in Sources */,
 				358BCF6529783A27000A7F9C /* View+Extension.swift in Sources */,
 				358BCF5C2978367F000A7F9C /* LoginView.swift in Sources */,
 				351818B7297E0C3C00230753 /* NewEntry.swift in Sources */,

@@ -218,6 +218,16 @@ struct JournalView: View {
                     // MARK: Delete Button
                     Button {
                         deleteEntry(entry: entry)
+                        if entry.taskParticipants.count == 1 {
+                            if entry.taskParticipants.first == userWrapper.user {
+                                user.removeCredits(amount: entry.amountSpent)
+                            } else {
+                                userWrapper.partner?.removeCredits(amount: entry.amountSpent)
+                            }
+                        } else if entry.taskParticipants.count == 2 {
+                            user.removeCredits(amount: entry.amountSpent)
+                            userWrapper.partner?.removeCredits(amount: entry.amountSpent)
+                        }
                         entryModel.filterTodayEntries(userUID: user.userUID)
                         print("deleting post \(entry)")
                     } label: {

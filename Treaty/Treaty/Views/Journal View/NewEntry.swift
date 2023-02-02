@@ -177,10 +177,20 @@ struct NewEntry: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save"){
                         save()
+                        if selectedUsers.count == 1 {
+                            if selectedUsers.first == userWrapper.user {
+                                user.addCredits(amount: selectedAmount)
+                            } else {
+                                userWrapper.partner?.addCredits(amount: selectedAmount)
+                            }
+                        } else if selectedUsers.count == 2 {
+                            user.addCredits(amount: selectedAmount)
+                            userWrapper.partner?.addCredits(amount: selectedAmount)
+                        }
                         entryModel.filterTodayEntries(userUID: user.userUID)
                         print("Array count: \(self.selectedUsers.count)")
                     }
-                    .disableWithOpacity(self.selectedUsers.isEmpty || self.selectedType == "")
+                    .disabled(self.selectedUsers.isEmpty || self.selectedType == "")
                 }
             }
         }
