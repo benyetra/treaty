@@ -16,6 +16,9 @@ struct ReusableProfileContent: View {
     var user: User
     @ObservedObject var userWrapper: UserWrapper
     @AppStorage("partnerUsernameStored") var partnerUsernameStored: String = ""
+    @AppStorage("user_name") var userNameStored: String = ""
+    @AppStorage("user_UID") var userUID: String = ""
+    @AppStorage("user_profile_url") var profileURL: URL?
     @State var partnerUsername: String = ""
     @State private var partnerToken: String = ""
     @State private var showLightbox = false
@@ -26,7 +29,7 @@ struct ReusableProfileContent: View {
             ScrollView(.vertical, showsIndicators: false) {
                 LazyVStack{
                     HStack(spacing: 12){
-                        WebImage(url: user.userProfileURL).placeholder{
+                        WebImage(url: profileURL).placeholder{
                             // MARK: Placeholder Image
                             Image("NullProfile")
                                 .resizable()
@@ -81,7 +84,7 @@ struct ReusableProfileContent: View {
                             }
                         }
                         VStack(alignment: .leading, spacing: 6) {
-                            Text("@\(user.username)")
+                            Text("@\(userNameStored)")
                                 .font(.title3)
                                 .fontWeight(.semibold)
                             if partnerUsername != "" {
