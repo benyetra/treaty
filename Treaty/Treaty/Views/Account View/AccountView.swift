@@ -37,6 +37,7 @@ struct AccountView: View {
     @State var isLoading: Bool = false
     @State var addPartnerSheet: Bool = false
     @State var pendingPartnerSheet: Bool = false
+    @State var editAccount: Bool = false
     @StateObject private var viewModel = PartnerRequestViewModel()
     @ObservedObject var userWrapper: UserWrapper
     var user: User
@@ -60,6 +61,7 @@ struct AccountView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
                         Button("Manage Partner") { addPartnerSheet.toggle() }
+                        Button("Edit Profile") { editAccount.toggle()}
                         Button("Logout",action: logOutUser)
                         Button("Delete Account",role: .destructive,action: deleteAccount)
                     } label: {
@@ -69,6 +71,9 @@ struct AccountView: View {
                             .scaleEffect(1)
                     }
                 }
+            }
+            .fullScreenCover(isPresented: $editAccount){
+                EditProfileView()
             }
             .sheet(isPresented: $addPartnerSheet){
                 AddPartnerView(userWrapper: userWrapper)

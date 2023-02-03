@@ -16,8 +16,12 @@ struct ReusableProfileContent: View {
     var user: User
     @ObservedObject var userWrapper: UserWrapper
     @AppStorage("partnerUsernameStored") var partnerUsernameStored: String = ""
+    @AppStorage("user_name") var userNameStored: String = ""
+    @AppStorage("user_UID") var userUID: String = ""
+    @AppStorage("user_profile_url") var profileURL: URL?
     @State var partnerUsername: String = ""
     @State private var partnerToken: String = ""
+    @State private var showLightbox = false
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
@@ -25,8 +29,8 @@ struct ReusableProfileContent: View {
             ScrollView(.vertical, showsIndicators: false) {
                 LazyVStack{
                     HStack(spacing: 12){
-                        WebImage(url: user.userProfileURL).placeholder{
-                            // MARK: Placeholder Imgae
+                        WebImage(url: profileURL).placeholder{
+                            // MARK: Placeholder Image
                             Image("NullProfile")
                                 .resizable()
                         }
@@ -34,9 +38,53 @@ struct ReusableProfileContent: View {
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 100, height: 100)
                         .clipShape(Circle())
-                        
+                        .overlay(
+                            WebImage(url: userWrapper.partner?.userProfileURL).placeholder{
+                                // MARK: Placeholder Image
+                                Image("NullProfile")
+                                    .resizable()
+                            }
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 30, height: 30)
+                                .clipShape(Circle())
+                                .overlay(Circle().stroke(colorScheme == .light ? Color("Blue") : Color("Sand"), lineWidth: 1))
+                                .position(x: 85, y: 85)
+                        )
+                        .onTapGesture {
+                            self.showLightbox = true
+                        }
+                        .sheet(isPresented: $showLightbox) {
+                            VStack {
+                                Text("Profile Pictures")
+                                    .font(.headline)
+                                    .fontWeight(.bold)
+                                    .padding(10)
+                                VStack {
+                                    Text("@\(user.username)")
+                                        .font(.title3)
+                                        .fontWeight(.semibold)
+                                    WebImage(url: self.user.userProfileURL)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                }
+                                if let partnerProfileURL = self.userWrapper.partner?.userProfileURL {
+                                    VStack {
+                                        Text("@\(partnerUsername)")
+                                            .font(.title3)
+                                            .fontWeight(.semibold)
+                                        WebImage(url: partnerProfileURL)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                    }
+                                }
+                            }
+                            .onTapGesture {
+                                self.showLightbox = false
+                            }
+                        }
                         VStack(alignment: .leading, spacing: 6) {
-                            Text("@\(user.username)")
+                            Text("@\(userNameStored)")
                                 .font(.title3)
                                 .fontWeight(.semibold)
                             if partnerUsername != "" {
@@ -45,6 +93,7 @@ struct ReusableProfileContent: View {
                                 Text("Add your partner in the account menu")
                             }
                         }
+                        .padding(.top, 10)
                         .onAppear {
                             getPartnerData()
                         }
