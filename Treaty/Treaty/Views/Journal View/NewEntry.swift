@@ -88,6 +88,7 @@ struct NewEntry: View {
                     }
                 } header: {
                     Text("Completed Task")
+                        .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                 }
                 
                 Section {
@@ -112,6 +113,7 @@ struct NewEntry: View {
                                 .opacity(isButton1Selected ? 1 : 0.5)
                             }
                             Text(user.username)
+                                .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                         }
                         if userWrapper.partner != nil {
                             HStack {
@@ -139,16 +141,20 @@ struct NewEntry: View {
                                 }
                                 if let username = userWrapper.partner?.username {
                                     Text(username)
+                                        .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                                 } else {
                                     Text("Your Partner")
+                                        .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                                 }
                             }
                         } else {
                             Text("No partner currently linked. If you have a partner add them on the Profile screen.")
+                                .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                         }
                     }
                 } header: {
                     Text("Participants")
+                        .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                 }
 
                 
@@ -158,10 +164,12 @@ struct NewEntry: View {
                         .labelsHidden()
                 } header: {
                     Text("Task Date")
+                        .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                 }
             }
             .listStyle(.insetGrouped)
             .navigationTitle("Add New Task")
+            .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
             .navigationBarTitleDisplayMode(.inline)
             // MARK: Disabling Dismiss on Swipe
             .interactiveDismissDisabled()
@@ -171,7 +179,7 @@ struct NewEntry: View {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel"){
                         dismiss()
-                    }
+                    }.foregroundColor(Color.red)
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -190,6 +198,7 @@ struct NewEntry: View {
                         entryModel.filterTodayEntries(userUID: user.userUID)
                         print("Array count: \(self.selectedUsers.count)")
                     }
+                    .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                     .disabled(self.selectedUsers.isEmpty || self.selectedType == "")
                 }
             }

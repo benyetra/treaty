@@ -24,7 +24,7 @@ struct JournalView: View {
     @State private var isShowingDatePicker: Bool = false
     var user: User
     @AppStorage("user_UID") var userUID: String = ""
-
+    
     
     init(userWrapper: UserWrapper) {
         self.userWrapper = userWrapper
@@ -46,9 +46,8 @@ struct JournalView: View {
         .safeAreaInset(edge: .bottom) {
             
             HStack{
-                
                 Button {
-                    
+                    entryModel.addNewTask.toggle()
                 } label: {
                     Text("Add Task")
                         .fontWeight(.bold)
@@ -56,21 +55,19 @@ struct JournalView: View {
                         .frame(maxWidth: .infinity)
                         .background(Color("Blue"),in: Capsule())
                 }
-
-                Button {
-                    
-                } label: {
-                    Text("Add Remainder")
-                        .fontWeight(.bold)
-                        .padding(.vertical)
-                        .frame(maxWidth: .infinity)
-                        .background(Color("Sand"),in: Capsule())
+                .sheet(isPresented: $entryModel.addNewTask) {
+                } content: {
+                    NewEntry(userWrapper: userWrapper)
+                        .environmentObject(entryModel)
+                        .onAppear {
+                            MainView().fetchUserData()
+                        }
                 }
+                .padding(.horizontal)
+                .padding(.top,10)
+                .foregroundColor(.white)
+                .background(.ultraThinMaterial)
             }
-            .padding(.horizontal)
-            .padding(.top,10)
-            .foregroundColor(.white)
-            .background(.ultraThinMaterial)
         }
     }
 }
