@@ -10,6 +10,8 @@ import SwiftUI
 struct CustomDatePicker: View {
     @Binding var currentDate: Date
     @StateObject var entryModel: EntryViewModel = EntryViewModel()
+    @AppStorage("user_UID") var userUID: String = ""
+    @State private var selectedDate: Date = Date()
 
     // Month update on arrow button clicks...
     @State var currentMonth: Int = 0
@@ -82,10 +84,12 @@ struct CustomDatePicker: View {
                             Capsule()
                                 .fill(Color("Blue"))
                                 .padding(.horizontal,8)
-                                .opacity(isSameDay(date1: value.date, date2: currentDate) ? 1 : 0)
+                                .opacity(isSameDay(date1: value.date, selectedDate: selectedDate) ? 1 : 0)
                         )
                         .onTapGesture {
+                            selectedDate = value.date
                             currentDate = value.date
+                            entryModel.filterTodayEntries(userUID: userUID)
                         }
                 }
             }
@@ -97,18 +101,15 @@ struct CustomDatePicker: View {
                     .frame(maxWidth: .infinity,alignment: .leading)
                     .padding(.vertical,20)
                 
-                if let note = entryModel.filteredEntries?.first(where: { note in
-                    return isSameDay(date1: note.taskDate, date2: currentDate)
-                }){
-                    if let entries = entryModel.filteredEntries{
-                        ForEach(entries){entry in
-                            
+                if let filteredEntries = entryModel.filteredEntries, !filteredEntries.isEmpty {
+                    ForEach(filteredEntries){entry in
+                        if isSameDay(date1: entry.taskDate, selectedDate: selectedDate) {
                             VStack(alignment: .leading, spacing: 10) {
                                 
                                 // For Custom Timing...
-                                Text(note.taskDate.addingTimeInterval(CGFloat.random(in: 0...5000)),style: .time)
-                                
-                                Text(note.product)
+                                Text(entry.taskDate, style: .time)
+
+                                Text(entry.product)
                                     .font(.title2.bold())
                             }
                             .padding(.vertical,10)
@@ -146,24 +147,24 @@ struct CustomDatePicker: View {
                 
                 if let note = entryModel.filteredEntries?.first(where: { note in
                     
-                    return isSameDay(date1: note.taskDate, date2: value.date)
+                    return isSameDay(date1: note.taskDate, selectedDate: value.date)
                 }){
                     Text("\(value.day)")
                         .font(.title3.bold())
-                        .foregroundColor(isSameDay(date1: note.taskDate, date2: currentDate) ? .white : .primary)
+                        .foregroundColor(isSameDay(date1: note.taskDate, selectedDate: selectedDate) ? .white : .primary)
                         .frame(maxWidth: .infinity)
                     
                     Spacer()
                     
                     Circle()
-                        .fill(isSameDay(date1: note.taskDate, date2: currentDate) ? .white : Color("Sand"))
+                        .fill(isSameDay(date1: note.taskDate, selectedDate: selectedDate) ? .white : Color("Sand"))
                         .frame(width: 8,height: 8)
                 }
                 else{
                     
                     Text("\(value.day)")
                         .font(.title3.bold())
-                        .foregroundColor(isSameDay(date1: value.date, date2: currentDate) ? .white : .primary)
+                        .foregroundColor(isSameDay(date1: value.date, selectedDate: selectedDate) ? .white : .primary)
                         .frame(maxWidth: .infinity)
                     
                     Spacer()
@@ -174,12 +175,11 @@ struct CustomDatePicker: View {
         .frame(height: 60,alignment: .top)
     }
     
-    // checking dates...
-    func isSameDay(date1: Date,date2: Date)->Bool{
+    func isSameDay(date1: Date, selectedDate: Date) -> Bool {
         let calendar = Calendar.current
-        
-        return calendar.isDate(date1, inSameDayAs: date2)
+        return calendar.isDate(date1, inSameDayAs: selectedDate)
     }
+
     
     // extrating Year And Month for display...
     func extraDate()->[String]{

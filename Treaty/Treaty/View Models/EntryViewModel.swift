@@ -13,7 +13,9 @@ class EntryViewModel: ObservableObject{
     @AppStorage("partnerUsernameStored") var partnerUsernameStored: String = ""
     @AppStorage("partnerTokenStored") var tokenStored: String = ""
     @AppStorage("user_name") var usernameStored: String = ""
-
+    
+    @Published var selectedDay: Date = Date()
+    
     // Sample Tasks
     @Published var storedEntries: [Entry] = []
     
@@ -47,8 +49,7 @@ class EntryViewModel: ObservableObject{
                 let calendar = Calendar.current
                 
                 let filtered = self.storedEntries.filter{
-                    return calendar.isDate($0.taskDate, inSameDayAs: self.currentDay) &&
-                    ($0.userUID == userUID || $0.taskParticipants.contains(where: { $0.username == self.usernameStored}) || $0.taskParticipants.contains(where: { $0.username == self.partnerUsernameStored}))
+                    return ($0.userUID == userUID || $0.taskParticipants.contains(where: { $0.username == self.usernameStored}) || $0.taskParticipants.contains(where: { $0.username == self.partnerUsernameStored}))
                 }.sorted { task1, task2 in
                     return task2.taskDate < task1.taskDate
                 }
@@ -60,6 +61,7 @@ class EntryViewModel: ObservableObject{
             }
         }
     }
+
 
     func fetchCurrentWeek() {
         let today = Date()
@@ -76,54 +78,6 @@ class EntryViewModel: ObservableObject{
                 currentWeek.append(weekday)
             }
         }
-    }
-
-
-    
-    // MARK: Extracting Date
-    func extractDate(date: Date,format: String)->String{
-        let formatter = DateFormatter()
-        
-        formatter.dateFormat = format
-        
-        return formatter.string(from: date)
-    }
-    
-    // MARK: Checking if current Date is Today
-    func isToday(date: Date)->Bool{
-        
-        let calendar = Calendar.current
-        
-        return calendar.isDate(currentDay, inSameDayAs: date)
-    }
-    
-    // MARK: Checking if the currentHour is task Hour
-    func isCurrentHour(date: Date)->Bool{
-        
-        let calendar = Calendar.current
-        
-        let hour = calendar.component(.hour, from: date)
-        let currentHour = calendar.component(.hour, from: Date())
-        
-        return hour == currentHour
-    }
-    
-    func generateWeek(for date: Date) -> [Date] {
-        let calendar = Calendar.current
-        let week = calendar.dateInterval(of: .weekOfMonth, for: date)
-
-        guard let firstWeekDay = week?.start else {
-            return []
-        }
-
-        var weekDays: [Date] = []
-        (0..<7).forEach { day in
-            if let weekday = calendar.date(byAdding: .day, value: day, to: firstWeekDay) {
-                weekDays.append(weekday)
-            }
-        }
-
-        return weekDays
     }
 
     func fetchEntries(completion: @escaping ([Entry]) -> Void) {
@@ -188,6 +142,52 @@ class EntryViewModel: ObservableObject{
                 }
             }
         }
+    }
+    
+    // MARK: Extracting Date
+    func extractDate(date: Date,format: String)->String{
+        let formatter = DateFormatter()
+        
+        formatter.dateFormat = format
+        
+        return formatter.string(from: date)
+    }
+    
+    // MARK: Checking if current Date is Today
+    func isToday(date: Date)->Bool{
+        
+        let calendar = Calendar.current
+        
+        return calendar.isDate(currentDay, inSameDayAs: date)
+    }
+    
+    // MARK: Checking if the currentHour is task Hour
+    func isCurrentHour(date: Date)->Bool{
+        
+        let calendar = Calendar.current
+        
+        let hour = calendar.component(.hour, from: date)
+        let currentHour = calendar.component(.hour, from: Date())
+        
+        return hour == currentHour
+    }
+    
+    func generateWeek(for date: Date) -> [Date] {
+        let calendar = Calendar.current
+        let week = calendar.dateInterval(of: .weekOfMonth, for: date)
+
+        guard let firstWeekDay = week?.start else {
+            return []
+        }
+
+        var weekDays: [Date] = []
+        (0..<7).forEach { day in
+            if let weekday = calendar.date(byAdding: .day, value: day, to: firstWeekDay) {
+                weekDays.append(weekday)
+            }
+        }
+
+        return weekDays
     }
 }
 
