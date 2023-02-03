@@ -25,6 +25,14 @@ struct Entry: Identifiable,Codable{
         case taskDate
         case userUID
     }
+    
+    func getDate(offset: Int)->Date{
+        let calender = Calendar.current
+        
+        let date = calender.date(byAdding: .day, value: offset, to: Date())
+        
+        return date ?? Date()
+    }
 }
 
 
