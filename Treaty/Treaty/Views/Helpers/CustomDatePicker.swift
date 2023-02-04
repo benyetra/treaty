@@ -117,46 +117,9 @@ struct CustomDatePicker: View {
                 if let filteredEntries = entryModel.filteredEntries, !filteredEntries.isEmpty {
                     ForEach(filteredEntries){entry in
                         if isSameDay(date1: entry.taskDate, selectedDate: selectedDate) {
-                            HStack {
-                                Text(entry.taskDate, style: .time)
-                                
-                                Text(entry.product)
-                                    .font(.title2.bold())
-                                // MARK: Delete Button
-                                Button {
-                                    deleteEntry(entry: entry)
-                                    if entry.taskParticipants.count == 1 {
-                                        if entry.taskParticipants.first == userWrapper.user {
-                                            user.removeCredits(amount: entry.amountSpent)
-                                        } else {
-                                            userWrapper.partner?.removeCredits(amount: entry.amountSpent)
-                                        }
-                                    } else if entry.taskParticipants.count == 2 {
-                                        user.removeCredits(amount: entry.amountSpent)
-                                        userWrapper.partner?.removeCredits(amount: entry.amountSpent)
-                                    }
-                                    entryModel.filterTodayEntries(userUID: user.userUID)
-                                    print("deleting post \(entry)")
-                                } label: {
-                                    Image(systemName: "trash")
-                                        .foregroundStyle(colorScheme == .light ? Color.black : Color.white)
-                                        .padding(10)
-                                        .background((colorScheme == .light ? Color.white : Color.black), in: RoundedRectangle(cornerRadius: 10))
-                                }.hAlign(.trailing)
-                                
-//                                VStack(alignment: .leading, spacing: 10) {
-                                }
-                                .padding(.vertical,10)
-                                .padding(.horizontal)
-                                .frame(maxWidth: .infinity,alignment: .leading)
-                                .background(
-                                    
-                                    Color("Sand")
-                                        .opacity(0.5)
-                                        .cornerRadius(10)
-                                )
-                            }
+                            EntryCardView(entry: entry)
                         }
+                    }
                 }else{
                     Text("No Task Found")
                 }
@@ -205,6 +168,105 @@ struct CustomDatePicker: View {
         }
         .padding(.vertical,9)
         .frame(height: 60,alignment: .top)
+    }
+    
+    func EntryCardView(entry: Entry)->some View{
+        HStack(alignment: .top,spacing: 30){
+            VStack(spacing: 10){
+                Circle()
+                    .fill(entryModel.isCurrentHour(date: entry.taskDate) ? (colorScheme == .light ? Color.black : Color.white) : .clear)
+                    .frame(width: 15, height: 15)
+                    .background(
+                    
+                        Circle()
+                            .stroke((colorScheme == .light ? Color("Blue") : Color("Sand")), lineWidth: 1)
+                            .padding(-3)
+                    )
+                    .scaleEffect(!entryModel.isCurrentHour(date: entry.taskDate) ? 0.8 : 1)
+                
+                Rectangle()
+                    .fill(colorScheme == .light ? Color("Blue") : Color("Sand"))
+                    .frame(width: 3)
+            }
+            VStack{
+                
+                HStack(alignment: .top, spacing: 10) {
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Text(entry.product)
+                                .font(.title2.bold())
+                                .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Blue"))
+                            if entry.amountSpent != 0 {
+                                Text("\(entry.amountSpent)")
+                                    .font(.title3.bold())
+                                    .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Blue"))
+                                    .hAlign(.trailingLastTextBaseline)
+                                Image("treat")
+                                    .resizable()
+                                    .frame(width: 15, height: 15)
+                            }
+                        }
+                    }
+                    .hLeading()
+                }
+
+                // MARK: Team Members
+                HStack(spacing: 0){
+                    HStack(spacing: -10){
+                        HStack {
+                            ForEach(0..<entry.taskParticipants.count, id: \.self) { i in
+                                WebImage(url: entry.taskParticipants[i].userProfileURL)
+                                    .placeholder(Image("NullProfile"))
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 45, height: 45)
+                                    .clipShape(Circle())
+                                    .background(
+                                        Circle()
+                                            .stroke((colorScheme == .light ? Color("Sand") : Color("Blue")), lineWidth: 5)
+                                    )
+                            }
+                        }
+                    }
+                    .hLeading()
+                    Text(entry.taskDate.formatted(date: .omitted, time: .shortened))
+                        .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Blue"))
+                        .padding(.horizontal, 10)
+                    // MARK: Delete Button
+                    Button {
+                        deleteEntry(entry: entry)
+                        if entry.taskParticipants.count == 1 {
+                            if entry.taskParticipants.first == userWrapper.user {
+                                user.removeCredits(amount: entry.amountSpent)
+                            } else {
+                                userWrapper.partner?.removeCredits(amount: entry.amountSpent)
+                            }
+                        } else if entry.taskParticipants.count == 2 {
+                            user.removeCredits(amount: entry.amountSpent)
+                            userWrapper.partner?.removeCredits(amount: entry.amountSpent)
+                        }
+                        entryModel.filterTodayEntries(userUID: user.userUID)
+                        print("deleting post \(entry)")
+                    } label: {
+                        Image(systemName: "trash")
+                            .foregroundStyle(colorScheme == .light ? Color.black : Color.white)
+                            .padding(10)
+                            .background((colorScheme == .light ? Color.white : Color.black), in: RoundedRectangle(cornerRadius: 10))
+                    }
+                }
+                .padding(.top)
+            }
+            .foregroundColor(entryModel.isCurrentHour(date: entry.taskDate) ? .black : .black)
+            .padding(entryModel.isCurrentHour(date: entry.taskDate) ? 15 : 15)
+            .padding(.bottom,entryModel.isCurrentHour(date: entry.taskDate) ? 10 : 10)
+            .hLeading()
+            .background(
+                Color("Sand")
+                    .cornerRadius(25)
+                    .opacity(entryModel.isCurrentHour(date: entry.taskDate) ? 1 : 1)
+            )
+        }
+        .hLeading()
     }
     
     func deleteEntry(entry: Entry) {
