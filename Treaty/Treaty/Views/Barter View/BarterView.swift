@@ -239,7 +239,7 @@ struct BarterView: View {
                         Image("treat")
                             .resizable()
                             .frame(width: 40, height: 40)
-                
+                        
                         Text("\(user.credits)")
                             .font(.custom(ubuntu, size: 40, relativeTo: .largeTitle))
                             .fontWeight(.medium)
@@ -251,19 +251,6 @@ struct BarterView: View {
                         .foregroundColor(.red)
                 }
                 .frame(maxWidth: .infinity,alignment: .leading)
-                
-                Button {
-                    
-                } label: {
-                    Image(systemName: "plus")
-                        .font(.title)
-                        .scaleEffect(0.9)
-                        .foregroundColor(.white)
-                        .frame(width: 55, height: 55)
-                        .background(Color("Blue"))
-                        .clipShape(Circle())
-                        .shadow(color: .black.opacity(0.15), radius: 5, x: 10, y: 10)
-                }
             }
             .padding(15)
             .background(colorScheme == .light ? Color.white : Color("Sand"))
