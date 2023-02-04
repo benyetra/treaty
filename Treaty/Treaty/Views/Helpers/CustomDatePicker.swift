@@ -6,15 +6,28 @@
 //
 
 import SwiftUI
+import SDWebImageSwiftUI
+import FirebaseFirestore
+import Firebase
 
 struct CustomDatePicker: View {
     @Binding var currentDate: Date
     @StateObject var entryModel: EntryViewModel = EntryViewModel()
-    @AppStorage("user_UID") var userUID: String = ""
+    @Environment(\.colorScheme) private var colorScheme
     @State private var selectedDate: Date = Date()
-
-    // Month update on arrow button clicks...
     @State var currentMonth: Int = 0
+    @ObservedObject var userWrapper: UserWrapper
+    @AppStorage("user_UID") var userUID: String = ""
+    
+    var user: User
+     
+     init(userWrapper: UserWrapper) {
+         self.userWrapper = userWrapper
+         self.user = userWrapper.user
+         self._currentDate = Binding.constant(Date())
+         self._selectedDate = State(initialValue: Date())
+         self._currentMonth = State(initialValue: 0)
+     }
     
     var body: some View {
         
@@ -104,28 +117,47 @@ struct CustomDatePicker: View {
                 if let filteredEntries = entryModel.filteredEntries, !filteredEntries.isEmpty {
                     ForEach(filteredEntries){entry in
                         if isSameDay(date1: entry.taskDate, selectedDate: selectedDate) {
-                            VStack(alignment: .leading, spacing: 10) {
-                                
-                                // For Custom Timing...
+                            HStack {
                                 Text(entry.taskDate, style: .time)
-
+                                
                                 Text(entry.product)
                                     .font(.title2.bold())
-                            }
-                            .padding(.vertical,10)
-                            .padding(.horizontal)
-                            .frame(maxWidth: .infinity,alignment: .leading)
-                            .background(
+                                // MARK: Delete Button
+                                Button {
+                                    deleteEntry(entry: entry)
+                                    if entry.taskParticipants.count == 1 {
+                                        if entry.taskParticipants.first == userWrapper.user {
+                                            user.removeCredits(amount: entry.amountSpent)
+                                        } else {
+                                            userWrapper.partner?.removeCredits(amount: entry.amountSpent)
+                                        }
+                                    } else if entry.taskParticipants.count == 2 {
+                                        user.removeCredits(amount: entry.amountSpent)
+                                        userWrapper.partner?.removeCredits(amount: entry.amountSpent)
+                                    }
+                                    entryModel.filterTodayEntries(userUID: user.userUID)
+                                    print("deleting post \(entry)")
+                                } label: {
+                                    Image(systemName: "trash")
+                                        .foregroundStyle(colorScheme == .light ? Color.black : Color.white)
+                                        .padding(10)
+                                        .background((colorScheme == .light ? Color.white : Color.black), in: RoundedRectangle(cornerRadius: 10))
+                                }.hAlign(.trailing)
                                 
-                                Color("Sand")
-                                    .opacity(0.5)
-                                    .cornerRadius(10)
-                            )
+//                                VStack(alignment: .leading, spacing: 10) {
+                                }
+                                .padding(.vertical,10)
+                                .padding(.horizontal)
+                                .frame(maxWidth: .infinity,alignment: .leading)
+                                .background(
+                                    
+                                    Color("Sand")
+                                        .opacity(0.5)
+                                        .cornerRadius(10)
+                                )
+                            }
                         }
-                    }
-                }
-                else{
-                    
+                }else{
                     Text("No Task Found")
                 }
             }
@@ -173,6 +205,18 @@ struct CustomDatePicker: View {
         }
         .padding(.vertical,9)
         .frame(height: 60,alignment: .top)
+    }
+    
+    func deleteEntry(entry: Entry) {
+        Task {
+            do {
+                /// Step 2: Delete Firestore Document
+                guard let entryID =  entry.id else {return}
+                try await Firestore.firestore().collection("entries").document(entryID).delete()
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
     }
     
     func isSameDay(date1: Date, selectedDate: Date) -> Bool {

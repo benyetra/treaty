@@ -38,7 +38,7 @@ struct JournalView: View {
             VStack(spacing: 20){
                 
                 // Custom Date Picker....
-                CustomDatePicker(currentDate: $currentDate)
+                CustomDatePicker(userWrapper: userWrapper)
             }
             .padding(.vertical)
         }

@@ -287,7 +287,7 @@ struct JournalViewO: View {
                         .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                         .padding(.top, 5)
                         .vAlign(.topLeading)
-                    CustomDatePicker(currentDate: $selectedDate)
+//                    CustomDatePicker(currentDate: $selectedDate)
                     Button(action: {
                         withAnimation {
                             self.entryModel.currentWeek = self.entryModel.generateWeek(for: self.selectedDate)
