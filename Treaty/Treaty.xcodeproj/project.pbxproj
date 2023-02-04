@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		3506E03F2980139F005F0771 /* PartnerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3506E03E2980139F005F0771 /* PartnerModel.swift */; };
 		3506E0412980262A005F0771 /* AddPartnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3506E0402980262A005F0771 /* AddPartnerView.swift */; };
-		3518189C2979C33400230753 /* JournalViewO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3518189B2979C33400230753 /* JournalViewO.swift */; };
 		3518189E297B3E4100230753 /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = 3518189D297B3E4100230753 /* Fonts */; };
 		351818A0297B3E9200230753 /* TransactionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3518189F297B3E9200230753 /* TransactionType.swift */; };
 		351818AE297D9B0D00230753 /* Entry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 351818AD297D9B0D00230753 /* Entry.swift */; };
@@ -81,7 +80,6 @@
 /* Begin PBXFileReference section */
 		3506E03E2980139F005F0771 /* PartnerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerModel.swift; sourceTree = "<group>"; };
 		3506E0402980262A005F0771 /* AddPartnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPartnerView.swift; sourceTree = "<group>"; };
-		3518189B2979C33400230753 /* JournalViewO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JournalViewO.swift; sourceTree = "<group>"; };
 		3518189D297B3E4100230753 /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Fonts; sourceTree = "<group>"; };
 		3518189F297B3E9200230753 /* TransactionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionType.swift; sourceTree = "<group>"; };
 		351818AD297D9B0D00230753 /* Entry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entry.swift; sourceTree = "<group>"; };
@@ -165,7 +163,6 @@
 		3518189A2979C32000230753 /* Journal View */ = {
 			isa = PBXGroup;
 			children = (
-				3518189B2979C33400230753 /* JournalViewO.swift */,
 				351818B6297E0C3C00230753 /* NewEntry.swift */,
 				352F3032298CA285006857CB /* JournalView.swift */,
 			);
@@ -517,7 +514,6 @@
 				352F3024298AD08A006857CB /* DateValue.swift in Sources */,
 				358BCF6D29783ACE000A7F9C /* AccountView.swift in Sources */,
 				358BCF60297839D8000A7F9C /* LoadingView.swift in Sources */,
-				3518189C2979C33400230753 /* JournalViewO.swift in Sources */,
 				352C02EF2978AA60008E77DF /* CustomTextField.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
