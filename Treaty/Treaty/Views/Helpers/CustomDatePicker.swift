@@ -120,7 +120,17 @@ struct CustomDatePicker: View {
                             EntryCardView(entry: entry)
                         }
                     }
-                }else{
+                }
+
+                if let filteredRecords = entryModel.filteredBathroomRecords, !filteredRecords.isEmpty {
+                    ForEach(filteredRecords) { record in
+                        if isSameDay(date1: record.taskDate, selectedDate: selectedDate) {
+                            RecordCardView(record: record)
+                        }
+                    }
+                }
+
+                if entryModel.filteredEntries == nil && entryModel.filteredBathroomRecords == nil {
                     Text("No Task Found")
                 }
             }
@@ -154,8 +164,20 @@ struct CustomDatePicker: View {
                     Circle()
                         .fill(isSameDay(date1: note.taskDate, selectedDate: selectedDate) ? .white : Color("Sand"))
                         .frame(width: 8,height: 8)
-                }
-                else{
+                } else if let record = entryModel.filteredBathroomRecords?.first(where: { record in
+                    return isSameDay(date1: record.taskDate, selectedDate: value.date)
+                }) {
+                    Text("\(value.day)")
+                        .font(.title3.bold())
+                        .foregroundColor(isSameDay(date1: record.taskDate, selectedDate: selectedDate) ? .white : .primary)
+                        .frame(maxWidth: .infinity)
+                    
+                    Spacer()
+                    
+                    Circle()
+                        .fill(isSameDay(date1: record.taskDate, selectedDate: selectedDate) ? .white : Color("Sand"))
+                        .frame(width: 8,height: 8)
+                }else{
                     
                     Text("\(value.day)")
                         .font(.title3.bold())
@@ -267,12 +289,99 @@ struct CustomDatePicker: View {
         .hLeading()
     }
     
+    func RecordCardView(record: BathroomRecord)->some View{
+        HStack(alignment: .top,spacing: 30){
+            VStack(spacing: 10){
+                Circle()
+                    .fill(entryModel.isCurrentHour(date: record.taskDate) ? (colorScheme == .light ? Color.black : Color.white) : .clear)
+                    .frame(width: 15, height: 15)
+                    .background(
+                    
+                        Circle()
+                            .stroke((colorScheme == .light ? Color("Sand") : Color("Blue")), lineWidth: 1)
+                            .padding(-3)
+                    )
+                    .scaleEffect(!entryModel.isCurrentHour(date: record.taskDate) ? 0.8 : 1)
+                
+                Rectangle()
+                    .fill(colorScheme == .light ? Color("Sand") : Color("Blue"))
+                    .frame(width: 3)
+            }
+            VStack{
+                
+                HStack(alignment: .top, spacing: 10) {
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Text(record.product)
+                                .font(.title2.bold())
+                                .foregroundColor(colorScheme == .light ? Color("Sand") : Color("Sand"))
+                            Text("\(record.size)")
+                                .font(.title3.bold())
+                                .foregroundColor(colorScheme == .light ? Color("Sand") : Color("Sand"))
+                                .hAlign(.trailingLastTextBaseline)
+                        }
+                    }
+                    .hLeading()
+                }
+
+                HStack(){
+                    HStack {
+                        let emojiString = "\(record.productIcon)"
+                        let emojiImage = UIGraphicsImageRenderer(size: CGSize(width: 30, height: 30)).image { _ in
+                            emojiString.draw(at: CGPoint.zero, withAttributes: [.font: UIFont.systemFont(ofSize: 30)])
+                        }
+                        Image(uiImage: emojiImage)
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                    }.hAlign(.leadingFirstTextBaseline)
+                    Text(record.taskDate.formatted(date: .omitted, time: .shortened))
+                        .foregroundColor(colorScheme == .light ? Color("Sand") : Color("Sand"))
+                        .padding(.horizontal, 10)
+                    // MARK: Delete Button
+                    Button {
+                        deleteRecord(record: record)
+                        entryModel.filterTodayEntries(userUID: user.userUID)
+                        print("deleting post \(record)")
+                    } label: {
+                        Image(systemName: "trash")
+                            .foregroundStyle(colorScheme == .light ? Color.black : Color.white)
+                            .padding(10)
+                            .background((colorScheme == .light ? Color.white : Color.black), in: RoundedRectangle(cornerRadius: 10))
+                    }
+                }
+                .padding(.top)
+            }
+            .foregroundColor(entryModel.isCurrentHour(date: record.taskDate) ? .black : .black)
+            .padding(entryModel.isCurrentHour(date: record.taskDate) ? 15 : 15)
+            .padding(.bottom,entryModel.isCurrentHour(date: record.taskDate) ? 10 : 10)
+            .hLeading()
+            .background(
+                Color("Blue")
+                    .cornerRadius(25)
+                    .opacity(entryModel.isCurrentHour(date: record.taskDate) ? 1 : 1)
+            )
+        }
+        .hLeading()
+    }
+    
     func deleteEntry(entry: Entry) {
         Task {
             do {
                 /// Step 2: Delete Firestore Document
                 guard let entryID =  entry.id else {return}
                 try await Firestore.firestore().collection("entries").document(entryID).delete()
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
+    func deleteRecord(record: BathroomRecord) {
+        Task {
+            do {
+                /// Step 2: Delete Firestore Document
+                guard let entryID =  record.id else {return}
+                try await Firestore.firestore().collection("notes").document(entryID).delete()
             } catch {
                 print(error.localizedDescription)
             }

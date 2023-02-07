@@ -16,6 +16,7 @@ struct ReusableProfileContent: View {
     var user: User
     @ObservedObject var userWrapper: UserWrapper
     @AppStorage("partnerUsernameStored") var partnerUsernameStored: String = ""
+    @AppStorage("partnerUID") var partnerUIDStored: String = ""
     @AppStorage("user_name") var userNameStored: String = ""
     @AppStorage("user_UID") var userUID: String = ""
     @AppStorage("user_profile_url") var profileURL: URL?
@@ -141,6 +142,7 @@ struct ReusableProfileContent: View {
                         {
                             self.userWrapper.partner = PartnerModel(username: partnerUsername, userProfileURL: partnerURL, token: partnerToken, credits: partnerCredits, partnerUID: partnerUID)
                             self.partnerUsernameStored = partnerUsername
+                            self.partnerUIDStored = partnerUID
                         } else {
                             let defaultPartnerURL = URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!
                             self.userWrapper.partner = PartnerModel(username: "", userProfileURL: defaultPartnerURL, token: "", credits: 50, partnerUID: partnerUID)

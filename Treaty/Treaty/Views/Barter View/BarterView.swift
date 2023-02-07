@@ -32,7 +32,8 @@ struct BarterView: View {
     @State var selectedTransaction: TransactionType = TransactionType(amountSpent: 0, product: "", productIcon: "")
     @StateObject var entryModel: EntryViewModel = EntryViewModel()
     @AppStorage("partnerUsernameStored") var partnerUsernameStored: String = ""
-    
+    @AppStorage("partnerUID") var partnerUIDStored: String = ""
+
     var user: User
     
     init(userWrapper: UserWrapper) {
@@ -218,6 +219,7 @@ struct BarterView: View {
                         {
                             self.userWrapper.partner = PartnerModel(username: partnerUsername, userProfileURL: partnerURL, token: partnerToken, credits: partnerCredits, partnerUID: partnerUID)
                             self.partnerUsernameStored = partnerUsername
+                            self.partnerUIDStored = partnerUID
                         } else {
                             let defaultPartnerURL = URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!
                             self.userWrapper.partner = PartnerModel(username: "", userProfileURL: defaultPartnerURL, token: "", credits: 50, partnerUID: partnerUID)

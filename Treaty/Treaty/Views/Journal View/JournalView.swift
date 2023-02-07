@@ -50,7 +50,7 @@ struct JournalView: View {
                     Button {
                         entryModel.addNewTask.toggle()
                     } label: {
-                        Text("Add Task")
+                        Text("Add New Task")
                             .fontWeight(.bold)
                             .padding(.vertical)
                             .frame(maxWidth: .infinity)
@@ -64,11 +64,28 @@ struct JournalView: View {
                                 MainView().fetchUserData()
                             }
                     }
-                    .padding(.horizontal)
-                    .padding(.top,10)
-                    .foregroundColor(.white)
-                    .background(.ultraThinMaterial)
+                    Button {
+                        entryModel.addNewBathroomRecord.toggle()
+                    } label: {
+                        Text("Bathroom Break")
+                            .fontWeight(.bold)
+                            .padding(.vertical)
+                            .frame(maxWidth: .infinity)
+                            .background(Color("Sand"),in: Capsule())
+                    }
+                    .sheet(isPresented: $entryModel.addNewBathroomRecord) {
+                    } content: {
+                        NewBathroomRecord(userWrapper: userWrapper)
+                            .environmentObject(entryModel)
+                            .onAppear {
+                                MainView().fetchUserData()
+                            }
+                    }
                 }
+                .padding(.horizontal)
+                .padding(.top,10)
+                .foregroundColor(.white)
+                .background(.ultraThinMaterial)
             }
         }, onRefresh: {
             entryModel.filterTodayEntries(userUID: user.userUID)

@@ -168,7 +168,7 @@ struct NewEntry: View {
                 }
             }
             .listStyle(.insetGrouped)
-            .navigationTitle("Add New Task")
+            .navigationTitle("Add New Event")
             .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
             .navigationBarTitleDisplayMode(.inline)
             // MARK: Disabling Dismiss on Swipe

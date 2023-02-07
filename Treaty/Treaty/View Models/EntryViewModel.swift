@@ -11,6 +11,7 @@ import FirebaseFirestore
 class EntryViewModel: ObservableObject{
     @AppStorage("user_UID") var userUID: String = ""
     @AppStorage("partnerUsernameStored") var partnerUsernameStored: String = ""
+    @AppStorage("partnerUID") var partnerUIDStored: String = ""
     @AppStorage("partnerTokenStored") var tokenStored: String = ""
     @AppStorage("user_name") var usernameStored: String = ""
     
@@ -18,6 +19,9 @@ class EntryViewModel: ObservableObject{
     
     // Sample Tasks
     @Published var storedEntries: [Entry] = []
+    
+    // Bathroom Records
+    @Published var storedBathroomRecords: [BathroomRecord] = []
     
     // MARK: Current Week Days
     @Published var currentWeek: [Date] = []
@@ -28,8 +32,14 @@ class EntryViewModel: ObservableObject{
     // MARK: Filtering Today Tasks
     @Published var filteredEntries: [Entry]?
     
+    // MARK: Filtering Today Tasks
+    @Published var filteredBathroomRecords: [BathroomRecord]?
+
     // MARK: New Task View
     @Published var addNewTask: Bool = false
+    
+    //MARK: New Bathroom Record
+    @Published var addNewBathroomRecord: Bool = false
     
     // MARK: Intializing
     init(){
@@ -56,6 +66,27 @@ class EntryViewModel: ObservableObject{
                 DispatchQueue.main.async {
                     withAnimation{
                         self.filteredEntries = filtered
+                    }
+                }
+            }
+        }
+        fetchBathroomRecords {  (records) in
+            // use the entries here
+            for record in records {
+                self.storedBathroomRecords = records
+            }
+            DispatchQueue.global(qos: .userInteractive).async {
+                
+                let calendar = Calendar.current
+                
+                let filteredRecords = self.storedBathroomRecords.filter{
+                    return ($0.userUID == userUID || $0.userUID == self.partnerUIDStored)
+                }.sorted { task1, task2 in
+                    return task2.taskDate < task1.taskDate
+                }
+                DispatchQueue.main.async {
+                    withAnimation{
+                        self.filteredBathroomRecords = filteredRecords
                     }
                 }
             }
@@ -108,6 +139,30 @@ class EntryViewModel: ObservableObject{
                         if entries.count == querySnapshot!.count {
                             completion(entries)
                         }
+                    }
+                }
+            }
+        }
+    }
+    
+    func fetchBathroomRecords(completion: @escaping ([BathroomRecord]) -> Void) {
+        var records: [BathroomRecord] = []
+        let db = Firestore.firestore()
+        db.collection("notes").getDocuments { (querySnapshot, error) in
+            if let error = error {
+                print("Error getting documents: \(error)")
+            } else {
+                for document in querySnapshot!.documents {
+                    let data = document.data()
+                    let product = data["product"] as! String
+                    let productIcon = data["productIcon"] as! String
+                    let taskDate = data["taskDate"] as! Timestamp
+                    let userUID = data["userUID"] as! String
+                    let size = data["size"] as! String
+                    let record = BathroomRecord(id: document.documentID, product: product, productIcon: productIcon, taskDate: taskDate.dateValue(), userUID: userUID, size: size)
+                    records.append(record)
+                    if records.count == querySnapshot!.count {
+                        completion(records)
                     }
                 }
             }
