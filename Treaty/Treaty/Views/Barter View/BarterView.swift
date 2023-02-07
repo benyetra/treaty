@@ -28,13 +28,17 @@ struct BarterView: View {
     @State private var expandMenu: Bool = false
     @State private var dimContent: Bool = false
     @State private var isLoading = false
+    @State private var isSheetViewPresented: Bool = false
+    @State var selectedTransaction: TransactionType = TransactionType(amountSpent: 0, product: "", productIcon: "")
+    @StateObject var entryModel: EntryViewModel = EntryViewModel()
     @AppStorage("partnerUsernameStored") var partnerUsernameStored: String = ""
-
+    
     var user: User
     
     init(userWrapper: UserWrapper) {
         self.userWrapper = userWrapper
         self.user = userWrapper.user
+        self.selectedTransaction = types.first!
     }
     
     var body: some View {
@@ -61,7 +65,7 @@ struct BarterView: View {
                         ScrollView(.vertical, showsIndicators: false) {
                             VStack(spacing: 12){
                                 ForEach(types){transactionType in
-                                    TransactionCardView(transactionType)
+                                  TransactionCardView(transactionType, selectedTransaction: $selectedTransaction)
                                 }
                             }
                             .padding(.top,40)
@@ -95,99 +99,99 @@ struct BarterView: View {
             fetchUserData()
         })
     }
-
+    
     /// - Header View
     @ViewBuilder
     func HeaderView()->some View{
-            GeometryReader{
-                let size = $0.size
-                let offset = (size.height + 200.0) * 0.21
-                
-                HStack{
-                    VStack(alignment: .leading, spacing: 4) {
-                        RoundedRectangle(cornerRadius: 2, style: .continuous)
-                            .menuTitleView(CGSize(width: 15, height: 2),"Gave", offset, expandMenu){
-                                print("Tapped Gave")
-                            }
-                        
-                        RoundedRectangle(cornerRadius: 2, style: .continuous)
-                            .menuTitleView(CGSize(width: 35, height: 2),"Earned", (offset * 2), expandMenu){
-                                print("Tapped Earned")
-                            }
-                        
-                        RoundedRectangle(cornerRadius: 2, style: .continuous)
-                            .menuTitleView(CGSize(width: 20, height: 2),"All", (offset * 3), expandMenu){
-                                print("Tapped All")
-                            }
-                    }
-                    .hAlign(.leading)
-                    .overlay(content: {
-                        Image(systemName: "xmark")
-                            .font(.title3)
-                            .foregroundColor(.white)
-                            .scaleEffect(expandMenu ? 1 : 0.001)
-                            .rotationEffect(.init(degrees: expandMenu ? 0 : -180))
-                            .hAlign(.topLeading)
-                    })
-                    .overlay(content: {
-                        Rectangle()
-                            .foregroundColor(.clear)
-                            .contentShape(Rectangle())
-                            .onTapGesture(perform: animateMenu)
-                    })
-                    .frame(maxWidth: .infinity,alignment: .leading)
-                    
-                    Button {
-                        
-                    } label: {
-                        WebImage(url: user.userProfileURL).placeholder{
-                            // MARK: Placeholder Imgae
-                            Image("NullProfile")
-                                .resizable()
+        GeometryReader{
+            let size = $0.size
+            let offset = (size.height + 200.0) * 0.21
+            
+            HStack{
+                VStack(alignment: .leading, spacing: 4) {
+                    RoundedRectangle(cornerRadius: 2, style: .continuous)
+                        .menuTitleView(CGSize(width: 15, height: 2),"Gave", offset, expandMenu){
+                            print("Tapped Gave")
                         }
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 35, height: 35)
-                        .clipShape(Circle())
-                    }
+                    
+                    RoundedRectangle(cornerRadius: 2, style: .continuous)
+                        .menuTitleView(CGSize(width: 35, height: 2),"Earned", (offset * 2), expandMenu){
+                            print("Tapped Earned")
+                        }
+                    
+                    RoundedRectangle(cornerRadius: 2, style: .continuous)
+                        .menuTitleView(CGSize(width: 20, height: 2),"All", (offset * 3), expandMenu){
+                            print("Tapped All")
+                        }
                 }
-                .padding(10)
+                .hAlign(.leading)
+                .overlay(content: {
+                    Image(systemName: "xmark")
+                        .font(.title3)
+                        .foregroundColor(.white)
+                        .scaleEffect(expandMenu ? 1 : 0.001)
+                        .rotationEffect(.init(degrees: expandMenu ? 0 : -180))
+                        .hAlign(.topLeading)
+                })
+                .overlay(content: {
+                    Rectangle()
+                        .foregroundColor(.clear)
+                        .contentShape(Rectangle())
+                        .onTapGesture(perform: animateMenu)
+                })
+                .frame(maxWidth: .infinity,alignment: .leading)
+                
+                Button {
+                    
+                } label: {
+                    WebImage(url: user.userProfileURL).placeholder{
+                        // MARK: Placeholder Imgae
+                        Image("NullProfile")
+                            .resizable()
+                    }
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 35, height: 35)
+                    .clipShape(Circle())
+                }
             }
-            .frame(height: 60)
-            .padding(.bottom,expandMenu ? 200 : 130)
-            .background {
-                Color("Blue")
-                    .ignoresSafeArea()
+            .padding(10)
+        }
+        .frame(height: 60)
+        .padding(.bottom,expandMenu ? 200 : 130)
+        .background {
+            Color("Blue")
+                .ignoresSafeArea()
+        }
+    }
+    
+    /// - Animating Menu
+    func animateMenu(){
+        if expandMenu{
+            /// - Closing With Little Speed
+            withAnimation(.easeInOut(duration: 0.25)){
+                dimContent = false
+            }
+            
+            /// - Dimming Content Little Later
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1){
+                withAnimation(.easeInOut(duration: 0.2)){
+                    expandMenu = false
+                }
+            }
+        }else{
+            withAnimation(.easeInOut(duration: 0.35)){
+                expandMenu = true
+            }
+            
+            /// - Dimming Content Little Later
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15){
+                withAnimation(.easeInOut(duration: 0.3)){
+                    dimContent = true
+                }
             }
         }
-        
-        /// - Animating Menu
-        func animateMenu(){
-            if expandMenu{
-                /// - Closing With Little Speed
-                withAnimation(.easeInOut(duration: 0.25)){
-                    dimContent = false
-                }
-                
-                /// - Dimming Content Little Later
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1){
-                    withAnimation(.easeInOut(duration: 0.2)){
-                        expandMenu = false
-                    }
-                }
-            }else{
-                withAnimation(.easeInOut(duration: 0.35)){
-                    expandMenu = true
-                }
-                
-                /// - Dimming Content Little Later
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15){
-                    withAnimation(.easeInOut(duration: 0.3)){
-                        dimContent = true
-                    }
-                }
-            }
-        }
+    }
     func fetchUserData() {
         let db = Firestore.firestore()
         guard let uid = Auth.auth().currentUser?.uid else { return }
@@ -227,72 +231,80 @@ struct BarterView: View {
             }
         }
     }
-        /// - CardView
-        @ViewBuilder
-        func CardView()->some View{
-            HStack{
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("Total")
-                        .font(.custom(ubuntu, size: 16, relativeTo: .body))
-                        .foregroundColor(colorScheme == .light ? Color.black : Color("Blue"))
-                    HStack {
-                        Image("treat")
-                            .resizable()
-                            .frame(width: 40, height: 40)
-                        
-                        Text("\(user.credits)")
-                            .font(.custom(ubuntu, size: 40, relativeTo: .largeTitle))
-                            .fontWeight(.medium)
-                            .foregroundColor(Color("Blue"))
-                    }
-                    Text("-25 today")
-                        .font(.custom(ubuntu, size: 12, relativeTo: .caption))
-                        .fontWeight(.bold)
-                        .foregroundColor(.red)
-                }
-                .frame(maxWidth: .infinity,alignment: .leading)
-            }
-            .padding(15)
-            .background(colorScheme == .light ? Color.white : Color("Sand"))
-            .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
-            .shadow(color: .black.opacity(0.15), radius: 10, x: 5, y: 5)
-            .padding(.horizontal,15)
-//            .padding(.top,10)
-        }
-        
-        /// - Transaction Card View
-        @ViewBuilder
-        func TransactionCardView(_ transaction: TransactionType)->some View{
-            HStack(spacing: 12){
-                Image(transaction.productIcon)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 40, height: 40)
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(transaction.product)
-                        .font(.custom(ubuntu, size: 16, relativeTo: .body))
-                    Text("Earned")
-                        .font(.custom(ubuntu, size: 12, relativeTo: .caption))
-                        .foregroundColor(.gray)
-                }
-                .frame(maxWidth: .infinity,alignment: .leading)
-                
+    /// - CardView
+    @ViewBuilder
+    func CardView()->some View{
+        HStack{
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Total")
+                    .font(.custom(ubuntu, size: 16, relativeTo: .body))
+                    .foregroundColor(colorScheme == .light ? Color.black : Color("Blue"))
                 HStack {
-                    Text("\(transaction.amountSpent)")
-                        .font(.custom(ubuntu, size: 18, relativeTo: .title3))
-                        .fontWeight(.medium)
-                        .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                     Image("treat")
                         .resizable()
-                        .frame(width: 18, height: 18)
+                        .frame(width: 40, height: 40)
+                    
+                    Text("\(user.credits)")
+                        .font(.custom(ubuntu, size: 40, relativeTo: .largeTitle))
+                        .fontWeight(.medium)
+                        .foregroundColor(Color("Blue"))
                 }
+                Text("-25 today")
+                    .font(.custom(ubuntu, size: 12, relativeTo: .caption))
+                    .fontWeight(.bold)
+                    .foregroundColor(.red)
             }
-            .padding(10)
-            .background(colorScheme == .light ? Color.white : Color("Blue"))
-            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-            .shadow(color: .black.opacity(0.05), radius: 5, x: 5, y: 5)
+            .frame(maxWidth: .infinity,alignment: .leading)
+        }
+        .padding(15)
+        .background(colorScheme == .light ? Color.white : Color("Sand"))
+        .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
+        .shadow(color: .black.opacity(0.15), radius: 10, x: 5, y: 5)
+        .padding(.horizontal,15)
+        //            .padding(.top,10)
+    }
+    
+    /// - Transaction Card View
+    @ViewBuilder
+    func TransactionCardView(_ transaction: TransactionType, selectedTransaction: Binding<TransactionType>)->some View{
+        HStack(spacing: 12){
+            Image(transaction.productIcon)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 40, height: 40)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(transaction.product)
+                    .font(.custom(ubuntu, size: 16, relativeTo: .body))
+                Text("Earned")
+                    .font(.custom(ubuntu, size: 12, relativeTo: .caption))
+                    .foregroundColor(.gray)
+            }
+            .frame(maxWidth: .infinity,alignment: .leading)
+            HStack {
+                Text("\(transaction.amountSpent)")
+                    .font(.custom(ubuntu, size: 18, relativeTo: .title3))
+                    .fontWeight(.medium)
+                    .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
+                Image("treat")
+                    .resizable()
+                    .frame(width: 18, height: 18)
+            }
+        }
+        .padding(10)
+        .background(colorScheme == .light ? Color.white : Color("Blue"))
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .shadow(color: .black.opacity(0.05), radius: 5, x: 5, y: 5)
+        .onTapGesture {
+            self.$selectedTransaction.wrappedValue = transaction
+            self.isSheetViewPresented.toggle()
+        }
+        .sheet(isPresented: $isSheetViewPresented, onDismiss: {
+            self.isSheetViewPresented = false
+        }) {
+            PartnerTradeView(userWrapper: userWrapper, selectedTransaction: self.$selectedTransaction).environmentObject(entryModel)
         }
     }
+}
      
     /// - Custom Extension to avoid Redundant Codes
     extension View{

@@ -36,7 +36,7 @@ struct CustomRefreshView<Content: View>: View {
                         VStack(spacing: 12){
                             Image(systemName: "arrow.down")
                                 .font(.caption.bold())
-                                .foregroundColor(.white)
+                                .foregroundColor(Color("Blue"))
                                 .rotationEffect(.init(degrees: scrollDelegate.progress * 180))
                                 .padding(8)
                                 .background(.primary,in: Circle())
@@ -96,19 +96,6 @@ struct CustomRefreshView<Content: View>: View {
     }
 }
 
-
-//struct CustomRefreshView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        CustomRefreshView(showsIndicator: false, lottieFileName: "Loading") {
-//            Rectangle()
-//                .fill(.red)
-//                .frame(height: 200)
-//        } onRefresh: {
-//            try? await Task.sleep(nanoseconds: 3_000_000_000)
-//        }
-//    }
-//}
-
 // MARK: For Simultanous Pan Gesture
 class ScrollViewModel: NSObject,ObservableObject,UIGestureRecognizerDelegate{
     // MARK: Properties
@@ -162,7 +149,7 @@ class ScrollViewModel: NSObject,ObservableObject,UIGestureRecognizerDelegate{
             print("User Released Touch")
             // MARK: Your Max Duration Goes Here
             if !isRefreshing{
-                if scrollOffset > 150{
+                if scrollOffset > 50{
                     isEligible = true
                 }else{
                     isEligible = false

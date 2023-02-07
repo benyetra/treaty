@@ -32,42 +32,46 @@ struct JournalView: View {
     }
     
     var body: some View {
-        
-        ScrollView(.vertical, showsIndicators: false) {
+        CustomRefreshView(lottieFileName: "Loading", backgroundColor: Color(.clear), content:  {
             
-            VStack(spacing: 20){
+            ScrollView(.vertical, showsIndicators: false) {
                 
-                // Custom Date Picker....
-                CustomDatePicker(userWrapper: userWrapper)
-            }
-            .padding(.vertical)
-        }
-        // Safe Area View...
-        .safeAreaInset(edge: .bottom) {
-            
-            HStack{
-                Button {
-                    entryModel.addNewTask.toggle()
-                } label: {
-                    Text("Add Task")
-                        .fontWeight(.bold)
-                        .padding(.vertical)
-                        .frame(maxWidth: .infinity)
-                        .background(Color("Blue"),in: Capsule())
+                VStack(spacing: 20){
+                    
+                    // Custom Date Picker....
+                    CustomDatePicker(userWrapper: userWrapper)
                 }
-                .sheet(isPresented: $entryModel.addNewTask) {
-                } content: {
-                    NewEntry(userWrapper: userWrapper)
-                        .environmentObject(entryModel)
-                        .onAppear {
-                            MainView().fetchUserData()
-                        }
-                }
-                .padding(.horizontal)
-                .padding(.top,10)
-                .foregroundColor(.white)
-                .background(.ultraThinMaterial)
+                .padding(.vertical)
             }
-        }
+            // Safe Area View...
+            .safeAreaInset(edge: .bottom) {
+                
+                HStack{
+                    Button {
+                        entryModel.addNewTask.toggle()
+                    } label: {
+                        Text("Add Task")
+                            .fontWeight(.bold)
+                            .padding(.vertical)
+                            .frame(maxWidth: .infinity)
+                            .background(Color("Blue"),in: Capsule())
+                    }
+                    .sheet(isPresented: $entryModel.addNewTask) {
+                    } content: {
+                        NewEntry(userWrapper: userWrapper)
+                            .environmentObject(entryModel)
+                            .onAppear {
+                                MainView().fetchUserData()
+                            }
+                    }
+                    .padding(.horizontal)
+                    .padding(.top,10)
+                    .foregroundColor(.white)
+                    .background(.ultraThinMaterial)
+                }
+            }
+        }, onRefresh: {
+            entryModel.filterTodayEntries(userUID: user.userUID)
+        })
     }
 }

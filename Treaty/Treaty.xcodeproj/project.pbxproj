@@ -34,6 +34,7 @@
 		3544C8AC29874C4800957435 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 3544C8AB29874C4800957435 /* FirebaseAnalytics */; };
 		3544C8AE29874C4800957435 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 3544C8AD29874C4800957435 /* FirebaseMessaging */; };
 		3544C8B0298865A800957435 /* PartnerRequestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3544C8AF298865A800957435 /* PartnerRequestView.swift */; };
+		355FCC7E298EAE1F005FD023 /* PartnerTradeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 355FCC7D298EAE1F005FD023 /* PartnerTradeView.swift */; };
 		358BCF142978329F000A7F9C /* TreatyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF132978329F000A7F9C /* TreatyApp.swift */; };
 		358BCF162978329F000A7F9C /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF152978329F000A7F9C /* Persistence.swift */; };
 		358BCF192978329F000A7F9C /* Treaty.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF172978329F000A7F9C /* Treaty.xcdatamodeld */; };
@@ -100,6 +101,7 @@
 		352F3032298CA285006857CB /* JournalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JournalView.swift; sourceTree = "<group>"; };
 		353DF54D29887FAC0088237A /* PartnerRequestModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerRequestModel.swift; sourceTree = "<group>"; };
 		3544C8AF298865A800957435 /* PartnerRequestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerRequestView.swift; sourceTree = "<group>"; };
+		355FCC7D298EAE1F005FD023 /* PartnerTradeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerTradeView.swift; sourceTree = "<group>"; };
 		358BCF102978329F000A7F9C /* Treaty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Treaty.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		358BCF132978329F000A7F9C /* TreatyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreatyApp.swift; sourceTree = "<group>"; };
 		358BCF152978329F000A7F9C /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
@@ -315,6 +317,7 @@
 			isa = PBXGroup;
 			children = (
 				358BCF6729783AA8000A7F9C /* BarterView.swift */,
+				355FCC7D298EAE1F005FD023 /* PartnerTradeView.swift */,
 			);
 			path = "Barter View";
 			sourceTree = "<group>";
@@ -508,6 +511,7 @@
 				351818B7297E0C3C00230753 /* NewEntry.swift in Sources */,
 				358BCF162978329F000A7F9C /* Persistence.swift in Sources */,
 				358BCF6829783AA8000A7F9C /* BarterView.swift in Sources */,
+				355FCC7E298EAE1F005FD023 /* PartnerTradeView.swift in Sources */,
 				352F3033298CA285006857CB /* JournalView.swift in Sources */,
 				351818A0297B3E9200230753 /* TransactionType.swift in Sources */,
 				352C02F12978AB17008E77DF /* PhoneRegisterView.swift in Sources */,

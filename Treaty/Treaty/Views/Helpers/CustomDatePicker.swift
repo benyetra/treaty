@@ -213,19 +213,17 @@ struct CustomDatePicker: View {
                 // MARK: Team Members
                 HStack(spacing: 0){
                     HStack(spacing: -10){
-                        HStack {
-                            ForEach(0..<entry.taskParticipants.count, id: \.self) { i in
-                                WebImage(url: entry.taskParticipants[i].userProfileURL)
-                                    .placeholder(Image("NullProfile"))
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: 45, height: 45)
-                                    .clipShape(Circle())
-                                    .background(
-                                        Circle()
-                                            .stroke((colorScheme == .light ? Color("Sand") : Color("Blue")), lineWidth: 5)
-                                    )
-                            }
+                        ForEach(0..<entry.taskParticipants.count, id: \.self) { i in
+                            WebImage(url: entry.taskParticipants[i].userProfileURL)
+                                .placeholder(Image("NullProfile"))
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 45, height: 45)
+                                .clipShape(Circle())
+                                .background(
+                                    Circle()
+                                        .stroke((colorScheme == .light ? Color("Sand") : Color("Blue")), lineWidth: 5)
+                                )
                         }
                     }
                     .hLeading()
@@ -335,11 +333,6 @@ struct CustomDatePicker: View {
     }
 }
 
-struct CustomDatePicker_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
 
 // Extending Date to get Current Month Dates...
 extension Date{
