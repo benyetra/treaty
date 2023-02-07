@@ -44,15 +44,17 @@ struct NewBathroomRecord: View {
     }
     
     var types: [BathroomRecordType] = [
-        BathroomRecordType(product: "Pee", productIcon: "💦", size: "Small"),
+        BathroomRecordType(product: "Pee", productIcon: "💦", size: "Quick"),
         BathroomRecordType(product: "Pee", productIcon: "💦", size: "Normal"),
-        BathroomRecordType(product: "Pee", productIcon: "💦", size: "Large"),
+        BathroomRecordType(product: "Pee", productIcon: "💦", size: "Long"),
         BathroomRecordType(product: "Poop", productIcon: "💩", size: "Small"),
         BathroomRecordType(product: "Poop", productIcon: "💩", size: "Normal"),
         BathroomRecordType(product: "Poop", productIcon: "💩", size: "Large"),
+        BathroomRecordType(product: "Poop", productIcon: "💩", size: "Foreign Materials"),
         BathroomRecordType(product: "Throw Up", productIcon: "🤢", size: "Bile"),
         BathroomRecordType(product: "Throw Up", productIcon: "🤢", size: "Food"),
-        BathroomRecordType(product: "Throw Up", productIcon: "🤢", size: "Materials")
+        BathroomRecordType(product: "Throw Up", productIcon: "🤢", size: "Watery"),
+        BathroomRecordType(product: "Throw Up", productIcon: "🤢", size: "Foreign Materials")
 
     ]
     
@@ -97,7 +99,7 @@ struct NewBathroomRecord: View {
                 }
             }
             .listStyle(.insetGrouped)
-            .navigationTitle("Add New Event")
+            .navigationTitle("Add Bathroom Event")
             .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
             .navigationBarTitleDisplayMode(.inline)
             // MARK: Disabling Dismiss on Swipe
@@ -150,12 +152,18 @@ struct NewBathroomRecord: View {
     @ViewBuilder
     func EntryButtonView(_ entry: BathroomRecordType)->some View{
         HStack(spacing: 12){
-            Image(entry.productIcon)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 15, height: 15)
-            VStack(alignment: .leading, spacing: 4) {
-                Text(entry.product)
+            HStack(alignment: .center, spacing: 4) {
+                let emojiString = "\(entry.productIcon)"
+                let emojiImage = UIGraphicsImageRenderer(size: CGSize(width: 30, height: 30)).image { _ in
+                    emojiString.draw(at: CGPoint.zero, withAttributes: [.font: UIFont.systemFont(ofSize: 30)])
+                }
+                
+                Image(uiImage: emojiImage)
+                    .resizable()
+                    .frame(width: 30, height: 30)
+            }
+            HStack(alignment: .center, spacing: 4) {
+                Text("\(entry.product): ")
                     .font(.custom(ubuntu, size: 15, relativeTo: .body))
                     .foregroundColor(colorScheme == .light ? Color.black : Color.black)
                 Text(entry.size)
