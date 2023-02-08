@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SDWebImageSwiftUI
 
 struct JournalView: View {
     var basedOnUID: Bool = false
@@ -35,6 +36,9 @@ struct JournalView: View {
     
     var body: some View {
         NavigationStack{
+            VStack {
+                HeaderView()
+            }
             CustomRefreshView(lottieFileName: "Loading", backgroundColor: Color(.clear), content:  {
                 
                 ScrollView(.vertical, showsIndicators: false) {
@@ -101,5 +105,120 @@ struct JournalView: View {
         }
         .alert(errorMessage, isPresented: $showError) {
         }
+    }
+    
+    @ViewBuilder
+    func HeaderView()->some View{
+        GeometryReader{
+            let size = $0.size
+            let offset = (size.height + 200.0) * 0.21
+            
+            HStack{
+                VStack(alignment: .leading, spacing: 4) {
+                    RoundedRectangle(cornerRadius: 2, style: .continuous)
+                        .menuTitleView(CGSize(width: 15, height: 2),"Gave", offset, expandMenu){
+                            print("Tapped Gave")
+                        }
+                    
+                    RoundedRectangle(cornerRadius: 2, style: .continuous)
+                        .menuTitleView(CGSize(width: 35, height: 2),"Earned", (offset * 2), expandMenu){
+                            print("Tapped Earned")
+                        }
+                    
+                    RoundedRectangle(cornerRadius: 2, style: .continuous)
+                        .menuTitleView(CGSize(width: 20, height: 2),"All", (offset * 3), expandMenu){
+                            print("Tapped All")
+                        }
+                }
+                .hAlign(.leading)
+                .overlay(content: {
+                    Image(systemName: "xmark")
+                        .font(.title3)
+                        .foregroundColor(.white)
+                        .scaleEffect(expandMenu ? 1 : 0.001)
+                        .rotationEffect(.init(degrees: expandMenu ? 0 : -180))
+                        .hAlign(.topLeading)
+                })
+                .overlay(content: {
+                    Rectangle()
+                        .foregroundColor(.clear)
+                        .contentShape(Rectangle())
+                        .onTapGesture(perform: animateMenu)
+                })
+                .frame(maxWidth: .infinity,alignment: .leading)
+                
+                Button {
+                    
+                } label: {
+                    WebImage(url: user.userProfileURL).placeholder{
+                        // MARK: Placeholder Imgae
+                        Image("NullProfile")
+                            .resizable()
+                    }
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 35, height: 35)
+                    .clipShape(Circle())
+                }
+            }
+            .padding(10)
+        }
+        .frame(height: 20)
+        .padding(.bottom,expandMenu ? 200 : 50)
+        .background {
+            Color("Blue")
+                .ignoresSafeArea()
+        }
+    }
+    
+    /// - Animating Menu
+    func animateMenu(){
+        if expandMenu{
+            /// - Closing With Little Speed
+            withAnimation(.easeInOut(duration: 0.25)){
+                dimContent = false
+            }
+            
+            /// - Dimming Content Little Later
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1){
+                withAnimation(.easeInOut(duration: 0.2)){
+                    expandMenu = false
+                }
+            }
+        }else{
+            withAnimation(.easeInOut(duration: 0.35)){
+                expandMenu = true
+            }
+            
+            /// - Dimming Content Little Later
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15){
+                withAnimation(.easeInOut(duration: 0.3)){
+                    dimContent = true
+                }
+            }
+        }
+    }
+}
+/// - Custom Extension to avoid Redundant Codes
+extension View{
+    @ViewBuilder
+    fileprivate func menuTitleView(_ size: CGSize,_ title: String,_ offset: CGFloat,_ condition: Bool,onTap: @escaping ()->())->some View{
+        self
+        /// - Hiding the line, when expanded
+            .foregroundColor(condition ? .clear : .white)
+            .contentTransition(.interpolate)
+            .frame(width: size.width, height: size.height)
+            .background(alignment: .topLeading) {
+                Text(title)
+                    .font(.custom(ubuntu, size: 25, relativeTo: .title))
+                    .fontWeight(.medium)
+                    .foregroundColor(.white)
+                    .frame(width: 100,alignment: .leading)
+                    .scaleEffect(condition ? 1 : 0.01, anchor: .topLeading)
+                    .offset(y: condition ? -6 : 0)
+                    .contentShape(Rectangle())
+                    .onTapGesture(perform: onTap)
+            }
+            .offset(x: condition ? 40 : 0,y: condition ? offset : 0)
     }
 }
