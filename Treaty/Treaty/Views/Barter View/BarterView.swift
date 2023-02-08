@@ -45,7 +45,7 @@ struct BarterView: View {
     
     var body: some View {
         CustomRefreshView(lottieFileName: "Loading", backgroundColor: Color("Blue"), content:  {
-            if userWrapper.user.username.isEmpty {
+            if userNameStored == "" {
                 UserNameView()
             } else {
                 VStack(spacing: 0){
@@ -99,7 +99,7 @@ struct BarterView: View {
             }
         }, onRefresh: {
             fetchUserData()
-        })
+        }).onAppear(perform: fetchUserData)
     }
     
     /// - Header View

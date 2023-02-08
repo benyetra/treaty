@@ -28,7 +28,6 @@ struct JournalView: View {
     var user: User
     @AppStorage("user_UID") var userUID: String = ""
     
-    
     init(userWrapper: UserWrapper) {
         self.userWrapper = userWrapper
         self.user = userWrapper.user
