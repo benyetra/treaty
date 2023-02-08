@@ -49,6 +49,7 @@ struct UserNameView: View {
                             filteredValue = String(value.filter { $0.isLetter || $0.isNumber })
                         }
                         self.userName = filteredValue
+                        self.userNameStored = userName
                     })
                 VStack {
                     Button(action: {
