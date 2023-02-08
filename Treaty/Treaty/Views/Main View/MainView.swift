@@ -15,7 +15,8 @@ struct MainView: View {
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("partnerUsernameStored") var partnerUsernameStored: String = ""
     @AppStorage("partnerUID") var partnerUIDStored: String = ""
-
+    @AppStorage("user_UID") var userUID: String = ""
+    
     init() {
         fetchUserData()
         storeFCMToken()

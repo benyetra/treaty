@@ -93,7 +93,7 @@ struct CustomDatePicker: View {
                     
                     CardView(value: value)
                         .background(
-                        
+                            
                             Capsule()
                                 .fill(Color("Blue"))
                                 .padding(.horizontal,8)
@@ -102,7 +102,7 @@ struct CustomDatePicker: View {
                         .onTapGesture {
                             selectedDate = value.date
                             currentDate = value.date
-                            entryModel.filterTodayEntries(userUID: userUID)
+                            entryModel.filterTodayEntries(userUID: user.userUID)
                         }
                 }
             }
