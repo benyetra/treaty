@@ -109,7 +109,7 @@ struct CustomDatePicker: View {
             
             VStack(spacing: 15){
                 
-                Text("Tasks")
+                Text("Events")
                     .font(.title2.bold())
                     .frame(maxWidth: .infinity,alignment: .leading)
                     .padding(.vertical,20)

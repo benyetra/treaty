@@ -16,6 +16,9 @@ struct JournalView: View {
     @ObservedObject var userWrapper: UserWrapper
     
     /// - Animation Properties
+    @State var errorMessage: String = ""
+    @State var showError: Bool = false
+    @State var isLoading: Bool = false
     @State var currentDate: Date = Date()
     @State private var currentWeek: [Date] = []
     @State private var selectedDate: Date = Date()
@@ -32,63 +35,72 @@ struct JournalView: View {
     }
     
     var body: some View {
-        CustomRefreshView(lottieFileName: "Loading", backgroundColor: Color(.clear), content:  {
-            
-            ScrollView(.vertical, showsIndicators: false) {
+        NavigationStack{
+            CustomRefreshView(lottieFileName: "Loading", backgroundColor: Color(.clear), content:  {
                 
-                VStack(spacing: 20){
+                ScrollView(.vertical, showsIndicators: false) {
                     
-                    // Custom Date Picker....
-                    CustomDatePicker(userWrapper: userWrapper)
+                    VStack(spacing: 20){
+                        
+                        // Custom Date Picker....
+                        CustomDatePicker(userWrapper: userWrapper)
+                    }
+                    .padding(.vertical)
                 }
-                .padding(.vertical)
-            }
-            // Safe Area View...
-            .safeAreaInset(edge: .bottom) {
-                
-                HStack{
-                    Button {
-                        entryModel.addNewTask.toggle()
-                    } label: {
-                        Text("Add New Task")
-                            .fontWeight(.bold)
-                            .padding(.vertical)
-                            .frame(maxWidth: .infinity)
-                            .background(Color("Blue"),in: Capsule())
+                // Safe Area View...
+                .safeAreaInset(edge: .bottom) {
+                    
+                    HStack{
+                        Button {
+                            entryModel.addNewTask.toggle()
+                        } label: {
+                            Text("Add New Task")
+                                .fontWeight(.bold)
+                                .padding(.vertical)
+                                .frame(maxWidth: .infinity)
+                                .background(Color("Blue"),in: Capsule())
+                        }
+                        .sheet(isPresented: $entryModel.addNewTask) {
+                        } content: {
+                            NewEntry(userWrapper: userWrapper)
+                                .environmentObject(entryModel)
+                                .onAppear {
+                                    MainView().fetchUserData()
+                                }
+                        }
+                        Button {
+                            entryModel.addNewBathroomRecord.toggle()
+                        } label: {
+                            Text("Bathroom Break")
+                                .fontWeight(.bold)
+                                .padding(.vertical)
+                                .frame(maxWidth: .infinity)
+                                .background(Color("Sand"),in: Capsule())
+                        }
+                        .sheet(isPresented: $entryModel.addNewBathroomRecord) {
+                        } content: {
+                            NewBathroomRecord(userWrapper: userWrapper)
+                                .environmentObject(entryModel)
+                                .onAppear {
+                                    MainView().fetchUserData()
+                                }
+                        }
                     }
-                    .sheet(isPresented: $entryModel.addNewTask) {
-                    } content: {
-                        NewEntry(userWrapper: userWrapper)
-                            .environmentObject(entryModel)
-                            .onAppear {
-                                MainView().fetchUserData()
-                            }
-                    }
-                    Button {
-                        entryModel.addNewBathroomRecord.toggle()
-                    } label: {
-                        Text("Bathroom Break")
-                            .fontWeight(.bold)
-                            .padding(.vertical)
-                            .frame(maxWidth: .infinity)
-                            .background(Color("Sand"),in: Capsule())
-                    }
-                    .sheet(isPresented: $entryModel.addNewBathroomRecord) {
-                    } content: {
-                        NewBathroomRecord(userWrapper: userWrapper)
-                            .environmentObject(entryModel)
-                            .onAppear {
-                                MainView().fetchUserData()
-                            }
-                    }
+                    .padding(.horizontal)
+                    .padding(.top,10)
+                    .padding(.bottom,10)
+                    .foregroundColor(.white)
+                    .background(.ultraThinMaterial)
                 }
-                .padding(.horizontal)
-                .padding(.top,10)
-                .foregroundColor(.white)
-                .background(.ultraThinMaterial)
-            }
-        }, onRefresh: {
-            entryModel.filterTodayEntries(userUID: user.userUID)
-        })
+            }, onRefresh: {
+                entryModel.filterTodayEntries(userUID: user.userUID)
+            })
+        }
+        .navigationTitle("Journal")
+        .overlay {
+            LoadingView(show: $isLoading)
+        }
+        .alert(errorMessage, isPresented: $showError) {
+        }
     }
 }

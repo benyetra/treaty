@@ -45,6 +45,7 @@ struct MainView: View {
                 }
                 .environmentObject(userWrapper)
         }
+        .background(.ultraThinMaterial)
         .tint(colorScheme == .light ? Color.black : Color.white)
     }
     

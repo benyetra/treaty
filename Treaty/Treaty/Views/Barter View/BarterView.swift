@@ -33,6 +33,7 @@ struct BarterView: View {
     @StateObject var entryModel: EntryViewModel = EntryViewModel()
     @AppStorage("partnerUsernameStored") var partnerUsernameStored: String = ""
     @AppStorage("partnerUID") var partnerUIDStored: String = ""
+    @AppStorage("user_name") var userNameStored: String = ""
 
     var user: User
     
@@ -207,9 +208,11 @@ struct BarterView: View {
                 let credits = data["credits"] as? Int ?? 50
                 if let url = URL(string: userProfileURL) {
                     self.userWrapper.user = User(id: "", username: username, userUID: userUID, userEmail: userEmail, userProfileURL: url, token: userToken, credits: credits)
+                    self.userNameStored = userUID
                 } else {
                     let defaultURL = URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!
                     self.userWrapper.user = User(id: "", username: username, userUID: userUID, userEmail: userEmail, userProfileURL: defaultURL, token: userToken, credits: credits)
+                    self.userNameStored = userUID
                 }
                 if let partnerUID = data["partners"] as? String {
                     db.collection("Users").document(partnerUID).getDocument { (partnerDocument, error) in
@@ -242,19 +245,14 @@ struct BarterView: View {
                     .font(.custom(ubuntu, size: 16, relativeTo: .body))
                     .foregroundColor(colorScheme == .light ? Color.black : Color("Blue"))
                 HStack {
-                    Image("treat")
-                        .resizable()
-                        .frame(width: 40, height: 40)
-                    
                     Text("\(user.credits)")
                         .font(.custom(ubuntu, size: 40, relativeTo: .largeTitle))
                         .fontWeight(.medium)
                         .foregroundColor(Color("Blue"))
+                    Image("treat")
+                        .resizable()
+                        .frame(width: 40, height: 40)
                 }
-                Text("-25 today")
-                    .font(.custom(ubuntu, size: 12, relativeTo: .caption))
-                    .fontWeight(.bold)
-                    .foregroundColor(.red)
             }
             .frame(maxWidth: .infinity,alignment: .leading)
         }
@@ -263,7 +261,6 @@ struct BarterView: View {
         .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
         .shadow(color: .black.opacity(0.15), radius: 10, x: 5, y: 5)
         .padding(.horizontal,15)
-        //            .padding(.top,10)
     }
     
     /// - Transaction Card View
@@ -277,9 +274,6 @@ struct BarterView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(transaction.product)
                     .font(.custom(ubuntu, size: 16, relativeTo: .body))
-                Text("Earned")
-                    .font(.custom(ubuntu, size: 12, relativeTo: .caption))
-                    .foregroundColor(.gray)
             }
             .frame(maxWidth: .infinity,alignment: .leading)
             HStack {

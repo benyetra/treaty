@@ -55,43 +55,30 @@ class EntryViewModel: ObservableObject{
                 self.storedEntries = entries
             }
             DispatchQueue.global(qos: .userInteractive).async {
-                
-                let calendar = Calendar.current
-                
-                let filtered = self.storedEntries.filter{
+                let filteredEntries = self.storedEntries.filter{
                     return ($0.userUID == userUID || $0.taskParticipants.contains(where: { $0.username == self.usernameStored}) || $0.taskParticipants.contains(where: { $0.username == self.partnerUsernameStored}))
                 }.sorted { task1, task2 in
                     return task2.taskDate < task1.taskDate
                 }
-                DispatchQueue.main.async {
-                    withAnimation{
-                        self.filteredEntries = filtered
+                self.fetchBathroomRecords {  (records) in
+                    // use the entries here
+                    self.storedBathroomRecords = records
+                    let filteredRecords = self.storedBathroomRecords.filter{
+                        return ($0.userUID == userUID || $0.userUID == self.partnerUIDStored)
+                    }.sorted { task1, task2 in
+                        return task2.taskDate < task1.taskDate
                     }
-                }
-            }
-        }
-        fetchBathroomRecords {  (records) in
-            // use the entries here
-            for record in records {
-                self.storedBathroomRecords = records
-            }
-            DispatchQueue.global(qos: .userInteractive).async {
-                
-                let calendar = Calendar.current
-                
-                let filteredRecords = self.storedBathroomRecords.filter{
-                    return ($0.userUID == userUID || $0.userUID == self.partnerUIDStored)
-                }.sorted { task1, task2 in
-                    return task2.taskDate < task1.taskDate
-                }
-                DispatchQueue.main.async {
-                    withAnimation{
-                        self.filteredBathroomRecords = filteredRecords
+                    DispatchQueue.main.async {
+                        withAnimation{
+                            self.filteredEntries = filteredEntries
+                            self.filteredBathroomRecords = filteredRecords
+                        }
                     }
                 }
             }
         }
     }
+
 
 
     func fetchCurrentWeek() {
