@@ -65,7 +65,7 @@ struct ReusableProfileContent: View {
                                     Text("@\(user.username)")
                                         .font(.title3)
                                         .fontWeight(.semibold)
-                                    WebImage(url: self.user.userProfileURL)
+                                    WebImage(url: self.profileURL)
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
                                 }
@@ -113,7 +113,8 @@ struct ReusableProfileContent: View {
             }
         }, onRefresh: {
             fetchUserData()
-        })
+        }).onAppear(perform: fetchUserData)
+
     }
     
     func fetchUserData() {
