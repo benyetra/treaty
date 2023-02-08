@@ -146,10 +146,7 @@ struct JournalView: View {
                         .onTapGesture(perform: animateMenu)
                 })
                 .frame(maxWidth: .infinity,alignment: .leading)
-                
-                Button {
-                    
-                } label: {
+                NavigationLink(destination: AccountView(userWrapper: userWrapper)) {
                     WebImage(url: user.userProfileURL).placeholder{
                         // MARK: Placeholder Imgae
                         Image("NullProfile")
