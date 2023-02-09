@@ -12,6 +12,7 @@ import Firebase
 
 struct CustomDatePicker: View {
     @Binding var currentDate: Date
+    @AppStorage("filter") var filter: String = ""
     @StateObject var entryModel: EntryViewModel = EntryViewModel()
     @Environment(\.colorScheme) private var colorScheme
     @State private var selectedDate: Date = Date()
@@ -102,7 +103,7 @@ struct CustomDatePicker: View {
                         .onTapGesture {
                             selectedDate = value.date
                             currentDate = value.date
-                            entryModel.filterTodayEntries(userUID: user.userUID)
+                            entryModel.filterTodayEntries(userUID: user.userUID, filter: self.filter)
                         }
                 }
             }
@@ -265,7 +266,7 @@ struct CustomDatePicker: View {
                             user.removeCredits(amount: entry.amountSpent)
                             userWrapper.partner?.removeCredits(amount: entry.amountSpent)
                         }
-                        entryModel.filterTodayEntries(userUID: user.userUID)
+                        entryModel.filterTodayEntries(userUID: user.userUID, filter: self.filter)
                         print("deleting post \(entry)")
                     } label: {
                         Image(systemName: "trash")
@@ -340,7 +341,7 @@ struct CustomDatePicker: View {
                     // MARK: Delete Button
                     Button {
                         deleteRecord(record: record)
-                        entryModel.filterTodayEntries(userUID: user.userUID)
+                        entryModel.filterTodayEntries(userUID: user.userUID, filter: self.filter)
                         print("deleting post \(record)")
                     } label: {
                         Image(systemName: "trash")

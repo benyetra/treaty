@@ -26,6 +26,8 @@ struct JournalView: View {
     @State private var expandMenu: Bool = false
     @State private var dimContent: Bool = false
     @State private var isShowingDatePicker: Bool = false
+    @State var filter: String = ""
+
     var user: User
     @AppStorage("user_UID") var userUID: String = ""
     
@@ -96,7 +98,7 @@ struct JournalView: View {
                     .background(.ultraThinMaterial)
                 }
             }, onRefresh: {
-                entryModel.filterTodayEntries(userUID: user.userUID)
+                entryModel.filterTodayEntries(userUID: user.userUID, filter: self.filter)
             })
         }
         .navigationTitle("Journal")
@@ -116,18 +118,21 @@ struct JournalView: View {
             HStack{
                 VStack(alignment: .leading, spacing: 4) {
                     RoundedRectangle(cornerRadius: 2, style: .continuous)
-                        .menuTitleView(CGSize(width: 15, height: 2),"Gave", offset, expandMenu){
-                            print("Tapped Gave")
+                        .menuTitleView(CGSize(width: 60, height: 2),"My Tasks", offset, expandMenu){
+                            self.filter = "currentUser"
+                            entryModel.filterTodayEntries(userUID: userUID, filter: self.filter)
                         }
                     
                     RoundedRectangle(cornerRadius: 2, style: .continuous)
-                        .menuTitleView(CGSize(width: 35, height: 2),"Earned", (offset * 2), expandMenu){
-                            print("Tapped Earned")
+                        .menuTitleView(CGSize(width: 45, height: 2),"Partner's", (offset * 2), expandMenu){
+                            self.filter = "partnerUser"
+                            entryModel.filterTodayEntries(userUID: userUID, filter: self.filter)
                         }
                     
                     RoundedRectangle(cornerRadius: 2, style: .continuous)
-                        .menuTitleView(CGSize(width: 20, height: 2),"All", (offset * 3), expandMenu){
-                            print("Tapped All")
+                        .menuTitleView(CGSize(width: 40, height: 2),"All", (offset * 3), expandMenu){
+                            self.filter = "both"
+                            entryModel.filterTodayEntries(userUID: userUID, filter: self.filter)
                         }
                 }
                 .hAlign(.leading)

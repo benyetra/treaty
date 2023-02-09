@@ -116,7 +116,7 @@ struct NewBathroomRecord: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save"){
                         save()
-                        entryModel.filterTodayEntries(userUID: user.userUID)
+                        entryModel.filterTodayEntries(userUID: user.userUID, filter: "both")
                     }
                     .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                     .disabled(self.selectedType == "")

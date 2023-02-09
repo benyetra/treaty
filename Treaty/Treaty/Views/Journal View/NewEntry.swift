@@ -195,7 +195,7 @@ struct NewEntry: View {
                             user.addCredits(amount: selectedAmount)
                             userWrapper.partner?.addCredits(amount: selectedAmount)
                         }
-                        entryModel.filterTodayEntries(userUID: user.userUID)
+                        entryModel.filterTodayEntries(userUID: user.userUID, filter: "both")
                         print("Array count: \(self.selectedUsers.count)")
                     }
                     .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))

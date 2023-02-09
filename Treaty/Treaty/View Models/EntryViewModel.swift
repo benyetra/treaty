@@ -14,6 +14,7 @@ class EntryViewModel: ObservableObject{
     @AppStorage("partnerUID") var partnerUIDStored: String = ""
     @AppStorage("partnerTokenStored") var tokenStored: String = ""
     @AppStorage("user_name") var usernameStored: String = ""
+    @AppStorage("filter") var filter: String = ""
     
     @Published var selectedDay: Date = Date()
     
@@ -33,7 +34,13 @@ class EntryViewModel: ObservableObject{
     @Published var filteredEntries: [Entry]?
     
     // MARK: Filtering Today Tasks
+    @Published var myFilteredEntries: [Entry]?
+    
+    // MARK: Filtering Today Tasks
     @Published var filteredBathroomRecords: [BathroomRecord]?
+    
+    // MARK: Filtering Today Tasks
+    @Published var myFilteredBathroomRecords: [BathroomRecord]?
 
     // MARK: New Task View
     @Published var addNewTask: Bool = false
@@ -44,32 +51,47 @@ class EntryViewModel: ObservableObject{
     // MARK: Intializing
     init(){
         fetchCurrentWeek()
-        filterTodayEntries(userUID: userUID)
+        filterTodayEntries(userUID: userUID, filter: filter)
     }
     
-    // MARK: Filter Today Tasks
-    func filterTodayEntries(userUID: String) {
+    func filterTodayEntries(userUID: String, filter: String) {
         fetchEntries { (entries) in
-            // use the entries here
-            for entry in entries {
-                self.storedEntries = entries
-            }
+            self.storedEntries = entries
             DispatchQueue.global(qos: .userInteractive).async {
-                let filteredEntries = self.storedEntries.filter{
-                    return ($0.userUID == userUID || $0.taskParticipants.contains(where: { $0.username == self.usernameStored}) || $0.taskParticipants.contains(where: { $0.username == self.partnerUsernameStored}))
-                }.sorted { task1, task2 in
-                    return task2.taskDate < task1.taskDate
-                }
-                self.fetchBathroomRecords {  (records) in
-                    // use the entries here
-                    self.storedBathroomRecords = records
-                    let filteredRecords = self.storedBathroomRecords.filter{
-                        return ($0.userUID == userUID || $0.userUID == self.partnerUIDStored)
-                    }.sorted { task1, task2 in
-                        return task2.taskDate < task1.taskDate
+                var filteredEntries = self.storedEntries
+                if filter == "currentUser" {
+                    filteredEntries = filteredEntries.filter {
+                        return $0.userUID == userUID
                     }
+                } else if filter == "partnerUser" {
+                    filteredEntries = filteredEntries.filter {
+                        return $0.taskParticipants.contains(where: { $0.username == self.partnerUsernameStored })
+                    }
+                } else if filter == "both" {
+                    filteredEntries = filteredEntries.filter {
+                        return ($0.userUID == userUID || $0.taskParticipants.contains(where: { $0.username == self.partnerUsernameStored }))
+                    }
+                }
+                filteredEntries.sort { $0.taskDate > $1.taskDate }
+                self.fetchBathroomRecords {  (records) in
+                    self.storedBathroomRecords = records
+                    var filteredRecords = self.storedBathroomRecords
+                    if filter == "currentUser" {
+                        filteredRecords = filteredRecords.filter {
+                            return $0.userUID == userUID
+                        }
+                    } else if filter == "partnerUser" {
+                        filteredRecords = filteredRecords.filter {
+                            return $0.userUID == self.partnerUIDStored
+                        }
+                    } else if filter == "both" {
+                        filteredRecords = filteredRecords.filter {
+                            return ($0.userUID == userUID || $0.userUID == self.partnerUIDStored)
+                        }
+                    }
+                    filteredRecords.sort { $0.taskDate > $1.taskDate }
                     DispatchQueue.main.async {
-                        withAnimation{
+                        withAnimation {
                             self.filteredEntries = filteredEntries
                             self.filteredBathroomRecords = filteredRecords
                         }
@@ -78,6 +100,8 @@ class EntryViewModel: ObservableObject{
             }
         }
     }
+
+
 
 
 

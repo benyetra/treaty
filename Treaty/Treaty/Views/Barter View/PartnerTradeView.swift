@@ -135,7 +135,7 @@ struct PartnerTradeView: View {
                         save()
                         userWrapper.partner?.addCredits(amount: self.selectedTransaction.amountSpent)
                         userWrapper.user.removeCredits(amount: self.selectedTransaction.amountSpent)
-                        entryModel.filterTodayEntries(userUID: user.userUID)
+                        entryModel.filterTodayEntries(userUID: user.userUID, filter: "both")
                         print("Array count: \(self.selectedUsers.count)")
                     }
                     .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
