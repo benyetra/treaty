@@ -110,49 +110,15 @@ struct BarterView: View {
             let offset = (size.height + 200.0) * 0.21
             
             HStack{
-                VStack(alignment: .leading, spacing: 4) {
-                    RoundedRectangle(cornerRadius: 2, style: .continuous)
-                        .menuTitleView(CGSize(width: 15, height: 2),"Gave", offset, expandMenu){
-                            print("Tapped Gave")
-                        }
-                    
-                    RoundedRectangle(cornerRadius: 2, style: .continuous)
-                        .menuTitleView(CGSize(width: 35, height: 2),"Earned", (offset * 2), expandMenu){
-                            print("Tapped Earned")
-                        }
-                    
-                    RoundedRectangle(cornerRadius: 2, style: .continuous)
-                        .menuTitleView(CGSize(width: 20, height: 2),"All", (offset * 3), expandMenu){
-                            print("Tapped All")
-                        }
+                WebImage(url: user.userProfileURL).placeholder{
+                    // MARK: Placeholder Imgae
+                    Image("NullProfile")
+                        .resizable()
                 }
-                .hAlign(.leading)
-                .overlay(content: {
-                    Image(systemName: "xmark")
-                        .font(.title3)
-                        .foregroundColor(.white)
-                        .scaleEffect(expandMenu ? 1 : 0.001)
-                        .rotationEffect(.init(degrees: expandMenu ? 0 : -180))
-                        .hAlign(.topLeading)
-                })
-                .overlay(content: {
-                    Rectangle()
-                        .foregroundColor(.clear)
-                        .contentShape(Rectangle())
-                        .onTapGesture(perform: animateMenu)
-                })
-                .frame(maxWidth: .infinity,alignment: .leading)
-                NavigationLink(destination: AccountView(userWrapper: userWrapper)) {
-                    WebImage(url: user.userProfileURL).placeholder{
-                        // MARK: Placeholder Imgae
-                        Image("NullProfile")
-                            .resizable()
-                    }
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 35, height: 35)
-                    .clipShape(Circle())
-                }
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 35, height: 35)
+                .clipShape(Circle())
             }
             .padding(10)
         }
@@ -164,33 +130,6 @@ struct BarterView: View {
         }
     }
     
-    /// - Animating Menu
-    func animateMenu(){
-        if expandMenu{
-            /// - Closing With Little Speed
-            withAnimation(.easeInOut(duration: 0.25)){
-                dimContent = false
-            }
-            
-            /// - Dimming Content Little Later
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1){
-                withAnimation(.easeInOut(duration: 0.2)){
-                    expandMenu = false
-                }
-            }
-        }else{
-            withAnimation(.easeInOut(duration: 0.35)){
-                expandMenu = true
-            }
-            
-            /// - Dimming Content Little Later
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15){
-                withAnimation(.easeInOut(duration: 0.3)){
-                    dimContent = true
-                }
-            }
-        }
-    }
     func fetchUserData() {
         let db = Firestore.firestore()
         guard let uid = Auth.auth().currentUser?.uid else { return }
