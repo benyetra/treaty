@@ -76,18 +76,8 @@ class EntryViewModel: ObservableObject{
                 self.fetchBathroomRecords {  (records) in
                     self.storedBathroomRecords = records
                     var filteredRecords = self.storedBathroomRecords
-                    if filter == "currentUser" {
-                        filteredRecords = filteredRecords.filter {
-                            return $0.userUID == userUID
-                        }
-                    } else if filter == "partnerUser" {
-                        filteredRecords = filteredRecords.filter {
-                            return $0.userUID == self.partnerUIDStored
-                        }
-                    } else if filter == "both" {
-                        filteredRecords = filteredRecords.filter {
-                            return ($0.userUID == userUID || $0.userUID == self.partnerUIDStored)
-                        }
+                    filteredRecords = filteredRecords.filter {
+                        return ($0.userUID == userUID || $0.userUID == self.partnerUIDStored)
                     }
                     filteredRecords.sort { $0.taskDate > $1.taskDate }
                     DispatchQueue.main.async {

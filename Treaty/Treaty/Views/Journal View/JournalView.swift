@@ -120,7 +120,7 @@ struct JournalView: View {
                     RoundedRectangle(cornerRadius: 2, style: .continuous)
                         .menuTitleView(CGSize(width: 70, height: 2),"Mine", offset, expandMenu){
                             self.filter = "currentUser"
-                            entryModel.filterTodayEntries(userUID: userUID, filter: self.filter ?? "both")
+                            entryModel.filterTodayEntries(userUID: user.userUID, filter: self.filter ?? "both")
                             animateMenu()
                         }.foregroundColor(self.filter == "currentUser" ? .orange : .primary)
 
@@ -128,16 +128,19 @@ struct JournalView: View {
                     RoundedRectangle(cornerRadius: 2, style: .continuous)
                         .menuTitleView(CGSize(width: 45, height: 2),"Partner's", (offset * 2), expandMenu){
                             self.filter = "partnerUser"
-                            entryModel.filterTodayEntries(userUID: userUID, filter: self.filter ?? "both")
+                            entryModel.filterTodayEntries(userUID: user.userUID, filter: self.filter ?? "both")
                             animateMenu()
                         }.foregroundColor(self.filter == "partnerUser" ? .orange : .primary)
                     
                     RoundedRectangle(cornerRadius: 2, style: .continuous)
                         .menuTitleView(CGSize(width: 40, height: 2),"All", (offset * 3), expandMenu){
                             self.filter = "both"
-                            entryModel.filterTodayEntries(userUID: userUID, filter: self.filter ?? "both")
+                            entryModel.filterTodayEntries(userUID: user.userUID, filter: self.filter ?? "both")
                             animateMenu()
                         }.foregroundColor(self.filter == "both" ? .orange : .primary)
+                }
+                .onChange(of: self.filter) { value in
+                    entryModel.filterTodayEntries(userUID: user.userUID, filter: self.filter ?? "both")
                 }
                 .hAlign(.leading)
                 .overlay(content: {
