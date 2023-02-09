@@ -83,31 +83,32 @@ struct AddPartnerView: View {
                         self.showSuccess = true
                     }), secondaryButton: .cancel())
                 }
-                
-                Button(action: {
-                    self.searchForPartner()
-                    showAlertDelete.toggle()
-                }) {
-                    VStack {
-                        Text("Remove Partner")
-                            .foregroundColor(colorScheme == .light ? Color.white : Color.black)
-                            .hAlign(.center)
-                            .fillView(colorScheme == .light ? Color.red : Color.red)
+                if !partnerUsername.isEmpty {
+                    Button(action: {
+                        self.searchForPartner()
+                        showAlertDelete.toggle()
+                    }) {
+                        VStack {
+                            Text("Remove Partner")
+                                .foregroundColor(colorScheme == .light ? Color.white : Color.black)
+                                .hAlign(.center)
+                                .fillView(colorScheme == .light ? Color.red : Color.red)
+                        }
+                        .disabled(partnerUsername.isEmpty)
+                        .padding(20)
+                        .vAlign(.bottom)
+                        if showSuccessDelete {
+                            Text(successDeleteMessage)
+                                .foregroundColor(.red)
+                                .padding()
+                        }
                     }
-                    .disabled(partnerUsername.isEmpty)
-                    .padding(20)
-                    .vAlign(.bottom)
-                    if showSuccessDelete {
-                        Text(successDeleteMessage)
-                            .foregroundColor(.red)
-                            .padding()
+                    .alert(isPresented: $showAlertDelete) {
+                        Alert(title: Text("Confirmation"), message: Text("Are you sure you want to remove this partner?"), primaryButton: .default(Text("Remove"), action: {
+                            self.deletePartner()
+                            self.showSuccessDelete = true
+                        }), secondaryButton: .cancel())
                     }
-                }
-                .alert(isPresented: $showAlertDelete) {
-                    Alert(title: Text("Confirmation"), message: Text("Are you sure you want to remove this partner?"), primaryButton: .default(Text("Remove"), action: {
-                        self.deletePartner()
-                        self.showSuccessDelete = true
-                    }), secondaryButton: .cancel())
                 }
             }
         }
