@@ -27,9 +27,9 @@ struct JournalView: View {
     @State private var dimContent: Bool = false
     @State private var isShowingDatePicker: Bool = false
     @AppStorage("filter") var filter: String?
+    @AppStorage("user_UID") var userUID: String = ""
 
     var user: User
-    @AppStorage("user_UID") var userUID: String = ""
     
     init(userWrapper: UserWrapper) {
         self.userWrapper = userWrapper
@@ -122,21 +122,22 @@ struct JournalView: View {
                             self.filter = "currentUser"
                             entryModel.filterTodayEntries(userUID: userUID, filter: self.filter ?? "both")
                             animateMenu()
-                        }
+                        }.foregroundColor(self.filter == "currentUser" ? .orange : .primary)
+
                     
                     RoundedRectangle(cornerRadius: 2, style: .continuous)
                         .menuTitleView(CGSize(width: 45, height: 2),"Partner's", (offset * 2), expandMenu){
                             self.filter = "partnerUser"
                             entryModel.filterTodayEntries(userUID: userUID, filter: self.filter ?? "both")
                             animateMenu()
-                        }
+                        }.foregroundColor(self.filter == "partnerUser" ? .orange : .primary)
                     
                     RoundedRectangle(cornerRadius: 2, style: .continuous)
                         .menuTitleView(CGSize(width: 40, height: 2),"All", (offset * 3), expandMenu){
                             self.filter = "both"
                             entryModel.filterTodayEntries(userUID: userUID, filter: self.filter ?? "both")
                             animateMenu()
-                        }
+                        }.foregroundColor(self.filter == "both" ? .orange : .primary)
                 }
                 .hAlign(.leading)
                 .overlay(content: {
@@ -217,7 +218,6 @@ extension View{
                 Text(title)
                     .font(.custom(ubuntu, size: 25, relativeTo: .title))
                     .fontWeight(.medium)
-                    .foregroundColor(.white)
                     .frame(width: 100,alignment: .leading)
                     .scaleEffect(condition ? 1 : 0.01, anchor: .topLeading)
                     .offset(y: condition ? -6 : 0)
