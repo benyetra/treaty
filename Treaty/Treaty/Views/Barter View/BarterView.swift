@@ -29,12 +29,13 @@ struct BarterView: View {
     @State private var dimContent: Bool = false
     @State private var isLoading = false
     @State private var isSheetViewPresented: Bool = false
+    @State private var showNoPartnerAlert: Bool = false
     @State var selectedTransaction: TransactionType = TransactionType(amountSpent: 0, product: "", productIcon: "")
     @StateObject var entryModel: EntryViewModel = EntryViewModel()
     @AppStorage("partnerUsernameStored") var partnerUsernameStored: String = ""
     @AppStorage("partnerUID") var partnerUIDStored: String = ""
     @AppStorage("user_name") var userNameStored: String = ""
-
+    
     var user: User
     
     init(userWrapper: UserWrapper) {
@@ -67,7 +68,7 @@ struct BarterView: View {
                         ScrollView(.vertical, showsIndicators: false) {
                             VStack(spacing: 12){
                                 ForEach(types){transactionType in
-                                  TransactionCardView(transactionType, selectedTransaction: $selectedTransaction)
+                                    TransactionCardView(transactionType, selectedTransaction: $selectedTransaction)
                                 }
                             }
                             .padding(.top,40)
@@ -227,16 +228,24 @@ struct BarterView: View {
         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
         .shadow(color: .black.opacity(0.05), radius: 5, x: 5, y: 5)
         .onTapGesture {
-            self.$selectedTransaction.wrappedValue = transaction
-            self.isSheetViewPresented.toggle()
+            if self.partnerUIDStored.isEmpty {
+                self.showNoPartnerAlert.toggle()
+            } else {
+                self.$selectedTransaction.wrappedValue = transaction
+                self.isSheetViewPresented.toggle()
+            }
         }
         .sheet(isPresented: $isSheetViewPresented, onDismiss: {
             self.isSheetViewPresented = false
         }) {
             PartnerTradeView(userWrapper: userWrapper, selectedTransaction: self.$selectedTransaction).environmentObject(entryModel)
         }
+        .alert(isPresented: $showNoPartnerAlert) {
+            Alert(title: Text("No Partner Linked"), message: Text("Please set a partner in the Profile menu"), dismissButton: .default(Text("Thanks!")))
+        }
     }
 }
+
      
     /// - Custom Extension to avoid Redundant Codes
     extension View{
