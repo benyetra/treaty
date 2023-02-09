@@ -118,21 +118,24 @@ struct JournalView: View {
             HStack{
                 VStack(alignment: .leading, spacing: 4) {
                     RoundedRectangle(cornerRadius: 2, style: .continuous)
-                        .menuTitleView(CGSize(width: 60, height: 2),"My Tasks", offset, expandMenu){
+                        .menuTitleView(CGSize(width: 70, height: 2),"Mine", offset, expandMenu){
                             self.filter = "currentUser"
                             entryModel.filterTodayEntries(userUID: userUID, filter: self.filter)
+                            animateMenu()
                         }
                     
                     RoundedRectangle(cornerRadius: 2, style: .continuous)
                         .menuTitleView(CGSize(width: 45, height: 2),"Partner's", (offset * 2), expandMenu){
                             self.filter = "partnerUser"
                             entryModel.filterTodayEntries(userUID: userUID, filter: self.filter)
+                            animateMenu()
                         }
                     
                     RoundedRectangle(cornerRadius: 2, style: .continuous)
                         .menuTitleView(CGSize(width: 40, height: 2),"All", (offset * 3), expandMenu){
                             self.filter = "both"
                             entryModel.filterTodayEntries(userUID: userUID, filter: self.filter)
+                            animateMenu()
                         }
                 }
                 .hAlign(.leading)
@@ -172,7 +175,7 @@ struct JournalView: View {
                 .ignoresSafeArea()
         }
     }
-    
+
     /// - Animating Menu
     func animateMenu(){
         if expandMenu{
