@@ -12,7 +12,7 @@ import Firebase
 
 struct CustomDatePicker: View {
     @Binding var currentDate: Date
-    @AppStorage("filter") var filter: String = ""
+    @AppStorage("filter") var filter: String?
     @StateObject var entryModel: EntryViewModel = EntryViewModel()
     @Environment(\.colorScheme) private var colorScheme
     @State private var selectedDate: Date = Date()
@@ -36,21 +36,15 @@ struct CustomDatePicker: View {
             
             // Days...
             let days: [String] = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
-            
             HStack(spacing: 20){
-                
                 VStack(alignment: .leading, spacing: 10) {
-                    
                     Text(extraDate()[0])
                         .font(.caption)
                         .fontWeight(.semibold)
-                    
                     Text(extraDate()[1])
                         .font(.title.bold())
                 }
-                
                 Spacer(minLength: 0)
-                
                 Button {
                     withAnimation{
                         currentMonth -= 1
@@ -59,13 +53,10 @@ struct CustomDatePicker: View {
                     Image(systemName: "chevron.left")
                         .font(.title2)
                 }
-
                 Button {
-                    
                     withAnimation{
                         currentMonth += 1
                     }
-                    
                 } label: {
                     Image(systemName: "chevron.right")
                         .font(.title2)
@@ -73,28 +64,21 @@ struct CustomDatePicker: View {
             }
             .padding(.horizontal)
             // Day View...
-            
             HStack(spacing: 0){
                 ForEach(days,id: \.self){day in
-                    
                     Text(day)
                         .font(.callout)
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
                 }
             }
-            
             // Dates....
             // Lazy Grid..
             let columns = Array(repeating: GridItem(.flexible()), count: 7)
-            
             LazyVGrid(columns: columns,spacing: 15) {
-                
                 ForEach(extractDate()){value in
-                    
                     CardView(value: value)
                         .background(
-                            
                             Capsule()
                                 .fill(Color("Blue"))
                                 .padding(.horizontal,8)
@@ -103,18 +87,16 @@ struct CustomDatePicker: View {
                         .onTapGesture {
                             selectedDate = value.date
                             currentDate = value.date
-                            entryModel.filterTodayEntries(userUID: user.userUID, filter: self.filter)
+                            entryModel.filterTodayEntries(userUID: user.userUID, filter: self.filter ?? "both")
+                            print("Filter: ", self.filter)
                         }
                 }
             }
-            
             VStack(spacing: 15){
-                
                 Text("Events")
                     .font(.title2.bold())
                     .frame(maxWidth: .infinity,alignment: .leading)
                     .padding(.vertical,20)
-                
                 if let filteredEntries = entryModel.filteredEntries, !filteredEntries.isEmpty {
                     ForEach(filteredEntries){entry in
                         if isSameDay(date1: entry.taskDate, selectedDate: selectedDate) {
@@ -122,7 +104,6 @@ struct CustomDatePicker: View {
                         }
                     }
                 }
-
                 if let filteredRecords = entryModel.filteredBathroomRecords, !filteredRecords.isEmpty {
                     ForEach(filteredRecords) { record in
                         if isSameDay(date1: record.taskDate, selectedDate: selectedDate) {
@@ -130,7 +111,6 @@ struct CustomDatePicker: View {
                         }
                     }
                 }
-
                 if entryModel.filteredEntries == nil && entryModel.filteredBathroomRecords == nil {
                     Text("No Task Found")
                 }
@@ -138,30 +118,22 @@ struct CustomDatePicker: View {
             .padding()
         }
         .onChange(of: currentMonth) { newValue in
-            
             // updating Month...
             currentDate = getCurrentMonth()
         }
     }
-    
     @ViewBuilder
     func CardView(value: DateValue)->some View{
-        
         VStack{
-            
             if value.day != -1{
-                
                 if let note = entryModel.filteredEntries?.first(where: { note in
-                    
                     return isSameDay(date1: note.taskDate, selectedDate: value.date)
                 }){
                     Text("\(value.day)")
                         .font(.title3.bold())
                         .foregroundColor(isSameDay(date1: note.taskDate, selectedDate: selectedDate) ? .white : .primary)
                         .frame(maxWidth: .infinity)
-                    
                     Spacer()
-                    
                     Circle()
                         .fill(isSameDay(date1: note.taskDate, selectedDate: selectedDate) ? .white : Color("Sand"))
                         .frame(width: 8,height: 8)
@@ -179,12 +151,10 @@ struct CustomDatePicker: View {
                         .fill(isSameDay(date1: record.taskDate, selectedDate: selectedDate) ? .white : Color("Sand"))
                         .frame(width: 8,height: 8)
                 }else{
-                    
                     Text("\(value.day)")
                         .font(.title3.bold())
                         .foregroundColor(isSameDay(date1: value.date, selectedDate: selectedDate) ? .white : .primary)
                         .frame(maxWidth: .infinity)
-                    
                     Spacer()
                 }
             }
@@ -200,19 +170,16 @@ struct CustomDatePicker: View {
                     .fill(entryModel.isCurrentHour(date: entry.taskDate) ? (colorScheme == .light ? Color.black : Color.white) : .clear)
                     .frame(width: 15, height: 15)
                     .background(
-                    
                         Circle()
                             .stroke((colorScheme == .light ? Color("Blue") : Color("Sand")), lineWidth: 1)
                             .padding(-3)
                     )
                     .scaleEffect(!entryModel.isCurrentHour(date: entry.taskDate) ? 0.8 : 1)
-                
                 Rectangle()
                     .fill(colorScheme == .light ? Color("Blue") : Color("Sand"))
                     .frame(width: 3)
             }
             VStack{
-                
                 HStack(alignment: .top, spacing: 10) {
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
@@ -232,7 +199,6 @@ struct CustomDatePicker: View {
                     }
                     .hLeading()
                 }
-
                 // MARK: Team Members
                 HStack(spacing: 0){
                     HStack(spacing: -10){
@@ -266,7 +232,7 @@ struct CustomDatePicker: View {
                             user.removeCredits(amount: entry.amountSpent)
                             userWrapper.partner?.removeCredits(amount: entry.amountSpent)
                         }
-                        entryModel.filterTodayEntries(userUID: user.userUID, filter: self.filter)
+                        entryModel.filterTodayEntries(userUID: user.userUID, filter: self.filter ?? "both")
                         print("deleting post \(entry)")
                     } label: {
                         Image(systemName: "trash")
@@ -341,7 +307,7 @@ struct CustomDatePicker: View {
                     // MARK: Delete Button
                     Button {
                         deleteRecord(record: record)
-                        entryModel.filterTodayEntries(userUID: user.userUID, filter: self.filter)
+                        entryModel.filterTodayEntries(userUID: user.userUID, filter: self.filter ?? "both")
                         print("deleting post \(record)")
                     } label: {
                         Image(systemName: "trash")

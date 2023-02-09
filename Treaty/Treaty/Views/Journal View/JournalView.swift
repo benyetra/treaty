@@ -26,7 +26,7 @@ struct JournalView: View {
     @State private var expandMenu: Bool = false
     @State private var dimContent: Bool = false
     @State private var isShowingDatePicker: Bool = false
-    @State var filter: String = ""
+    @AppStorage("filter") var filter: String?
 
     var user: User
     @AppStorage("user_UID") var userUID: String = ""
@@ -98,7 +98,7 @@ struct JournalView: View {
                     .background(.ultraThinMaterial)
                 }
             }, onRefresh: {
-                entryModel.filterTodayEntries(userUID: user.userUID, filter: self.filter)
+                entryModel.filterTodayEntries(userUID: user.userUID, filter: self.filter ?? "both")
             })
         }
         .navigationTitle("Journal")
@@ -120,21 +120,21 @@ struct JournalView: View {
                     RoundedRectangle(cornerRadius: 2, style: .continuous)
                         .menuTitleView(CGSize(width: 70, height: 2),"Mine", offset, expandMenu){
                             self.filter = "currentUser"
-                            entryModel.filterTodayEntries(userUID: userUID, filter: self.filter)
+                            entryModel.filterTodayEntries(userUID: userUID, filter: self.filter ?? "both")
                             animateMenu()
                         }
                     
                     RoundedRectangle(cornerRadius: 2, style: .continuous)
                         .menuTitleView(CGSize(width: 45, height: 2),"Partner's", (offset * 2), expandMenu){
                             self.filter = "partnerUser"
-                            entryModel.filterTodayEntries(userUID: userUID, filter: self.filter)
+                            entryModel.filterTodayEntries(userUID: userUID, filter: self.filter ?? "both")
                             animateMenu()
                         }
                     
                     RoundedRectangle(cornerRadius: 2, style: .continuous)
                         .menuTitleView(CGSize(width: 40, height: 2),"All", (offset * 3), expandMenu){
                             self.filter = "both"
-                            entryModel.filterTodayEntries(userUID: userUID, filter: self.filter)
+                            entryModel.filterTodayEntries(userUID: userUID, filter: self.filter ?? "both")
                             animateMenu()
                         }
                 }

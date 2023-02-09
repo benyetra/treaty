@@ -14,8 +14,8 @@ class EntryViewModel: ObservableObject{
     @AppStorage("partnerUID") var partnerUIDStored: String = ""
     @AppStorage("partnerTokenStored") var tokenStored: String = ""
     @AppStorage("user_name") var usernameStored: String = ""
-    @AppStorage("filter") var filter: String = ""
-    
+    @AppStorage("filter") var filter: String?
+
     @Published var selectedDay: Date = Date()
     
     // Sample Tasks
@@ -51,7 +51,7 @@ class EntryViewModel: ObservableObject{
     // MARK: Intializing
     init(){
         fetchCurrentWeek()
-        filterTodayEntries(userUID: userUID, filter: filter)
+        filterTodayEntries(userUID: userUID, filter: filter ?? "both")
     }
     
     func filterTodayEntries(userUID: String, filter: String) {
@@ -61,15 +61,15 @@ class EntryViewModel: ObservableObject{
                 var filteredEntries = self.storedEntries
                 if filter == "currentUser" {
                     filteredEntries = filteredEntries.filter {
-                        return $0.userUID == userUID
+                        return $0.taskParticipants.contains(where: {$0.userUID == self.userUID})
                     }
                 } else if filter == "partnerUser" {
                     filteredEntries = filteredEntries.filter {
-                        return $0.taskParticipants.contains(where: { $0.username == self.partnerUsernameStored })
+                        return $0.taskParticipants.contains(where: { $0.userUID == self.partnerUIDStored })
                     }
                 } else if filter == "both" {
                     filteredEntries = filteredEntries.filter {
-                        return ($0.userUID == userUID || $0.taskParticipants.contains(where: { $0.username == self.partnerUsernameStored }))
+                        return ($0.taskParticipants.contains(where: { $0.userUID == self.partnerUIDStored  || $0.userUID == self.userUID}))
                     }
                 }
                 filteredEntries.sort { $0.taskDate > $1.taskDate }
@@ -185,8 +185,8 @@ class EntryViewModel: ObservableObject{
         let db = Firestore.firestore()
         var count = 0
         for participant in taskParticipants {
-            if let username = participant["username"] as? String {
-                db.collection("Users").whereField("username", isEqualTo: username).getDocuments { (querySnapshot, error) in
+            if let userUID = participant["userUID"] as? String {
+                db.collection("Users").whereField("userUID", isEqualTo: userUID).getDocuments { (querySnapshot, error) in
                     if let error = error {
                         print("Error getting document: (error)")
                     } else {

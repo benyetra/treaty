@@ -121,7 +121,7 @@ struct NewEntry: View {
                                     if let partner = self.userWrapper.partner {
                                         self.isButton2Selected.toggle()
                                         if self.isButton2Selected {
-                                            self.selectedUsers.append(User(id: "", username: partner.username, userUID: "", userEmail: "", userProfileURL: partner.userProfileURL, token: partner.token, credits: partner.credits))
+                                            self.selectedUsers.append(User(id: "", username: partner.username, userUID: partner.partnerUID, userEmail: "", userProfileURL: partner.userProfileURL, token: partner.token, credits: partner.credits))
                                         } else {
                                             self.selectedUsers.removeAll(where: { $0.username == partner.username })
                                         }
@@ -211,7 +211,7 @@ struct NewEntry: View {
         var ref: DocumentReference? = nil
         var taskParticipants = [[String: Any]]()
         for user in newEntry.taskParticipants {
-            taskParticipants.append(["username": user.username, "userProfileURL": user.userProfileURL.absoluteString])
+            taskParticipants.append(["username": user.username, "userUID": user.userUID, "userProfileURL": user.userProfileURL.absoluteString])
         }
         ref = db.collection("entries").addDocument(data: [
             "id": newEntry.id,
