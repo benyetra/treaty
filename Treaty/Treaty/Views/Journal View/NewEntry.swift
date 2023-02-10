@@ -88,6 +88,7 @@ struct NewEntry: View {
                     }
                 } header: {
                     Text("Completed Task")
+                        .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                 }
                 
                 Section {
@@ -112,6 +113,7 @@ struct NewEntry: View {
                                 .opacity(isButton1Selected ? 1 : 0.5)
                             }
                             Text(user.username)
+                                .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                         }
                         if userWrapper.partner != nil {
                             HStack {
@@ -119,7 +121,7 @@ struct NewEntry: View {
                                     if let partner = self.userWrapper.partner {
                                         self.isButton2Selected.toggle()
                                         if self.isButton2Selected {
-                                            self.selectedUsers.append(User(id: "", username: partner.username, userUID: "", userEmail: "", userProfileURL: partner.userProfileURL, token: partner.token, credits: partner.credits))
+                                            self.selectedUsers.append(User(id: "", username: partner.username, userUID: partner.partnerUID, userEmail: "", userProfileURL: partner.userProfileURL, token: partner.token, credits: partner.credits))
                                         } else {
                                             self.selectedUsers.removeAll(where: { $0.username == partner.username })
                                         }
@@ -139,16 +141,20 @@ struct NewEntry: View {
                                 }
                                 if let username = userWrapper.partner?.username {
                                     Text(username)
+                                        .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                                 } else {
                                     Text("Your Partner")
+                                        .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                                 }
                             }
                         } else {
                             Text("No partner currently linked. If you have a partner add them on the Profile screen.")
+                                .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                         }
                     }
                 } header: {
                     Text("Participants")
+                        .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                 }
 
                 
@@ -158,10 +164,12 @@ struct NewEntry: View {
                         .labelsHidden()
                 } header: {
                     Text("Task Date")
+                        .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                 }
             }
             .listStyle(.insetGrouped)
-            .navigationTitle("Add New Task")
+            .navigationTitle("Add New Event")
+            .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
             .navigationBarTitleDisplayMode(.inline)
             // MARK: Disabling Dismiss on Swipe
             .interactiveDismissDisabled()
@@ -171,7 +179,7 @@ struct NewEntry: View {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel"){
                         dismiss()
-                    }
+                    }.foregroundColor(Color.red)
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -187,9 +195,10 @@ struct NewEntry: View {
                             user.addCredits(amount: selectedAmount)
                             userWrapper.partner?.addCredits(amount: selectedAmount)
                         }
-                        entryModel.filterTodayEntries(userUID: user.userUID)
+                        entryModel.filterTodayEntries(userUID: user.userUID, filter: "both")
                         print("Array count: \(self.selectedUsers.count)")
                     }
+                    .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                     .disabled(self.selectedUsers.isEmpty || self.selectedType == "")
                 }
             }
@@ -202,7 +211,7 @@ struct NewEntry: View {
         var ref: DocumentReference? = nil
         var taskParticipants = [[String: Any]]()
         for user in newEntry.taskParticipants {
-            taskParticipants.append(["username": user.username, "userProfileURL": user.userProfileURL.absoluteString])
+            taskParticipants.append(["username": user.username, "userUID": user.userUID, "userProfileURL": user.userProfileURL.absoluteString])
         }
         ref = db.collection("entries").addDocument(data: [
             "id": newEntry.id,

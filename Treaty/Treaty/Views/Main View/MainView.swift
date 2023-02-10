@@ -14,6 +14,8 @@ struct MainView: View {
     @ObservedObject var userWrapper = UserWrapper(user: User(id: "", username: "", userUID: "", userEmail: "", userProfileURL: URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")! ,token: "", credits: 50))
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("partnerUsernameStored") var partnerUsernameStored: String = ""
+    @AppStorage("partnerUID") var partnerUIDStored: String = ""
+    @AppStorage("user_UID") var userUID: String = ""
     
     init() {
         fetchUserData()
@@ -44,6 +46,7 @@ struct MainView: View {
                 }
                 .environmentObject(userWrapper)
         }
+        .background(.ultraThinMaterial)
         .tint(colorScheme == .light ? Color.black : Color.white)
     }
     
@@ -73,6 +76,7 @@ struct MainView: View {
                         {
                             self.userWrapper.partner = PartnerModel(username: partnerUsername, userProfileURL: partnerURL, token: partnerToken, credits: partnerCredits, partnerUID: partnerUID)
                             self.partnerUsernameStored = partnerUsername
+                            self.partnerUIDStored = partnerUID
                         } else {
                             let defaultPartnerURL = URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!
                             self.userWrapper.partner = PartnerModel(username: "", userProfileURL: defaultPartnerURL, token: "", credits: 50, partnerUID: partnerUID)

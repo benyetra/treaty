@@ -16,6 +16,7 @@ struct ReusableProfileContent: View {
     var user: User
     @ObservedObject var userWrapper: UserWrapper
     @AppStorage("partnerUsernameStored") var partnerUsernameStored: String = ""
+    @AppStorage("partnerUID") var partnerUIDStored: String = ""
     @AppStorage("user_name") var userNameStored: String = ""
     @AppStorage("user_UID") var userUID: String = ""
     @AppStorage("user_profile_url") var profileURL: URL?
@@ -64,7 +65,7 @@ struct ReusableProfileContent: View {
                                     Text("@\(user.username)")
                                         .font(.title3)
                                         .fontWeight(.semibold)
-                                    WebImage(url: self.user.userProfileURL)
+                                    WebImage(url: self.profileURL)
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
                                 }
@@ -112,7 +113,8 @@ struct ReusableProfileContent: View {
             }
         }, onRefresh: {
             fetchUserData()
-        })
+        }).onAppear(perform: fetchUserData)
+
     }
     
     func fetchUserData() {
@@ -129,9 +131,13 @@ struct ReusableProfileContent: View {
                 let credits = data["credits"] as? Int ?? 50
                 if let url = URL(string: userProfileURL) {
                     self.userWrapper.user = User(id: "", username: username, userUID: userUID, userEmail: userEmail, userProfileURL: url, token: userToken, credits: credits)
+                    self.profileURL = url
+                    self.userNameStored = username
                 } else {
                     let defaultURL = URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!
                     self.userWrapper.user = User(id: "", username: username, userUID: userUID, userEmail: userEmail, userProfileURL: defaultURL, token: userToken, credits: credits)
+                    self.profileURL = defaultURL
+                    self.userNameStored = username
                 }
                 if let partnerUID = data["partners"] as? String {
                     db.collection("Users").document(partnerUID).getDocument { (partnerDocument, error) in
@@ -141,6 +147,7 @@ struct ReusableProfileContent: View {
                         {
                             self.userWrapper.partner = PartnerModel(username: partnerUsername, userProfileURL: partnerURL, token: partnerToken, credits: partnerCredits, partnerUID: partnerUID)
                             self.partnerUsernameStored = partnerUsername
+                            self.partnerUIDStored = partnerUID
                         } else {
                             let defaultPartnerURL = URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!
                             self.userWrapper.partner = PartnerModel(username: "", userProfileURL: defaultPartnerURL, token: "", credits: 50, partnerUID: partnerUID)

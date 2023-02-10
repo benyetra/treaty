@@ -1,29 +1,28 @@
 //
-//  Tasks.swift
+//  BathroomRecord.swift
 //  Treaty
 //
-//  Created by Bennett Yetra on 1/22/23.
+//  Created by Bennett Yetra on 2/7/23.
 //
 
 import SwiftUI
 import FirebaseFirestoreSwift
 
-// Entry Model
-struct Entry: Identifiable,Codable{
+struct BathroomRecord: Identifiable,Codable{
     @DocumentID var id: String?
     var product: String
-    var amountSpent: Int
-    var taskParticipants: [User]
+    var productIcon: String
     var taskDate: Date
     var userUID: String
+    var size: String
     
     enum CodingKeys: CodingKey {
         case id
         case product
-        case amountSpent
-        case taskParticipants
+        case productIcon
         case taskDate
         case userUID
+        case size
     }
     
     func getDate(offset: Int)->Date{
@@ -34,5 +33,3 @@ struct Entry: Identifiable,Codable{
         return date ?? Date()
     }
 }
-
-

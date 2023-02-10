@@ -26,7 +26,7 @@ class LoginViewModel: ObservableObject {
     
     // MARK: App Log Status
     @AppStorage("log_status") var logStatus: Bool = false
-    
+    @AppStorage("user_UID") var userUID: String = ""
     // MARK: Apple Sign in Properties
     @Published var nonce: String = ""
     

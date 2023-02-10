@@ -27,8 +27,12 @@ struct AccountView: View {
     // MARK: User Defaults Data
     @ObservedObject var credentials = UserCredentials()
     @AppStorage("user_profile_url") var profileURL: URL?
-    @AppStorage("user_name") var userName: String = ""
+    @AppStorage("user_name") var userNameStored: String = ""
     @AppStorage("user_UID") var userUID: String = ""
+    @AppStorage("user_token") var userTokenStored: String = ""
+    @AppStorage("partnerUsernameStored") var partnerUsernameStored: String = ""
+    @AppStorage("partnerUID") var partnerUIDStored: String = ""
+    @AppStorage("partnerTokenStored") var tokenStored: String = ""
     @AppStorage("log_status") var logStatus: Bool = false
     // MARK: View Properties
     @Environment(\.colorScheme) private var colorScheme
@@ -134,8 +138,12 @@ struct AccountView: View {
         }
         withAnimation(.easeInOut){
             userUID = ""
-            userName = ""
+            userNameStored = ""
             profileURL = nil
+            userTokenStored = ""
+            partnerUsernameStored = ""
+            partnerUIDStored = ""
+            tokenStored = ""
             logStatus = false
         }
     }
