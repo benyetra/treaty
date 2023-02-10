@@ -11,7 +11,7 @@ import FirebaseFirestore
 import Firebase
 
 struct CustomDatePicker: View {
-    @Binding var currentDate: Date
+    @State var currentDate: Date
     @AppStorage("filter") var filter: String?
     @StateObject var entryModel: EntryViewModel = EntryViewModel()
     @Environment(\.colorScheme) private var colorScheme
@@ -25,7 +25,7 @@ struct CustomDatePicker: View {
      init(userWrapper: UserWrapper) {
          self.userWrapper = userWrapper
          self.user = userWrapper.user
-         self._currentDate = Binding.constant(Date())
+         self._currentDate = State(initialValue: Date())
          self._selectedDate = State(initialValue: Date())
          self._currentMonth = State(initialValue: 0)
      }
