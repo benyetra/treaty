@@ -19,6 +19,7 @@ struct JournalView: View {
     /// - Animation Properties
     @State var errorMessage: String = ""
     @State var showError: Bool = false
+    @State var showAlert: Bool = false
     @State var isLoading: Bool = false
     @State var currentDate: Date = Date()
     @State private var currentWeek: [Date] = []
@@ -40,7 +41,53 @@ struct JournalView: View {
         NavigationStack{
             VStack {
                 HeaderView()
+                HStack(){
+                    Button {
+                        entryModel.addNewTask.toggle()
+                    } label: {
+                        Text("Add New Task")
+                            .foregroundColor(Color("Sand"))
+                            .fontWeight(.bold)
+                            .padding(.vertical)
+                            .frame(maxWidth: .infinity)
+                            .background(
+                                Capsule()
+                                    .strokeBorder(Color("Sand"), lineWidth: 2)
+                            )
+                    }
+                    .sheet(isPresented: $entryModel.addNewTask) {
+                        NewEntry(userWrapper: userWrapper)
+                            .environmentObject(entryModel)
+                            .onAppear {
+                                entryModel.filterTodayEntries(userUID: userUID, filter: self.filter ?? "both")
+                            }
+                    }
+                    Button {
+                        entryModel.addNewBathroomRecord.toggle()
+                    } label: {
+                        Text("Bathroom Break")
+                            .foregroundColor(Color("Blue"))
+                            .fontWeight(.bold)
+                            .padding(.vertical)
+                            .frame(maxWidth: .infinity)
+                            .background(Color("Sand"),in: Capsule())
+                    }
+                    .sheet(isPresented: $entryModel.addNewBathroomRecord) {
+                    } content: {
+                        NewBathroomRecord(userWrapper: userWrapper)
+                            .environmentObject(entryModel)
+                            .onAppear {
+                                entryModel.filterTodayEntries(userUID: userUID, filter: self.filter ?? "both")
+                            }
+                    }
+                }
             }
+                .padding(.horizontal)
+                .padding(.top,10)
+                .padding(.bottom,10)
+                .foregroundColor(.white)
+                .background(Color("Blue"))
+            
             CustomRefreshView(lottieFileName: "Loading", backgroundColor: Color(.clear), content:  {
                 
                 ScrollView(.vertical, showsIndicators: false) {
@@ -52,51 +99,11 @@ struct JournalView: View {
                     }
                     .padding(.vertical)
                 }
-                // Safe Area View...
-                .safeAreaInset(edge: .bottom) {
-                    
-                    HStack{
-                        Button {
-                            entryModel.addNewTask.toggle()
-                        } label: {
-                            Text("Add New Task")
-                                .fontWeight(.bold)
-                                .padding(.vertical)
-                                .frame(maxWidth: .infinity)
-                                .background(Color("Blue"),in: Capsule())
-                        }
-                        .sheet(isPresented: $entryModel.addNewTask) {
-                        } content: {
-                            NewEntry(userWrapper: userWrapper)
-                                .environmentObject(entryModel)
-                                .onAppear {
-                                    MainView().fetchUserData()
-                                }
-                        }
-                        Button {
-                            entryModel.addNewBathroomRecord.toggle()
-                        } label: {
-                            Text("Bathroom Break")
-                                .fontWeight(.bold)
-                                .padding(.vertical)
-                                .frame(maxWidth: .infinity)
-                                .background(Color("Sand"),in: Capsule())
-                        }
-                        .sheet(isPresented: $entryModel.addNewBathroomRecord) {
-                        } content: {
-                            NewBathroomRecord(userWrapper: userWrapper)
-                                .environmentObject(entryModel)
-                                .onAppear {
-                                    MainView().fetchUserData()
-                                }
-                        }
-                    }
-                    .padding(.horizontal)
-                    .padding(.top,10)
-                    .padding(.bottom,10)
-                    .foregroundColor(.white)
-                    .background(.ultraThinMaterial)
-                }
+//                // Safe Area View...
+//                .safeAreaInset(edge: .bottom) {
+//
+//
+//                }
             }, onRefresh: {
                 entryModel.filterTodayEntries(userUID: user.userUID, filter: self.filter ?? "both")
             })
@@ -127,10 +134,17 @@ struct JournalView: View {
                     
                     RoundedRectangle(cornerRadius: 2, style: .continuous)
                         .menuTitleView(CGSize(width: 45, height: 2),"Partner's", (offset * 2), expandMenu){
-                            self.filter = "partnerUser"
-                            entryModel.filterTodayEntries(userUID: user.userUID, filter: self.filter ?? "both")
-                            animateMenu()
+                            if user.partner == nil {
+                                showAlert = true
+                            } else {
+                                self.filter = "partnerUser"
+                                entryModel.filterTodayEntries(userUID: user.userUID, filter: self.filter ?? "both")
+                                animateMenu()
+                            }
                         }.foregroundColor(self.filter == "partnerUser" ? .orange : .primary)
+                        .alert(isPresented: $showAlert) {
+                            Alert(title: Text("No Partner Linked"), message: Text("Please set a partner in the Profile menu"), dismissButton: .default(Text("Thanks!")))
+                        }
                     
                     RoundedRectangle(cornerRadius: 2, style: .continuous)
                         .menuTitleView(CGSize(width: 40, height: 2),"All", (offset * 3), expandMenu){
