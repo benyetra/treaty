@@ -99,11 +99,6 @@ struct JournalView: View {
                     }
                     .padding(.vertical)
                 }
-//                // Safe Area View...
-//                .safeAreaInset(edge: .bottom) {
-//
-//
-//                }
             }, onRefresh: {
                 entryModel.filterTodayEntries(userUID: user.userUID, filter: self.filter ?? "both")
             })
