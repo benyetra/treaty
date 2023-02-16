@@ -26,10 +26,13 @@ struct PartnerTradeView: View {
     @State private var isButton2Selected = false
     @State private var selectedButton = -1
     @State var selectedIndex: Int? = nil
+    @State private var partnerToken: String = ""
     @State private var partnerUser: User?
     @State private var partnerModel: PartnerModel?
     @State var partnerUsername: String = ""
     @State private var partnerProfileURL: String = ""
+    @State var titleText = "you've received a trade from: "
+    @State var bodyText = "Your partner apprecaites you for helping with: "
     @Binding var selectedTransaction: TransactionType
     var user: User
 
@@ -169,6 +172,35 @@ struct PartnerTradeView: View {
                 print("Document added with ID: \(ref!.documentID)")
             }
         }
+        self.titleText = "Hey @\(partnerUsername),  \(titleText) \(user.username)!"
+        self.bodyText = "\(bodyText) \(newEntry.product) for \(newEntry.amountSpent)"
+        sendPushNotification(to: partnerToken, title: titleText, body: bodyText)
         self.dismiss()
+    }
+    
+    func sendPushNotification(to token: String, title: String, body: String) {
+        let url = URL(string: "https://fcm.googleapis.com/fcm/send")!
+        var request = URLRequest(url: url)
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("key=AAAAtmf3cpE:APA91bGYuNqm0U9i_TM6UNuze11Vwk813RNQs8LZvGYKMl9QcYgSxGy-EUeccJs1_3GSRiJKwq39xNH0Ji3CN2nQ7WiPgrdnhMIBIs6M2GBaCnJl2gEmsOdyCnlco4bU9GwK4OBF6obA", forHTTPHeaderField: "Authorization")
+        request.httpMethod = "POST"
+        let data: [String: Any] = [
+            "to": token,
+            "notification": [
+                "title": (title),
+                "body": body
+            ],
+            "priority": "high"
+        ]
+        let jsonData = try! JSONSerialization.data(withJSONObject: data, options: [])
+        request.httpBody = jsonData
+        
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                print("Error sending push notification: \(error)")
+            } else if let response = response as? HTTPURLResponse {
+                print("Push notification sent with response: \(response)")
+            }
+        }.resume()
     }
 }
