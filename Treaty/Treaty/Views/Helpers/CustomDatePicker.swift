@@ -75,7 +75,7 @@ struct CustomDatePicker: View {
             // Dates....
             // Lazy Grid..
             let columns = Array(repeating: GridItem(.flexible()), count: 7)
-            LazyVGrid(columns: columns,spacing: 15) {
+            LazyVGrid(columns: columns,spacing: 1) {
                 ForEach(extractDate()){value in
                     CardView(value: value)
                         .background(
@@ -92,7 +92,7 @@ struct CustomDatePicker: View {
                         }
                 }
             }
-            VStack(spacing: 15){
+            VStack(spacing: 10){
                 Text("Events")
                     .font(.title2.bold())
                     .frame(maxWidth: .infinity,alignment: .leading)
