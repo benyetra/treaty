@@ -204,8 +204,9 @@ struct EditProfileView: View {
                 userName == "" ||
                 emailID == "" ||
                 (newPassword != confirmPassword) ||
-                (newPassword != "" && newPassword.count < 6) ||
-                (confirmPassword != "" && confirmPassword.count < 6)
+                ((newPassword != "" || currentPassword != "") && newPassword.count < 6) ||
+                ((confirmPassword != "" || currentPassword != "") && confirmPassword.count < 6) ||
+                (currentPassword != "" && newPassword == "" && confirmPassword == "")
             )
             .padding(.top, 10)
         }
