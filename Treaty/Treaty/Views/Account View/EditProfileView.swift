@@ -93,7 +93,11 @@ struct EditProfileView: View {
             }
         }
         // MARK: Displaying Alert
-        .alert(errorMessage, isPresented: $showError, actions: {})
+        .alert(errorMessage, isPresented: $showError, actions: {
+            Button("OK", role: .cancel) {
+                showError = false
+            }
+        })
     }
     
     @ViewBuilder
