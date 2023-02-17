@@ -17,9 +17,12 @@ struct EditProfileView: View {
     var docRef: DocumentReference!
     @State var emailID: String = ""
     @State var password: String = ""
+    @State private var newPassword: String = ""
+    @State private var confirmPassword: String = ""
+    @State private var currentPassword: String = ""
     @State var userName: String = ""
     @State var userProfilePicData: Data?
-
+    
     //MARK: View Properties
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) private var colorScheme
@@ -30,14 +33,14 @@ struct EditProfileView: View {
     @State var isLoading: Bool = false
     @State private var selection: String?
     @State private var isTextFieldEnabled: Bool = false
-
+    
     // MARK: User Defaults
     @AppStorage("log_status") var logStatus: Bool = false
     @AppStorage("user_name") var userNameStored: String = ""
     @AppStorage("user_UID") var userUID: String = ""
     @AppStorage("user_profile_url") var profileURL: URL?
-
-
+    
+    
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing:10) {
@@ -157,73 +160,83 @@ struct EditProfileView: View {
                 .autocapitalization(.none)
                 .border(1, colorScheme == .light ? Color.black : Color.white.opacity(0.5))
             
-                Button(action: {
-                    updateUserInfo { (error) in
-                        if let error = error {
-                            // Handle the error
-                            self.errorMessage = error.localizedDescription
-                            self.showError = true
-                        }
+            SecureField("Current Password", text: $currentPassword)
+                .foregroundColor(colorScheme == .light ? Color.gray : Color.white)
+                .textContentType(.password)
+                .disableAutocorrection(true)
+                .border(1, colorScheme == .light ? Color.black : Color.white.opacity(0.5))
+            
+            SecureField("New Password", text: $newPassword)
+                .foregroundColor(colorScheme == .light ? Color.gray : Color.white)
+                .textContentType(.newPassword)
+                .disableAutocorrection(true)
+                .border(1, colorScheme == .light ? Color.black : Color.white.opacity(0.5))
+            
+            SecureField("Confirm New Password", text: $confirmPassword)
+                .foregroundColor(colorScheme == .light ? Color.gray : Color.white)
+                .textContentType(.newPassword)
+                .disableAutocorrection(true)
+                .border(1, colorScheme == .light ? Color.black : Color.white.opacity(0.5))
+            
+            Button(action: {
+                updateUserInfo { (error) in
+                    if let error = error {
+                        // Handle the error
+                        self.errorMessage = error.localizedDescription
+                        self.showError = true
                     }
-                }) {
-                    Text("Save Changes")
-                        .foregroundColor(colorScheme == .light ? Color.white : Color("Blue"))
-                        .hAlign(.center)
-                        .fillView(colorScheme == .light ? Color("Blue") : Color("Sand"))
-                        .hAlign(.center)
                 }
-                .disableWithOpacity(userName == "" || emailID == "")
-                .padding(.top,10)
+            }) {
+                Text("Save Changes")
+                    .foregroundColor(colorScheme == .light ? Color.white : Color("Blue"))
+                    .hAlign(.center)
+                    .fillView(colorScheme == .light ? Color("Blue") : Color("Sand"))
+                    .hAlign(.center)
             }
+            .disableWithOpacity(
+                userName == "" ||
+                emailID == "" ||
+                (newPassword != confirmPassword) ||
+                (newPassword != "" && newPassword.count < 6) ||
+                (confirmPassword != "" && confirmPassword.count < 6)
+            )
+            .padding(.top, 10)
+        }
         .onAppear {
             getUserData()
         }
     }
-
-    func updateUserInfo(completion: @escaping (Error?) -> Void){
+    
+    func updateUserInfo(completion: @escaping (Error?) -> Void) {
         isLoading = true
         closeKeyboard()
         let db = Firestore.firestore()
-        
+
         // Get user's uid, if it exists
         if let uid = Auth.auth().currentUser?.uid {
-        guard let imageData = userProfilePicData else {
-            completion(nil)
-            return
-        }
-        let storageRef = Storage.storage().reference().child("Profile_Images").child(userUID)
-            storageRef.putData(imageData) { (metadata, error) in
+            validateCurrentPassword(uid: uid, currentPassword: currentPassword) { (error) in
                 if let error = error {
+                    // Handle the error
+                    self.errorMessage = error.localizedDescription
+                    self.showError = true
                     completion(error)
                 } else {
-                    // Downloading Photo URL
-                    storageRef.downloadURL { (url, error) in
-                        if let error = error {
-                            completion(error)
-                        } else {
-                            // Update user's data in Firebase Firestore
-                            db.collection("Users").document(uid).updateData([
-                                "userEmail": self.emailID,
-                                "username": self.userName.lowercased(),
-                                "userProfileURL": url?.absoluteString
-                            ]) { (error) in
-                                if let error = error {
-                                    // Show error message
-                                    self.errorMessage = error.localizedDescription
-                                    self.showError = true
-                                    completion(error)
-                                } else {
-                                    // Update user's data in UserDefaults
-                                    self.userNameStored = self.userName.lowercased()
-                                    self.userUID = self.userUID
-                                    self.profileURL = url
-                                    self.logStatus = true
-                                    // Dismiss view
-                                    self.dismiss()
-                                    completion(nil)
-                                }
+                    if !newPassword.isEmpty {
+                        Auth.auth().currentUser?.updatePassword(to: newPassword) { (error) in
+                            if let error = error {
+                                // Handle the error
+                                self.errorMessage = error.localizedDescription
+                                self.showError = true
+                                completion(error)
+                            } else {
+                                // Password change successful, update current password and user's data in Firebase Firestore
+                                self.currentPassword = self.newPassword
+                                self.updateUserData(db: db, uid: uid, completion: completion)
                             }
                         }
+                    } else {
+                        // No password change requested, update user's data in Firebase Firestore
+                        self.updateUserData(db: db, uid: uid, completion: completion)
                     }
                 }
             }
@@ -234,6 +247,63 @@ struct EditProfileView: View {
             completion(nil)
         }
     }
+    
+    func updateUserData(db: Firestore, uid: String, completion: @escaping (Error?) -> Void) {
+        guard let imageData = userProfilePicData else {
+            completion(nil)
+            return
+        }
+        let storageRef = Storage.storage().reference().child("Profile_Images").child(userUID)
+        storageRef.putData(imageData) { (metadata, error) in
+            if let error = error {
+                completion(error)
+            } else {
+                // Downloading Photo URL
+                storageRef.downloadURL { (url, error) in
+                    if let error = error {
+                        completion(error)
+                    } else {
+                        // Update user's data in Firebase Firestore
+                        db.collection("Users").document(uid).updateData([
+                            "userEmail": self.emailID,
+                            "username": self.userName.lowercased(),
+                            "userProfileURL": url?.absoluteString
+                        ]) { (error) in
+                            if let error = error {
+                                // Show error message
+                                self.errorMessage = error.localizedDescription
+                                self.showError = true
+                                completion(error)
+                            } else {
+                                // Update user's data in UserDefaults
+                                self.userNameStored = self.userName.lowercased()
+                                self.userUID = self.userUID
+                                self.profileURL = url
+                                self.logStatus = true
+                                // Dismiss view
+                                self.dismiss()
+                                completion(nil)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func validateCurrentPassword(uid: String, currentPassword: String, completion: @escaping (Error?) -> Void) {
+        let credential = EmailAuthProvider.credential(withEmail: Auth.auth().currentUser?.email ?? "", password: currentPassword)
+        Auth.auth().currentUser?.reauthenticate(with: credential) { (result, error) in
+            if let error = error {
+                // Handle the error
+                completion(error)
+            } else {
+                // Password is valid, call completion with no error
+                completion(nil)
+            }
+        }
+    }
+
     
     // MARK: Displaying Errors VIA Alert
     func setError(_ error: Error)async{
@@ -253,10 +323,29 @@ struct EditProfileView: View {
                 self.emailID = document["userEmail"] as? String ?? ""
                 self.userName = document["username"] as? String ?? ""
                 self.userProfilePicData = document["userProfileURL"] as? Data
+                
+//                let credential = EmailAuthProvider.credential(withEmail: self.emailID, password: self.currentPassword)
+//                print("Current password: \(self.currentPassword)")
+//
+//                // Reauthenticate the user using the credential
+//                Auth.auth().currentUser?.reauthenticate(with: credential) { (result, error) in
+//                    if let error = error {
+//                        // Handle the error
+//                        self.errorMessage = error.localizedDescription
+//                        self.showError = true
+//                        return
+//                    } else {
+//                        // Update the currentPassword value with the user's current password
+//                        self.currentPassword = self.newPassword
+//
+//                        // Reset the newPassword and confirmPassword fields
+//                        self.newPassword = ""
+//                        self.confirmPassword = ""
+//                    }
+//                }
             } else {
                 print("Error getting user data: \(error)")
             }
         }
     }
 }
-
