@@ -218,7 +218,7 @@ struct EditProfileView: View {
                 userName == "" || emailID == "")
             .padding(.top, 10)
         }
-        .sheet(isPresented: $showPasswordSheet){
+        .fullScreenCover(isPresented: $showPasswordSheet){
             PasswordFormView()
         }
         .onAppear {
