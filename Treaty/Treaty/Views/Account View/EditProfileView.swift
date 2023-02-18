@@ -33,7 +33,7 @@ struct EditProfileView: View {
     @State var isLoading: Bool = false
     @State private var selection: String?
     @State private var isTextFieldEnabled: Bool = false
-    
+    @State private var showPasswordSheet: Bool = false
     // MARK: User Defaults
     @AppStorage("log_status") var logStatus: Bool = false
     @AppStorage("user_name") var userNameStored: String = ""
@@ -170,23 +170,33 @@ struct EditProfileView: View {
                 .autocapitalization(.none)
                 .border(1, colorScheme == .light ? Color.black : Color.white.opacity(0.5))
             
-            SecureField("Current Password", text: $currentPassword)
-                .foregroundColor(colorScheme == .light ? Color.gray : Color.white)
-                .textContentType(.password)
-                .disableAutocorrection(true)
-                .border(1, colorScheme == .light ? Color.black : Color.white.opacity(0.5))
-            
-            SecureField("New Password", text: $newPassword)
-                .foregroundColor(colorScheme == .light ? Color.gray : Color.white)
-                .textContentType(.newPassword)
-                .disableAutocorrection(true)
-                .border(1, colorScheme == .light ? Color.black : Color.white.opacity(0.5))
-            
-            SecureField("Confirm New Password", text: $confirmPassword)
-                .foregroundColor(colorScheme == .light ? Color.gray : Color.white)
-                .textContentType(.newPassword)
-                .disableAutocorrection(true)
-                .border(1, colorScheme == .light ? Color.black : Color.white.opacity(0.5))
+//            SecureField("Current Password", text: $currentPassword)
+//                .foregroundColor(colorScheme == .light ? Color.gray : Color.white)
+//                .textContentType(.password)
+//                .disableAutocorrection(true)
+//                .border(1, colorScheme == .light ? Color.black : Color.white.opacity(0.5))
+//
+//            SecureField("New Password", text: $newPassword)
+//                .foregroundColor(colorScheme == .light ? Color.gray : Color.white)
+//                .textContentType(.newPassword)
+//                .disableAutocorrection(true)
+//                .border(1, colorScheme == .light ? Color.black : Color.white.opacity(0.5))
+//
+//            SecureField("Confirm New Password", text: $confirmPassword)
+//                .foregroundColor(colorScheme == .light ? Color.gray : Color.white)
+//                .textContentType(.newPassword)
+//                .disableAutocorrection(true)
+//                .border(1, colorScheme == .light ? Color.black : Color.white.opacity(0.5))
+        
+            Button(action: {
+                showPasswordSheet.toggle()
+            }) {
+                Text("Change Password")
+                    .foregroundColor(colorScheme == .light ? Color.white : Color("Sand"))
+                    .hAlign(.center)
+                    .fillView(colorScheme == .light ? Color("Sand") : Color("Blue"))
+                    .hAlign(.center)
+            }
             
             Button(action: {
                 updateUserInfo { (error) in
@@ -205,14 +215,11 @@ struct EditProfileView: View {
                     .hAlign(.center)
             }
             .disableWithOpacity(
-                userName == "" ||
-                emailID == "" ||
-                (newPassword != confirmPassword) ||
-                ((newPassword != "" || currentPassword != "") && newPassword.count < 6) ||
-                ((confirmPassword != "" || currentPassword != "") && confirmPassword.count < 6) ||
-                (currentPassword != "" && newPassword == "" && confirmPassword == "")
-            )
+                userName == "" || emailID == "")
             .padding(.top, 10)
+        }
+        .sheet(isPresented: $showPasswordSheet){
+            PasswordFormView()
         }
         .onAppear {
             getUserData()
@@ -225,119 +232,74 @@ struct EditProfileView: View {
         let db = Firestore.firestore()
 
         // Get user's uid, if it exists
-        guard let uid = Auth.auth().currentUser?.uid else {
-            // Handle error: uid is nil
-            self.errorMessage = "Error: Could not retrieve user's uid"
-            self.showError = true
-            completion(nil)
-            return
-        }
-
-        let group = DispatchGroup()
-
-        group.enter()
-        validateCurrentPassword(uid: uid, currentPassword: currentPassword) { (error) in
-            if let error = error {
-                // Handle the error
-                self.errorMessage = error.localizedDescription
-                self.showError = true
-                completion(error)
-            }
-            group.leave()
-        }
-
-        group.enter()
-        updateUserData(db: db, uid: uid) { (error) in
-            if let error = error {
-                // Handle the error
-                self.errorMessage = error.localizedDescription
-                self.showError = true
-                completion(error)
-            }
-            group.leave()
-        }
-
-        group.notify(queue: .main) {
-            // Update current password if it was changed
-            if !newPassword.isEmpty {
-                Auth.auth().currentUser?.updatePassword(to: newPassword) { (error) in
-                    if let error = error {
-                        // Handle the error
-                        self.errorMessage = error.localizedDescription
-                        self.showError = true
-                        completion(error)
-                    } else {
-                        self.currentPassword = self.newPassword
-                        self.dismiss()
-                        completion(nil)
-                    }
-                }
-            } else {
-                self.dismiss()
-                completion(nil)
-            }
-        }
-    }
-
-    
-    func updateUserData(db: Firestore, uid: String, completion: @escaping (Error?) -> Void) {
-        guard let imageData = userProfilePicData else {
-            completion(nil)
-            return
-        }
-        let storageRef = Storage.storage().reference().child("Profile_Images").child(userUID)
-        let group = DispatchGroup()
-
-        group.enter()
-        storageRef.putData(imageData) { (metadata, error) in
-            if let error = error {
-                completion(error)
-            } else {
-                group.enter()
-                storageRef.downloadURL { (url, error) in
+        if let uid = Auth.auth().currentUser?.uid {
+            if let imageData = userProfilePicData {
+                let storageRef = Storage.storage().reference().child("Profile_Images").child(userUID)
+                storageRef.putData(imageData) { (metadata, error) in
                     if let error = error {
                         completion(error)
                     } else {
-                        db.collection("Users").document(uid).updateData([
-                            "userEmail": self.emailID,
-                            "username": self.userName.lowercased(),
-                            "userProfileURL": url?.absoluteString
-                        ]) { (error) in
+                        // Downloading Photo URL
+                        storageRef.downloadURL { (url, error) in
                             if let error = error {
                                 completion(error)
                             } else {
-                                self.userNameStored = self.userName.lowercased()
-                                self.userUID = self.userUID
-                                self.profileURL = url
-                                self.logStatus = true
-                                group.leave()
+                                // Update user's data in Firebase Firestore
+                                db.collection("Users").document(uid).updateData([
+                                    "userEmail": self.emailID,
+                                    "username": self.userName.lowercased(),
+                                    "userProfileURL": url?.absoluteString
+                                ]) { (error) in
+                                    if let error = error {
+                                        // Show error message
+                                        self.errorMessage = error.localizedDescription
+                                        self.showError = true
+                                        completion(error)
+                                    } else {
+                                        // Update user's data in UserDefaults
+                                        self.userNameStored = self.userName.lowercased()
+                                        self.userUID = self.userUID
+                                        self.profileURL = url
+                                        self.logStatus = true
+                                        // Dismiss view
+                                        self.dismiss()
+                                        completion(nil)
+                                    }
+                                }
                             }
                         }
                     }
                 }
+            } else {
+                // Update user's data in Firebase Firestore
+                db.collection("Users").document(uid).updateData([
+                    "userEmail": self.emailID,
+                    "username": self.userName.lowercased(),
+                ]) { (error) in
+                    if let error = error {
+                        // Show error message
+                        self.errorMessage = error.localizedDescription
+                        self.showError = true
+                        completion(error)
+                    } else {
+                        // Update user's data in UserDefaults
+                        self.userNameStored = self.userName.lowercased()
+                        self.userUID = self.userUID
+                        self.logStatus = true
+                        // Dismiss view
+                        self.dismiss()
+                        completion(nil)
+                    }
+                }
             }
-            group.leave()
-        }
-
-        group.notify(queue: .main) {
-            self.dismiss()
+        } else {
+            // Handle error: uid is nil
+            self.errorMessage = "Error: Could not retrieve user's uid"
+            self.showError = true
             completion(nil)
         }
     }
 
-    
-    func validateCurrentPassword(uid: String, currentPassword: String, completion: @escaping (Error?) -> Void) {
-        let credential = EmailAuthProvider.credential(withEmail: Auth.auth().currentUser?.email ?? "", password: currentPassword)
-        Auth.auth().currentUser?.reauthenticate(with: credential) { (result, error) in
-            if let error = error {
-                // Handle the error
-                completion(error)
-            } else {
-                // Password is valid, call completion with no error
-                completion(nil)
-            }
-        }
-    }
 
     
     // MARK: Displaying Errors VIA Alert
