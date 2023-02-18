@@ -48,6 +48,13 @@ struct ReauthenticateDeleteAccountView: View {
                 .disableWithOpacity(password == "")
             }
             .padding(30)
+            .alert(isPresented: $showError) {
+                Alert(
+                    title: Text("Error"),
+                    message: Text(errorMessage),
+                    dismissButton: .default(Text("OK"))
+                )
+            }
         }
     }
     
@@ -112,7 +119,7 @@ struct ReauthenticateDeleteAccountView: View {
         await MainActor.run(body: {
             isLoading = false
             errorMessage = error.localizedDescription
-            showError.toggle()
+            showError = true
         })
     }
 }
