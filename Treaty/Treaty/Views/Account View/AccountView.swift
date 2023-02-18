@@ -37,15 +37,17 @@ struct AccountView: View {
     // MARK: View Properties
     @Environment(\.colorScheme) private var colorScheme
     @State var errorMessage: String = ""
+    @State private var password = ""
     @State var showError: Bool = false
     @State var isLoading: Bool = false
     @State var addPartnerSheet: Bool = false
     @State var pendingPartnerSheet: Bool = false
     @State var editAccount: Bool = false
+    @State var isShowingPasswordAlert: Bool = false
     @StateObject private var viewModel = PartnerRequestViewModel()
     @ObservedObject var userWrapper: UserWrapper
     var user: User
-
+    
     init(userWrapper: UserWrapper) {
         self.userWrapper = userWrapper
         self.user = userWrapper.user
@@ -67,7 +69,9 @@ struct AccountView: View {
                         Button("Manage Partner") { addPartnerSheet.toggle() }
                         Button("Edit Profile") { editAccount.toggle()}
                         Button("Logout",action: logOutUser)
-                        Button("Delete Account",role: .destructive,action: deleteAccount)
+                        Button("Delete Account", role: .destructive, action: {
+                            isShowingPasswordAlert.toggle()
+                        })
                     } label: {
                         Image(systemName: "ellipsis")
                             .rotationEffect(.init(degrees: 90))
@@ -84,6 +88,9 @@ struct AccountView: View {
             }
             .sheet(isPresented: $pendingPartnerSheet){
                 PartnerRequestView(viewModel: PartnerRequestViewModel())
+            }
+            .sheet(isPresented: $isShowingPasswordAlert) {
+                ReauthenticateDeleteAccountView()
             }
             if viewModel.partnerRequests.isEmpty {
             } else {
@@ -114,7 +121,7 @@ struct AccountView: View {
             await fetchUserData()
         }
     }
-
+    
     
     // MARK: Fetching User Data
     func fetchUserData()async{
@@ -146,53 +153,6 @@ struct AccountView: View {
             tokenStored = ""
             logStatus = false
         }
-    }
-    
-    // MARK: Deleting User Entire Account
-    func deleteAccount(){
-        isLoading = true
-        Task{
-            do{
-                guard let userUID = Auth.auth().currentUser?.uid else{return}
-
-                // Step 1: Check if user has any Profile_Images associated with their userUID
-                let reference = Storage.storage().reference().child("Profile_Images").child(userUID)
-                do {
-                    _ = try await reference.getMetadata()
-                    // if no error is thrown, it means image exists and can be deleted
-                    try await reference.delete()
-                } catch {
-                    // if error is thrown, it means image does not exist and can be skipped
-                }
-                // Step 2: Deleting Firestore User Document
-                try await Firestore.firestore().collection("Users").document(userUID).delete()
-                
-                // Final Step: Deleting Auth Account and Setting Log Status to False
-                try await Auth.auth().currentUser?.delete()
-                Firestore.firestore().clearPersistence { (error) in
-                    if let error = error {
-                        print("Error clearing Firestore instance cache: \(error)")
-                    } else {
-                        print("Successfully cleared Firestore instance cache")
-                    }
-                }
-
-                logStatus = false
-            }catch{
-                await setError(error)
-            }
-        }
-    }
-
-    
-    // MARK: Setting Error
-    func setError(_ error: Error)async{
-        // MARK: UI Must be run on Main Thread
-        await MainActor.run(body: {
-            isLoading = false
-            errorMessage = error.localizedDescription
-            showError.toggle()
-        })
     }
 }
 
