@@ -45,7 +45,7 @@ struct ReauthenticateDeleteAccountView: View {
                     }
                     .padding(20)
                 }
-                .disableWithOpacity(password == "")
+                .disableWithOpacity(isLoading || password == "")
             }
             .padding(30)
             .alert(isPresented: $showError) {
