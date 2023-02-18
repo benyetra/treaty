@@ -30,6 +30,8 @@
 		352F302F298BF7A6006857CB /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352F302E298BF7A6006857CB /* EditProfileView.swift */; };
 		352F3031298CA22A006857CB /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352F3030298CA22A006857CB /* Note.swift */; };
 		352F3033298CA285006857CB /* JournalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352F3032298CA285006857CB /* JournalView.swift */; };
+		3533B31729A0753A006199D2 /* PasswordFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3533B31629A0753A006199D2 /* PasswordFormView.swift */; };
+		3533B31929A1599A006199D2 /* ReauthenticateDeleteAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3533B31829A1599A006199D2 /* ReauthenticateDeleteAccountView.swift */; };
 		353DF54E29887FAC0088237A /* PartnerRequestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353DF54D29887FAC0088237A /* PartnerRequestModel.swift */; };
 		3544C8AC29874C4800957435 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 3544C8AB29874C4800957435 /* FirebaseAnalytics */; };
 		3544C8AE29874C4800957435 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 3544C8AD29874C4800957435 /* FirebaseMessaging */; };
@@ -101,6 +103,8 @@
 		352F302E298BF7A6006857CB /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
 		352F3030298CA22A006857CB /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note.swift; sourceTree = "<group>"; };
 		352F3032298CA285006857CB /* JournalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JournalView.swift; sourceTree = "<group>"; };
+		3533B31629A0753A006199D2 /* PasswordFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordFormView.swift; sourceTree = "<group>"; };
+		3533B31829A1599A006199D2 /* ReauthenticateDeleteAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ReauthenticateDeleteAccountView.swift; path = "Treaty/Views/Account View/ReauthenticateDeleteAccountView.swift"; sourceTree = "<group>"; };
 		353DF54D29887FAC0088237A /* PartnerRequestModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerRequestModel.swift; sourceTree = "<group>"; };
 		3544C8AF298865A800957435 /* PartnerRequestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerRequestView.swift; sourceTree = "<group>"; };
 		355FCC7D298EAE1F005FD023 /* PartnerTradeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerTradeView.swift; sourceTree = "<group>"; };
@@ -195,6 +199,7 @@
 		358BCF072978329F000A7F9C = {
 			isa = PBXGroup;
 			children = (
+				3533B31829A1599A006199D2 /* ReauthenticateDeleteAccountView.swift */,
 				358BCF122978329F000A7F9C /* Treaty */,
 				358BCF29297832A1000A7F9C /* TreatyTests */,
 				358BCF33297832A1000A7F9C /* TreatyUITests */,
@@ -336,6 +341,7 @@
 				358BCF702978609B000A7F9C /* ReusableProfileContent.swift */,
 				3544C8AF298865A800957435 /* PartnerRequestView.swift */,
 				3506E0402980262A005F0771 /* AddPartnerView.swift */,
+				3533B31629A0753A006199D2 /* PasswordFormView.swift */,
 			);
 			path = "Account View";
 			sourceTree = "<group>";
@@ -516,10 +522,12 @@
 				358BCF6529783A27000A7F9C /* View+Extension.swift in Sources */,
 				358BCF5C2978367F000A7F9C /* LoginView.swift in Sources */,
 				351818B7297E0C3C00230753 /* NewEntry.swift in Sources */,
+				3533B31929A1599A006199D2 /* ReauthenticateDeleteAccountView.swift in Sources */,
 				358BCF162978329F000A7F9C /* Persistence.swift in Sources */,
 				358BCF6829783AA8000A7F9C /* BarterView.swift in Sources */,
 				355FCC7E298EAE1F005FD023 /* PartnerTradeView.swift in Sources */,
 				352F3033298CA285006857CB /* JournalView.swift in Sources */,
+				3533B31729A0753A006199D2 /* PasswordFormView.swift in Sources */,
 				351818A0297B3E9200230753 /* TransactionType.swift in Sources */,
 				352C02F12978AB17008E77DF /* PhoneRegisterView.swift in Sources */,
 				355FCC8229928FF3005FD023 /* NewBathroomRecord.swift in Sources */,
