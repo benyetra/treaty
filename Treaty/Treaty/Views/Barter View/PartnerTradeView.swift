@@ -153,7 +153,7 @@ struct PartnerTradeView: View {
         var ref: DocumentReference? = nil
         var taskParticipants = [[String: Any]]()
         for user in newEntry.taskParticipants {
-            taskParticipants.append(["username": user.username, "userProfileURL": user.userProfileURL.absoluteString])
+            taskParticipants.append(["username": user.username, "userUID": user.userUID, "userProfileURL": user.userProfileURL.absoluteString])
         }
         ref = db.collection("entries").addDocument(data: [
             "id": newEntry.id,

@@ -17,9 +17,12 @@ struct EditProfileView: View {
     var docRef: DocumentReference!
     @State var emailID: String = ""
     @State var password: String = ""
+    @State private var newPassword: String = ""
+    @State private var confirmPassword: String = ""
+    @State private var currentPassword: String = ""
     @State var userName: String = ""
     @State var userProfilePicData: Data?
-
+    
     //MARK: View Properties
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) private var colorScheme
@@ -30,14 +33,14 @@ struct EditProfileView: View {
     @State var isLoading: Bool = false
     @State private var selection: String?
     @State private var isTextFieldEnabled: Bool = false
-
+    @State private var showPasswordSheet: Bool = false
     // MARK: User Defaults
     @AppStorage("log_status") var logStatus: Bool = false
     @AppStorage("user_name") var userNameStored: String = ""
     @AppStorage("user_UID") var userUID: String = ""
     @AppStorage("user_profile_url") var profileURL: URL?
-
-
+    
+    
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing:10) {
@@ -90,17 +93,27 @@ struct EditProfileView: View {
             }
         }
         // MARK: Displaying Alert
-        .alert(errorMessage, isPresented: $showError, actions: {})
+        .alert(errorMessage, isPresented: $showError, actions: {
+            Button("OK", role: .cancel) {
+                showError = false
+            }
+        })
     }
     
     @ViewBuilder
     func HelperView() -> some View {
         VStack(spacing:12) {
             ZStack {
-                if let userProfilePicData, let image = UIImage(data: userProfilePicData) {
+                if let userProfilePicData = userProfilePicData, let image = UIImage(data: userProfilePicData) {
                     Image(uiImage: image)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
+                } else if let profileURL = profileURL {
+                    WebImage(url: profileURL)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .clipShape(Circle())
+                        .overlay(Circle().stroke(colorScheme == .light ? Color("Blue") : Color("Sand"), lineWidth: 1))
                 } else {
                     Image("NullProfile")
                         .resizable()
@@ -157,73 +170,125 @@ struct EditProfileView: View {
                 .autocapitalization(.none)
                 .border(1, colorScheme == .light ? Color.black : Color.white.opacity(0.5))
             
-                Button(action: {
-                    updateUserInfo { (error) in
-                        if let error = error {
-                            // Handle the error
-                            self.errorMessage = error.localizedDescription
-                            self.showError = true
-                        }
-                    }
-                }) {
-                    Text("Save Changes")
-                        .foregroundColor(colorScheme == .light ? Color.white : Color("Blue"))
-                        .hAlign(.center)
-                        .fillView(colorScheme == .light ? Color("Blue") : Color("Sand"))
-                        .hAlign(.center)
-                }
-                .disableWithOpacity(userName == "" || emailID == "")
-                .padding(.top,10)
+//            SecureField("Current Password", text: $currentPassword)
+//                .foregroundColor(colorScheme == .light ? Color.gray : Color.white)
+//                .textContentType(.password)
+//                .disableAutocorrection(true)
+//                .border(1, colorScheme == .light ? Color.black : Color.white.opacity(0.5))
+//
+//            SecureField("New Password", text: $newPassword)
+//                .foregroundColor(colorScheme == .light ? Color.gray : Color.white)
+//                .textContentType(.newPassword)
+//                .disableAutocorrection(true)
+//                .border(1, colorScheme == .light ? Color.black : Color.white.opacity(0.5))
+//
+//            SecureField("Confirm New Password", text: $confirmPassword)
+//                .foregroundColor(colorScheme == .light ? Color.gray : Color.white)
+//                .textContentType(.newPassword)
+//                .disableAutocorrection(true)
+//                .border(1, colorScheme == .light ? Color.black : Color.white.opacity(0.5))
+        
+            Button(action: {
+                showPasswordSheet.toggle()
+            }) {
+                Text("Change Password")
+                    .foregroundColor(colorScheme == .light ? Color.white : Color("Sand"))
+                    .hAlign(.center)
+                    .fillView(colorScheme == .light ? Color("Sand") : Color("Blue"))
+                    .hAlign(.center)
             }
+            
+            Button(action: {
+                updateUserInfo { (error) in
+                    if let error = error {
+                        // Handle the error
+                        self.errorMessage = error.localizedDescription
+                        self.showError = true
+                        self.isLoading = false
+                    }
+                }
+            }) {
+                Text("Save Changes")
+                    .foregroundColor(colorScheme == .light ? Color.white : Color("Blue"))
+                    .hAlign(.center)
+                    .fillView(colorScheme == .light ? Color("Blue") : Color("Sand"))
+                    .hAlign(.center)
+            }
+            .disableWithOpacity(
+                userName == "" || emailID == "")
+            .padding(.top, 10)
+        }
+        .fullScreenCover(isPresented: $showPasswordSheet){
+            PasswordFormView()
+        }
         .onAppear {
             getUserData()
         }
     }
-
-    func updateUserInfo(completion: @escaping (Error?) -> Void){
+    
+    func updateUserInfo(completion: @escaping (Error?) -> Void) {
         isLoading = true
         closeKeyboard()
         let db = Firestore.firestore()
-        
+
         // Get user's uid, if it exists
         if let uid = Auth.auth().currentUser?.uid {
-        guard let imageData = userProfilePicData else {
-            completion(nil)
-            return
-        }
-        let storageRef = Storage.storage().reference().child("Profile_Images").child(userUID)
-            storageRef.putData(imageData) { (metadata, error) in
-                if let error = error {
-                    completion(error)
-                } else {
-                    // Downloading Photo URL
-                    storageRef.downloadURL { (url, error) in
-                        if let error = error {
-                            completion(error)
-                        } else {
-                            // Update user's data in Firebase Firestore
-                            db.collection("Users").document(uid).updateData([
-                                "userEmail": self.emailID,
-                                "username": self.userName.lowercased(),
-                                "userProfileURL": url?.absoluteString
-                            ]) { (error) in
-                                if let error = error {
-                                    // Show error message
-                                    self.errorMessage = error.localizedDescription
-                                    self.showError = true
-                                    completion(error)
-                                } else {
-                                    // Update user's data in UserDefaults
-                                    self.userNameStored = self.userName.lowercased()
-                                    self.userUID = self.userUID
-                                    self.profileURL = url
-                                    self.logStatus = true
-                                    // Dismiss view
-                                    self.dismiss()
-                                    completion(nil)
+            if let imageData = userProfilePicData {
+                let storageRef = Storage.storage().reference().child("Profile_Images").child(userUID)
+                storageRef.putData(imageData) { (metadata, error) in
+                    if let error = error {
+                        completion(error)
+                    } else {
+                        // Downloading Photo URL
+                        storageRef.downloadURL { (url, error) in
+                            if let error = error {
+                                completion(error)
+                            } else {
+                                // Update user's data in Firebase Firestore
+                                db.collection("Users").document(uid).updateData([
+                                    "userEmail": self.emailID,
+                                    "username": self.userName.lowercased(),
+                                    "userProfileURL": url?.absoluteString
+                                ]) { (error) in
+                                    if let error = error {
+                                        // Show error message
+                                        self.errorMessage = error.localizedDescription
+                                        self.showError = true
+                                        completion(error)
+                                    } else {
+                                        // Update user's data in UserDefaults
+                                        self.userNameStored = self.userName.lowercased()
+                                        self.userUID = self.userUID
+                                        self.profileURL = url
+                                        self.logStatus = true
+                                        // Dismiss view
+                                        self.dismiss()
+                                        completion(nil)
+                                    }
                                 }
                             }
                         }
+                    }
+                }
+            } else {
+                // Update user's data in Firebase Firestore
+                db.collection("Users").document(uid).updateData([
+                    "userEmail": self.emailID,
+                    "username": self.userName.lowercased(),
+                ]) { (error) in
+                    if let error = error {
+                        // Show error message
+                        self.errorMessage = error.localizedDescription
+                        self.showError = true
+                        completion(error)
+                    } else {
+                        // Update user's data in UserDefaults
+                        self.userNameStored = self.userName.lowercased()
+                        self.userUID = self.userUID
+                        self.logStatus = true
+                        // Dismiss view
+                        self.dismiss()
+                        completion(nil)
                     }
                 }
             }
@@ -234,6 +299,8 @@ struct EditProfileView: View {
             completion(nil)
         }
     }
+
+
     
     // MARK: Displaying Errors VIA Alert
     func setError(_ error: Error)async{
@@ -259,4 +326,3 @@ struct EditProfileView: View {
         }
     }
 }
-
