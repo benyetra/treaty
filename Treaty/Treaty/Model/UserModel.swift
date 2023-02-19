@@ -25,6 +25,7 @@ class User: Identifiable, Codable {
     var partner: PartnerModel?
     var token: String?
     var credits: Int
+    var pet: PetModel?
 
     func addCredits(amount: Int) {
         let db = Firestore.firestore()
@@ -80,7 +81,7 @@ class User: Identifiable, Codable {
         return credits
     }
 
-    init(id: String?, username: String, userUID: String, userEmail: String, userProfileURL: URL, partner: PartnerModel? = nil, token: String?, credits: Int) {
+    init(id: String?, username: String, userUID: String, userEmail: String, userProfileURL: URL, partner: PartnerModel? = nil, token: String?, credits: Int, pet: PetModel? = nil) {
         self.id = id
         self.username = username
         self.userUID = userUID
@@ -89,6 +90,7 @@ class User: Identifiable, Codable {
         self.partner = partner
         self.token = token
         self.credits = credits
+        self.pet = pet
     }
 
     func toDict() -> [String: Any] {
@@ -111,6 +113,7 @@ class User: Identifiable, Codable {
         case partner
         case token
         case credits
+        case pet
     }
 }
 

@@ -21,9 +21,11 @@ struct ReusableProfileContent: View {
     @AppStorage("user_name") var userNameStored: String = ""
     @AppStorage("user_UID") var userUID: String = ""
     @AppStorage("user_profile_url") var profileURL: URL?
+    @State private var pet = PetModel(name: "", breed: "", birthDate: Date(), weight: 0)
     @State var partnerUsername: String = ""
     @State private var partnerToken: String = ""
     @State private var showLightbox = false
+    @State private var showPetView = false
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
@@ -109,13 +111,53 @@ struct ReusableProfileContent: View {
                         .hAlign(.leading)
                         .padding(.vertical,15)
                     
+                    // Add a button here to allow users to add a new pet
+                    Button(action: {
+                        // Check if the user already has a linked pet
+//                        if self.userWrapper.user.pet == nil {
+//                            // Create a new pet and link it to the user and partner
+//                            let newPet = PetModel(name: pet.name, breed: pet.breed, birthDate: pet.birthDate, weight: pet.weight)
+//                            self.userWrapper.user.pet = newPet
+//                            if let partner = self.userWrapper.partner {
+//                                partner.partnerPet = newPet
+//                            }
+//                        }
+                        // Toggle the showPetView flag to open the PetInformationView full screen
+                        self.showPetView.toggle()
+                    }, label: {
+                        Text("Add Pet +")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color("Blue"))
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 20)
+                            .background(Color(.white))
+                            .clipShape(Capsule())
+                            .overlay(Capsule().stroke(Color("Blue"), lineWidth: 1))
+                    })
+                    .fullScreenCover(isPresented: $showPetView) {
+                        PetInformationView(userWrapper: userWrapper)
+                    }
+
+
+                    
+                    if let pet = self.userWrapper.user.pet {
+                        Text("Your Pet: \(pet.name),n/Breed:\(pet.breed), Weight: \(pet.weight), Birthdate: \(pet.birthDate)")
+                            .font(.subheadline)
+                            .foregroundColor(colorScheme == .light ? Color.gray : Color.white)
+                            .padding(.top, 10)
+                    } else {
+                        Text("No pet information found.")
+                            .font(.subheadline)
+                            .foregroundColor(colorScheme == .light ? Color.gray : Color.white)
+                            .padding(.top, 10)
+                    }
                 }
                 .padding(15)
             }
         }, onRefresh: {
             fetchUserData()
         }).onAppear(perform: fetchUserData)
-
     }
     
     func fetchUserData() {
@@ -130,6 +172,7 @@ struct ReusableProfileContent: View {
                 let userProfileURL = data["userProfileURL"] as? String ?? ""
                 let userToken = data["token"] as? String ?? ""
                 let credits = data["credits"] as? Int ?? 50
+                let pet = data["pet"] as? PetModel?
                 if let url = URL(string: userProfileURL) {
                     self.userWrapper.user = User(id: "", username: username, userUID: userUID, userEmail: userEmail, userProfileURL: url, token: userToken, credits: credits)
                     self.profileURL = url
