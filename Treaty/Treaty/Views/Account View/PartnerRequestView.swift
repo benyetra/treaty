@@ -15,6 +15,8 @@ struct PartnerRequestView: View {
     @ObservedObject var viewModel: PartnerRequestViewModel
     @EnvironmentObject var userWrapper: UserWrapper
     @Environment(\.colorScheme) private var colorScheme
+    @AppStorage("parnterLinked") var partnerLinked: Bool = false
+
     
     var body: some View {
         VStack {
@@ -113,6 +115,7 @@ class PartnerRequestViewModel: ObservableObject {
         let partnerRequest = partnerRequests[index]
         let senderUID = partnerRequest.senderUID
         let receiverUID = Auth.auth().currentUser?.uid
+        let partnerLinked = true
         // Update the user document to have the partner's UID added to the "partners" field
         Firestore.firestore().collection("Users").document(receiverUID!).updateData([
             "partners": senderUID

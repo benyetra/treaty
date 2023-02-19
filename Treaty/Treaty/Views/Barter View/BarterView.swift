@@ -35,6 +35,7 @@ struct BarterView: View {
     @AppStorage("partnerUsernameStored") var partnerUsernameStored: String = ""
     @AppStorage("partnerUID") var partnerUIDStored: String = ""
     @AppStorage("user_name") var userNameStored: String = ""
+    @AppStorage("parnterLinked") var partnerLinked: Bool = false
     
     var user: User
     
@@ -160,6 +161,7 @@ struct BarterView: View {
                             self.userWrapper.partner = PartnerModel(username: partnerUsername, userProfileURL: partnerURL, token: partnerToken, credits: partnerCredits, partnerUID: partnerUID)
                             self.partnerUsernameStored = partnerUsername
                             self.partnerUIDStored = partnerUID
+                            self.partnerLinked = true // set partnerLinked to true
                         } else {
                             let defaultPartnerURL = URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!
                             self.userWrapper.partner = PartnerModel(username: "", userProfileURL: defaultPartnerURL, token: "", credits: 50, partnerUID: partnerUID)
