@@ -31,7 +31,7 @@ struct PartnerTradeView: View {
     @State private var partnerModel: PartnerModel?
     @State var partnerUsername: String = ""
     @State private var partnerProfileURL: String = ""
-    @State var titleText = "you've received a trade from: "
+    @State var titleText = "appreciates you helping out"
     @State var bodyText = "Your partner apprecaites you for helping with: "
     @Binding var selectedTransaction: TransactionType
     var user: User
@@ -149,7 +149,7 @@ struct PartnerTradeView: View {
     
     func save(){
         if let partner = self.userWrapper.partner {
-            self.selectedUsers.append(User(id: "", username: partner.username, userUID: "", userEmail: "", userProfileURL: partner.userProfileURL, token: partner.token, credits: partner.credits))
+            self.selectedUsers.append(User(id: "", username: partner.username, userUID: partner.partnerUID, userEmail: "", userProfileURL: partner.userProfileURL, token: partner.token, credits: partner.credits))
         }
         let newEntry = Entry(id: UUID().uuidString, product: self.selectedTransaction.product, amountSpent: self.selectedTransaction.amountSpent, taskParticipants: self.selectedUsers, taskDate: self.taskDate, userUID: user.userUID)
         let db = Firestore.firestore()
@@ -172,8 +172,12 @@ struct PartnerTradeView: View {
                 print("Document added with ID: \(ref!.documentID)")
             }
         }
-        self.titleText = "Hey @\(partnerUsername),  \(titleText) \(user.username)!"
-        self.bodyText = "\(bodyText) \(newEntry.product) for \(newEntry.amountSpent)"
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MM/dd"
+        let formattedDate = dateFormatter.string(from: newEntry.taskDate)
+        self.titleText = "Hey, @\(user.username) \(titleText)!"
+        self.bodyText = "\(newEntry.product) on \(formattedDate)"
+        self.partnerToken = userWrapper.partner!.token
         sendPushNotification(to: partnerToken, title: titleText, body: bodyText)
         self.dismiss()
     }

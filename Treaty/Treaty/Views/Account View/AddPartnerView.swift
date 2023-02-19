@@ -25,6 +25,8 @@ struct AddPartnerView: View {
     @State var showSuccessDelete = false
     @State var titleText = "want to be "
     @State var bodyText = "Open the app to accept or decline the partnership request!"
+    @AppStorage("parnterLinked") var partnerLinked: Bool = false
+
     @Environment(\.colorScheme) private var colorScheme
     @ObservedObject var userWrapper: UserWrapper
 
@@ -83,7 +85,9 @@ struct AddPartnerView: View {
                         self.showSuccess = true
                     }), secondaryButton: .cancel())
                 }
-                if !partnerUsername.isEmpty {
+                
+                // Conditionally show the remove button only if partner is already linked
+                if partnerLinked {
                     Button(action: {
                         self.searchForPartner()
                         showAlertDelete.toggle()
@@ -268,6 +272,7 @@ struct AddPartnerView: View {
                         }
                     }
                 }
+                self.partnerLinked = false // set partnerLinked to true
             } else {
                 print("Error fetching document: \(error)")
             }

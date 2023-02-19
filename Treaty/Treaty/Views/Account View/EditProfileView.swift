@@ -170,24 +170,6 @@ struct EditProfileView: View {
                 .autocapitalization(.none)
                 .border(1, colorScheme == .light ? Color.black : Color.white.opacity(0.5))
             
-//            SecureField("Current Password", text: $currentPassword)
-//                .foregroundColor(colorScheme == .light ? Color.gray : Color.white)
-//                .textContentType(.password)
-//                .disableAutocorrection(true)
-//                .border(1, colorScheme == .light ? Color.black : Color.white.opacity(0.5))
-//
-//            SecureField("New Password", text: $newPassword)
-//                .foregroundColor(colorScheme == .light ? Color.gray : Color.white)
-//                .textContentType(.newPassword)
-//                .disableAutocorrection(true)
-//                .border(1, colorScheme == .light ? Color.black : Color.white.opacity(0.5))
-//
-//            SecureField("Confirm New Password", text: $confirmPassword)
-//                .foregroundColor(colorScheme == .light ? Color.gray : Color.white)
-//                .textContentType(.newPassword)
-//                .disableAutocorrection(true)
-//                .border(1, colorScheme == .light ? Color.black : Color.white.opacity(0.5))
-        
             Button(action: {
                 showPasswordSheet.toggle()
             }) {
