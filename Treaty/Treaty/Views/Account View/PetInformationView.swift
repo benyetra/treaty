@@ -28,7 +28,8 @@ struct PetInformationView: View {
     @State private var showImagePicker: Bool = false
     @State var petProfilePicData: Data?
     @State var photoItem: PhotosPickerItem?
-    
+    @AppStorage("parnterLinked") var partnerLinked: Bool = false
+
     
     var user: User
     
@@ -207,12 +208,21 @@ struct PetInformationView: View {
                 ]) { error in
                     if let error = error {
                         // Handle error
+                        print(error.localizedDescription)
                     } else {
+                        // Check if pet is linked to partner
+                        if partnerLinked == true {
+                            let partnerRef = Firestore.firestore().collection("Users").document(userWrapper.partner!.partnerUID)
+                            partnerRef.updateData([
+                                "pet": FieldValue.arrayUnion([petData])
+                            ])
+                        }
                         dismiss()
                     }
                 }
             } catch {
                 // Handle error
+                print(error.localizedDescription)
             }
         }
     }
