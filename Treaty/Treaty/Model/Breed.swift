@@ -7,30 +7,12 @@
 
 import SwiftUI
 
-struct Breed: Decodable {
-    let id: Int
-    let name: String
-    let temperament: String?
-    let origin: String?
-    let lifeSpan: String?
-    let weight: Weight?
-    let height: Height?
-    let bredFor: String?
-    let breedGroup: String?
-    let image: Image?
-    
-    struct Weight: Decodable {
-        let imperial: String
-        let metric: String
-    }
-    
-    struct Height: Decodable {
-        let imperial: String
-        let metric: String
-    }
-    
-    struct Image: Decodable {
-        let url: URL
-    }
+struct Breed: Identifiable{
+    var id: String = UUID().uuidString
+    var value: String
+    var index: Int = 0
+    var rect: CGRect = .zero
+    var pusOffset: CGFloat = 0
+    var isCurrent: Bool = false
+    var color: Color = .clear
 }
-

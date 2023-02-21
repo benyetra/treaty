@@ -8,7 +8,7 @@
 import SwiftUI
 
 // MARK: Character Model For Holding Data about Each Alphabet
-struct CharacterModel: Identifiable{
+struct CharacterModela: Identifiable{
     var id: String = UUID().uuidString
     var value: String
     var index: Int = 0
