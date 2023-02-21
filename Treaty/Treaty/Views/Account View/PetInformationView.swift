@@ -28,6 +28,7 @@ struct PetInformationView: View {
     @State private var showImagePicker: Bool = false
     @State var petProfilePicData: Data?
     @State var photoItem: PhotosPickerItem?
+    @State private var showBreedScrollView: Bool = false
     @AppStorage("parnterLinked") var partnerLinked: Bool = false
 
     
@@ -99,10 +100,19 @@ struct PetInformationView: View {
                 }
                 
                 Section {
-                    Picker("Pet's Breed", selection: $selectedBreedName) {
-                        ForEach(dogBreeds, id: \.self) { breed in
-                            Text(breed)
-                        }
+                    Button {
+                        showBreedScrollView.toggle()
+                    } label: {
+                        Text("Dog Breed")
+                            .foregroundColor(Color("Blue"))
+                            .fontWeight(.bold)
+                            .padding(.vertical)
+                            .frame(maxWidth: .infinity)
+                            .background(Color("Sand"),in: Capsule())
+                    }
+                    .fullScreenCover(isPresented: $showBreedScrollView) {
+                    } content: {
+                        BreedScrollView()
                     }
                 } header: {
                     Text("Pet's Breed")
