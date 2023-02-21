@@ -10,17 +10,30 @@ import FirebaseFirestoreSwift
 import Firebase
 import FirebaseFirestore
 
-struct PetModel: Identifiable,Codable{
+struct PetModel: Identifiable, Codable {
     @DocumentID var id: String?
     var name: String
-    var breed: String
     var birthDate: Date
+    var breed: String
+    var profileImageURL: URL?
     var weight: Int
     
-    enum CodingKeys: CodingKey {
+    private enum CodingKeys: CodingKey {
         case name
-        case breed
         case birthDate
+        case breed
+        case profileImageURL
         case weight
     }
+    
+    init(name: String, birthDate: Date, breed: String, profileImageURL: URL?, weight: Int) {
+        self.name = name
+        self.birthDate = birthDate
+        self.breed = breed
+        self.profileImageURL = profileImageURL
+        self.weight = weight
+    }
 }
+
+
+
