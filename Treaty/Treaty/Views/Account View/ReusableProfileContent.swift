@@ -110,23 +110,6 @@ struct ReusableProfileContent: View {
                         .hAlign(.leading)
                         .padding(.vertical,15)
                     
-                    // Add a button here to allow users to add a new pet
-                    Button(action: {
-                        self.showPetView.toggle()
-                    }, label: {
-                        Text("Add Pet +")
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(Color("Blue"))
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 20)
-                            .background(Color(.white))
-                            .clipShape(Capsule())
-                            .overlay(Capsule().stroke(Color("Blue"), lineWidth: 1))
-                    })
-                    .fullScreenCover(isPresented: $showPetView) {
-                        PetInformationView(userWrapper: userWrapper)
-                    }
                     if let pet = self.userWrapper.user.pet {
                         HStack {
                             WebImage(url: userWrapper.pet?.profileImageURL).placeholder{
@@ -170,6 +153,23 @@ struct ReusableProfileContent: View {
                             .font(.subheadline)
                             .foregroundColor(colorScheme == .light ? Color.gray : Color.white)
                             .padding(.top, 10)
+                    }
+                    // Add a button here to allow users to add a new pet
+                    Button(action: {
+                        self.showPetView.toggle()
+                    }, label: {
+                        Text("Add Pet +")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color("Blue"))
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 20)
+                            .background(Color(.white))
+                            .clipShape(Capsule())
+                            .overlay(Capsule().stroke(Color("Blue"), lineWidth: 1))
+                    })
+                    .fullScreenCover(isPresented: $showPetView) {
+                        PetInformationView(userWrapper: userWrapper)
                     }
                 }
                 .padding(15)
