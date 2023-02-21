@@ -24,6 +24,7 @@ struct ReusableProfileContent: View {
     @State var partnerUsername: String = ""
     @State private var partnerToken: String = ""
     @State private var showLightbox = false
+    @State private var showPetLightbox = false
     @State private var showPetView = false
     @Environment(\.colorScheme) private var colorScheme
 
@@ -122,9 +123,9 @@ struct ReusableProfileContent: View {
                             .frame(width: 50, height: 50)
                             .clipShape(Circle())
                             .onTapGesture {
-                                self.showLightbox = true
+                                self.showPetLightbox = true
                             }
-                            .sheet(isPresented: $showLightbox) {
+                            .sheet(isPresented: $showPetLightbox) {
                                 VStack {
                                     Text("Dog Picture")
                                         .font(.headline)
@@ -140,9 +141,10 @@ struct ReusableProfileContent: View {
                                     }
                                 }
                                 .onTapGesture {
-                                    self.showLightbox = false
+                                    self.showPetLightbox = false
                                 }
                             }
+                            
                             Text("Your Pet: \(pet.name), Breed:\(pet.breed), Weight: \(pet.weight), Birthdate: \(pet.birthDate)")
                                 .font(.headline)
                                 .foregroundColor(colorScheme == .light ? Color.gray : Color.white)
