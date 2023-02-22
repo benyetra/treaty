@@ -16,8 +16,6 @@ struct PetInformationView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var userWrapper: UserWrapper
     @Environment(\.colorScheme) private var colorScheme
-    
-    let dogBreeds = ["Affenpinscher", "Afghan Hound", "Aidi", "Airedale Terrier", "Akbash Dog", "Akita", "Alaskan Husky", "Alaskan Klee Kai", "Alaskan Malamute", "American Bulldog", "American Bully", "American Cocker Spaniel", "American Eskimo Dog", "American Foxhound", "American Hairless Terrier", "American Leopard Hound", "American Pit Bull Terrier", "American Staffordshire Terrier", "American Water Spaniel", "Anatolian Shepherd Dog", "Australian Cattle Dog", "Australian Kelpie", "Australian Shepherd", "Australian Terrier", "Barbet", "Basenji", "Basset Hound", "Beagle", "Bearded Collie", "Beauceron", "Bedlington Terrier", "Belgian Sheepdog-Malinois", "Belgian Sheepdog-Tervuren", "Bernedoodle", "Bernese Mountain Dog", "Bichon Frise", "Black & Tan Coonhound", "Black Mouth Cur", "Black Russian Terrier", "Bloodhound", "Bluetick Coonhound", "Border Collie", "Border Terrier", "Borzoi", "Boston Terrier", "Bouvier Des Flandres", "Boykin Spaniel", "Boxer", "Briard", "Brittany", "Brussels Griffon", "Bull Terrier", "Bulldog", "Bullmastiff", "Cairn Terrier", "Canaan Dog", "Cane Corso", "Cardigan Welsh Corgi", "Carolina Dog", "Catahoula Leopard Dog", "Cavalier King Charles Spaniel", "Chesapeake Bay Retriever", "Chihuahua", "Chinese Crested", "Chinese Shar-Pei", "Chow Chow", "Clumber Spaniel", "Collie", "Coton de Tulear", "Curly Coated Retriever", "Dachshund, Miniature", "Dachshund, Standard", "Dalmatian", "Dandie Dinmont Terrier", "Danish-Swedish Farmdog", "Doberman Pinscher", "Dogo Argentino", "Dutch Shepherd", "English Bulldog", "English Cocker Spaniel", "English Coonhound", "English Foxhound", "English Setter", "English Shepherd", "English Springer Spaniel", "English Toy Spaniel", "Field Spaniel", "Finnish Spitz", "Flat Coated Retriever", "French Bulldog", "German Longhaired Pointer", "German Pinscher", "German Shepherd Dog", "German Shorthaired Pointer", "German Wirehaired Pointer", "Giant Schnauzer", "Glen of Imaal Terrier", "Golden Retriever", "Gordon Setter", "Great Dane", "Great Pyrenees", "Greater Swiss Mountain Dog", "Greyhound", "Harrier", "Havanese", "Ibizan Hound", "Irish Setter", "Irish Terrier", "Irish Water Spaniel", "Irish Wolfhound", "Italian Greyhound", "Jack Russell Terrier", "Japanese Chin", "Kangal", "Keeshond", "Kerry Blue Terrier", "Komondor", "Kuvasz", "Labrador Retriever", "Lakeland Terrier", "Lhasa Apso", "Maltese", "Manchester Terrier (Standard)", "Manchester Terrier (Toy)", "Mastiff", "Miniature Bull Terrier", "Miniature Pinscher", "Neapolitan Mastiff", "Nederlandse Kooikerhondje", "Newfoundland", "Norfolk Terrier", "Norrbottenspets", "Norwegian Elkhound", "Nova Scotia Duck Tolling Retriever", "Old English Sheepdog", "Olde English Bulldogge", "Otterhound", "Papillon", "Parson Russell Terrier", "Patterdale Terrier", "Pekingese", "Pembroke Welsh Corgi", "Perro de Presa Canario", "Peruvian Inca Orchid", "Petit Basset Griffon Vendeen", "Pharaoh Hound", "Plott Hound", "Pointer", "Polish Lowland Sheepdog", "Pomeranian", "Poodle Toy", "Poodle, Miniature", "Poodle, Standard", "Portuguese Water Dog", "Pug", "Puli", "Pumi", "Rat Terrier", "Redbone Coonhound", "Rhodesian Ridgeback", "Rottweiler", "Saint Bernard", "Saluki", "Samoyed", "Schapendoes", "Schipperke", "Schnauzer, Standard", "Scottish Deerhound", "Scottish Terrier", "Sealyham Terrier", "Shetland Sheepdog", "Shiba Inu", "Shih Tzu", "Siberian Husky", "Silky Terrier", "Skye Terrier", "Smooth Fox Terrier", "Spinone Italiano", "Staffordshire Bull Terrier", "Sussex Spaniel", "Tibetan Mastiff", "Tibetan Spaniel", "Tibetan Terrier", "Toy Fox Terrier", "Treeing Tennessee Brindle", "Treeing Walker Coonhound", "Vizsla", "Weimaraner", "Welsh Springer Spaniel", "Welsh Terrier", "West Highland White Terrier", "Wheaten Terrier, Soft-Coated", "Whippet", "Wire Fox Terrier", "Wirehaired Pointing Griffon", "Yorkshire Terrier"]
     @State private var selectedBreedIndex = 0
     @State private var selectedBreedName: String = ""
     @State private var name: String = ""
@@ -30,8 +28,8 @@ struct PetInformationView: View {
     @State var photoItem: PhotosPickerItem?
     @State private var showBreedScrollView: Bool = false
     @AppStorage("parnterLinked") var partnerLinked: Bool = false
+    @State var selectBreed: String?
 
-    
     var user: User
     
     init(userWrapper: UserWrapper) {
@@ -39,9 +37,6 @@ struct PetInformationView: View {
         self.user = userWrapper.user
     }
     
-    var selectedBreed: String {
-        dogBreeds[selectedBreedIndex]
-    }
     var body: some View {
         NavigationView{
             List{
@@ -100,23 +95,17 @@ struct PetInformationView: View {
                 }
                 
                 Section {
-                    Button {
+                    Button(action: {
                         showBreedScrollView.toggle()
-                    } label: {
-                        Text("Dog Breed")
-                            .foregroundColor(Color("Blue"))
-                            .fontWeight(.bold)
-                            .padding(.vertical)
-                            .frame(maxWidth: .infinity)
-                            .background(Color("Sand"),in: Capsule())
-                    }
-                    .fullScreenCover(isPresented: $showBreedScrollView) {
-                    } content: {
-                        BreedScrollView()
-                    }
-                } header: {
-                    Text("Pet's Breed")
-                        .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
+                    }, label: {
+                        Text(selectedBreedName.isEmpty ? "Breed" : selectedBreedName)
+                            .foregroundColor(selectedBreedName.isEmpty ? Color.gray : .primary)
+                    })
+                    .sheet(isPresented: $showBreedScrollView, onDismiss: {
+                        selectedBreedName = selectBreed ?? "" // update the selected breed name after dismissing the sheet
+                    }, content: {
+                        BreedScrollView(selectBreed: $selectBreed) // pass the binding variable to the sheet
+                    })
                 }
                 
                 Section {
@@ -180,7 +169,7 @@ struct PetInformationView: View {
                         save()
                     }
                     .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
-                    .disableWithOpacity(name == "" || selectedBreedName == "" || birthDate == nil || weight == 0 || petProfilePicData == nil)
+                    .disableWithOpacity(name == "" || self.selectedBreedName.isEmpty || weight == 0 || petProfilePicData == nil)
                 }
             }
         }
