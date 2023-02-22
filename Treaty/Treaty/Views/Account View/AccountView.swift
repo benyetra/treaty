@@ -33,6 +33,7 @@ struct AccountView: View {
     @AppStorage("partnerUsernameStored") var partnerUsernameStored: String = ""
     @AppStorage("partnerUID") var partnerUIDStored: String = ""
     @AppStorage("partnerTokenStored") var tokenStored: String = ""
+    @AppStorage("parnterLinked") var partnerLinked: Bool = false
     @AppStorage("log_status") var logStatus: Bool = false
     // MARK: View Properties
     @Environment(\.colorScheme) private var colorScheme
@@ -56,11 +57,7 @@ struct AccountView: View {
     var body: some View {
         NavigationStack{
             VStack{
-                if let myProfile{
-                    ReusableProfileContent(user: myProfile, userWrapper: userWrapper)
-                }else{
-                    ProgressView()
-                }
+                ReusableProfileContent(user: user, userWrapper: userWrapper)
             }
             .navigationTitle("My Profile")
             .toolbar {
@@ -113,23 +110,6 @@ struct AccountView: View {
         }
         .alert(errorMessage, isPresented: $showError) {
         }
-        .task {
-            // This Modifer is like onAppear
-            // So Fetching for the First Time Only
-            if myProfile != nil{return}
-            // MARK: Initial Fetch
-            await fetchUserData()
-        }
-    }
-    
-    
-    // MARK: Fetching User Data
-    func fetchUserData()async{
-        guard let userUID = Auth.auth().currentUser?.uid else{return}
-        guard let user = try? await Firestore.firestore().collection("Users").document(userUID).getDocument(as: User.self) else{return}
-        await MainActor.run(body: {
-            myProfile = user
-        })
     }
     
     // MARK: Logging User Out

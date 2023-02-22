@@ -13,10 +13,12 @@ import SDWebImageSwiftUI
 class UserWrapper: ObservableObject {
     @Published var user: User
     @Published var partner: PartnerModel?
+    @Published var pet: PetModel?
 
     init(user: User) {
         self.user = user
         self.partner = nil
+        self.pet = nil
     }
 }
 

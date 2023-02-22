@@ -24,6 +24,8 @@ struct ReusableProfileContent: View {
     @State var partnerUsername: String = ""
     @State private var partnerToken: String = ""
     @State private var showLightbox = false
+    @State private var showPetLightbox = false
+    @State private var showPetView = false
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
@@ -109,14 +111,76 @@ struct ReusableProfileContent: View {
                         .hAlign(.leading)
                         .padding(.vertical,15)
                     
+                    if let pet = self.userWrapper.user.pet {
+                        HStack {
+                            WebImage(url: userWrapper.pet?.profileImageURL).placeholder{
+                                // MARK: Placeholder Image
+                                Image("NullProfile")
+                                    .resizable()
+                            }
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 50, height: 50)
+                            .clipShape(Circle())
+                            .onTapGesture {
+                                self.showPetLightbox = true
+                            }
+                            .sheet(isPresented: $showPetLightbox) {
+                                VStack {
+                                    Text("Dog Picture")
+                                        .font(.headline)
+                                        .fontWeight(.bold)
+                                        .padding(10)
+                                    VStack {
+                                        Text(userWrapper.pet?.name ?? "")
+                                            .font(.title3)
+                                            .fontWeight(.semibold)
+                                        WebImage(url: self.userWrapper.pet?.profileImageURL)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                    }
+                                }
+                                .onTapGesture {
+                                    self.showPetLightbox = false
+                                }
+                            }
+                            
+                            Text("Your Pet: \(pet.name), Breed:\(pet.breed), Weight: \(pet.weight), Birthdate: \(pet.birthDate)")
+                                .font(.headline)
+                                .foregroundColor(colorScheme == .light ? Color.gray : Color.white)
+                                .padding(.top, 10)
+                        }
+                    } else {
+                        Text("No pet information found.")
+                            .font(.subheadline)
+                            .foregroundColor(colorScheme == .light ? Color.gray : Color.white)
+                            .padding(.top, 10)
+                    }
+                    // Add a button here to allow users to add a new pet
+                    Button(action: {
+                        self.showPetView.toggle()
+                    }, label: {
+                        Text("Add Pet +")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color("Blue"))
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 20)
+                            .background(Color(.white))
+                            .clipShape(Capsule())
+                            .overlay(Capsule().stroke(Color("Blue"), lineWidth: 1))
+                    })
+                    .fullScreenCover(isPresented: $showPetView) {
+                        PetInformationView(userWrapper: userWrapper)
+                    }
                 }
                 .padding(15)
             }
         }, onRefresh: {
             fetchUserData()
         }).onAppear(perform: fetchUserData)
-
     }
+    
     
     func fetchUserData() {
         let db = Firestore.firestore()
@@ -130,6 +194,19 @@ struct ReusableProfileContent: View {
                 let userProfileURL = data["userProfileURL"] as? String ?? ""
                 let userToken = data["token"] as? String ?? ""
                 let credits = data["credits"] as? Int ?? 50
+                
+                // Fetch user pet data
+                if let petArray = data["pet"] as? [[String: Any]], let petData = petArray.first,
+                   let petName = petData["name"] as? String,
+                   let petBirthDate = petData["birthDate"] as? Timestamp,
+                   let petBreed = petData["breed"] as? String,
+                   let petWeight = petData["weight"] as? Int,
+                   let petProfileURLString = petData["petPicURL"] as? String,
+                   let petProfileURL = URL(string: petProfileURLString) {
+                    let petModel = PetModel(name: petName, birthDate: petBirthDate.dateValue(), breed: petBreed, profileImageURL: petProfileURL, weight: petWeight)
+                    self.userWrapper.pet = petModel
+                }
+                
                 if let url = URL(string: userProfileURL) {
                     self.userWrapper.user = User(id: "", username: username, userUID: userUID, userEmail: userEmail, userProfileURL: url, token: userToken, credits: credits)
                     self.profileURL = url
@@ -140,23 +217,38 @@ struct ReusableProfileContent: View {
                     self.profileURL = defaultURL
                     self.userNameStored = username
                 }
+                
                 if let partnerUID = data["partners"] as? String {
                     db.collection("Users").document(partnerUID).getDocument { (partnerDocument, error) in
                         if let partnerDocument = partnerDocument, partnerDocument.exists, let partnerData = partnerDocument.data(), let partnerUsername = partnerData["username"] as? String, let partnerProfileURL = partnerData["userProfileURL"] as? String, let partnerURL = URL(string: partnerProfileURL),
                            let partnerToken = partnerData["token"] as? String,
-                           let partnerCredits = partnerData["credits"] as? Int
-                        {
-                            self.userWrapper.partner = PartnerModel(username: partnerUsername, userProfileURL: partnerURL, token: partnerToken, credits: partnerCredits, partnerUID: partnerUID)
-                            self.partnerUsernameStored = partnerUsername
-                            self.partnerUIDStored = partnerUID
-                            self.partnerLinked = true // set partnerLinked to true
-                        } else {
-                            let defaultPartnerURL = URL(string: "https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png")!
-                            self.userWrapper.partner = PartnerModel(username: "", userProfileURL: defaultPartnerURL, token: "", credits: 50, partnerUID: partnerUID)
+                           let partnerCredits = partnerData["credits"] as? Int {
+                            // Fetch partner pet data
+                            if let partnerPetArray = partnerData["pet"] as? [[String: Any]], let partnerPetData = partnerPetArray.first,
+                               let partnerPetName = partnerPetData["name"] as? String,
+                               let partnerPetBirthDate = partnerPetData["birthDate"] as? Timestamp,
+                               let partnerPetBreed = partnerPetData["breed"] as? String,
+                               let partnerPetWeight = partnerPetData["weight"] as? Int,
+                               let partnerPetPicURLString = partnerPetData["petPicURL"] as? String,
+                               let partnerPetPicURL = URL(string: partnerPetPicURLString) {
+                                let partnerPet = PetModel(name: partnerPetName, birthDate: partnerPetBirthDate.dateValue(), breed: partnerPetBreed, profileImageURL: partnerPetPicURL, weight: partnerPetWeight)
+                                self.userWrapper.partner?.pet = partnerPet
+                            }
                         }
                     }
                 } else {
-                    self.userWrapper.partner = nil
+                    self.userWrapper.partner?.pet = nil
+                }
+                // Fetching current user's pet data
+                if let petData = data["pet"] as? [[String: Any]], let currentPetData = petData.first,
+                   let petName = currentPetData["name"] as? String,
+                   let petBirthDate = currentPetData["birthDate"] as? Timestamp,
+                   let petBreed = currentPetData["breed"] as? String,
+                   let petWeight = currentPetData["weight"] as? Int,
+                   let petPicURLString = currentPetData["petPicURL"] as? String,
+                   let petPicURL = URL(string: petPicURLString) {
+                    let pet = PetModel(name: petName, birthDate: petBirthDate.dateValue(), breed: petBreed, profileImageURL: petPicURL, weight: petWeight)
+                    self.userWrapper.user.pet = pet
                 }
             } else {
                 print("Document does not exist")
@@ -192,3 +284,10 @@ struct ReusableProfileContent: View {
     }
 }
 
+extension DateFormatter {
+    static let yyyyMMdd: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
+}

@@ -16,6 +16,7 @@ struct PartnerModel:Codable {
     var token: String
     var credits: Int
     var partnerUID: String
+    var pet: PetModel?
     
     func addCredits(amount: Int) {
         let db = Firestore.firestore()
