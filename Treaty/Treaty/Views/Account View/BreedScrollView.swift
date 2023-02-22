@@ -26,23 +26,31 @@ struct BreedScrollView: View {
             ScrollView {
                 VStack(alignment: .leading) {
                     ForEach(dogs.sorted(), id: \.self) { dog in
-                        if self.isFirstDogWithLetter(dog) {
+                        if isFirstDogWithLetter(dog) {
                             Text(String(dog.prefix(1)))
                                 .font(.system(size: 30, weight: .bold))
                                 .padding(.leading, 16)
                                 .padding(.top, 16)
-                            Spacer()
+                                .padding(.bottom, 8)
+                            Divider()
                         }
-                        Text(dog)
-                            .font(.system(size: 25))
-                            .onTapGesture {
-                                // handle dog selection here
-                                self.selectBreed(dog)
+                        HStack {
+                            Text(dog)
+                                .font(.system(size: 25))
+                                .foregroundColor(selectedBreedName == dog ? .blue : .primary)
+                                .onTapGesture {
+                                    selectBreed(dog)
+                                }
+                                .padding(.leading, 16)
+                                .padding(.trailing, 16)
+                                .padding(.vertical, 8)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            if selectedBreedName == dog {
+                                Image(systemName: "checkmark")
+                                    .foregroundColor(.blue)
+                                    .padding(.trailing, 16)
                             }
-                            .foregroundColor(self.selectedBreedName == dog ? .blue : .primary)
-                            .padding(.leading, 16)
-                            .padding(.trailing, 16)
-                            .padding(.vertical, 2)
+                        }
                     }
                 }
             }

@@ -29,6 +29,7 @@ struct PetInformationView: View {
     @State private var showBreedScrollView: Bool = false
     @AppStorage("parnterLinked") var partnerLinked: Bool = false
     @State var selectBreed: String?
+    @State var isLoading: Bool = false
 
     var user: User
     
@@ -167,10 +168,14 @@ struct PetInformationView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save"){
                         save()
+                        isLoading = true
                     }
                     .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                     .disableWithOpacity(name == "" || self.selectedBreedName.isEmpty || weight == 0 || petProfilePicData == nil)
                 }
+            }
+            .overlay {
+                LoadingView(show: $isLoading)
             }
         }
     }
