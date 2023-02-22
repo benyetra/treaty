@@ -25,7 +25,7 @@ class User: Identifiable, Codable {
     var partner: PartnerModel?
     var token: String?
     var credits: Int
-    var pet: PetModel?
+    var pet: [PetModel]?
 
     func addCredits(amount: Int) {
         let db = Firestore.firestore()
@@ -81,17 +81,18 @@ class User: Identifiable, Codable {
         return credits
     }
 
-    init(id: String?, username: String, userUID: String, userEmail: String, userProfileURL: URL, partner: PartnerModel? = nil, token: String?, credits: Int, pet: PetModel? = nil) {
-        self.id = id
-        self.username = username
-        self.userUID = userUID
-        self.userEmail = userEmail
-        self.userProfileURL = userProfileURL
-        self.partner = partner
-        self.token = token
-        self.credits = credits
-        self.pet = pet
+    init(id: String?, username: String, userUID: String, userEmail: String, userProfileURL: URL, partner: PartnerModel? = nil, token: String?, credits: Int, pet: [PetModel]? = nil) {
+            self.id = id
+            self.username = username
+            self.userUID = userUID
+            self.userEmail = userEmail
+            self.userProfileURL = userProfileURL
+            self.partner = partner
+            self.token = token
+            self.credits = credits
+            self.pet = pet ?? []
     }
+
 
     func toDict() -> [String: Any] {
         return [

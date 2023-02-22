@@ -103,7 +103,6 @@ struct ReusableProfileContent: View {
                         }
                         .hAlign(.leading)
                     }
-                    
                     Text("Pet Information")
                         .font(.title2)
                         .fontWeight(.semibold)
@@ -111,45 +110,19 @@ struct ReusableProfileContent: View {
                         .hAlign(.leading)
                         .padding(.vertical,15)
                     
-                    if let pet = self.userWrapper.user.pet {
-                        HStack {
-                            WebImage(url: userWrapper.pet?.profileImageURL).placeholder{
-                                // MARK: Placeholder Image
-                                Image("NullProfile")
-                                    .resizable()
-                            }
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 50, height: 50)
-                            .clipShape(Circle())
-                            .onTapGesture {
-                                self.showPetLightbox = true
-                            }
-                            .sheet(isPresented: $showPetLightbox) {
+                    if let pets = self.userWrapper.user.pet {
+//                        TabView {
+                            ForEach(pets) { pet in
                                 VStack {
-                                    Text("Dog Picture")
-                                        .font(.headline)
-                                        .fontWeight(.bold)
-                                        .padding(10)
-                                    VStack {
-                                        Text(userWrapper.pet?.name ?? "")
-                                            .font(.title3)
-                                            .fontWeight(.semibold)
-                                        WebImage(url: self.userWrapper.pet?.profileImageURL)
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                    }
+                                    PetDetailView(pet: pet)
                                 }
-                                .onTapGesture {
-                                    self.showPetLightbox = false
-                                }
+                                .padding(15)
+                                .tag(pet.id)
+                                .navigationBarTitle("\(pet.name)")
                             }
-                            
-                            Text("Your Pet: \(pet.name), Breed:\(pet.breed), Weight: \(pet.weight), Birthdate: \(pet.birthDate)")
-                                .font(.headline)
-                                .foregroundColor(colorScheme == .light ? Color.gray : Color.white)
-                                .padding(.top, 10)
-                        }
+//                        }
+                        .tabViewStyle(PageTabViewStyle())
+                        .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
                     } else {
                         Text("No pet information found.")
                             .font(.subheadline)
@@ -181,6 +154,92 @@ struct ReusableProfileContent: View {
         }).onAppear(perform: fetchUserData)
     }
     
+    func PetDetailView(pet: PetModel)->some View{
+        HStack(alignment: .top,spacing: 30){
+            VStack{
+                HStack(alignment: .top, spacing: 10) {
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            HStack(spacing: 10){
+                                WebImage(url: pet.profileImageURL)
+                                    .placeholder(Image("NullProfile"))
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 65, height: 65)
+                                    .clipShape(Circle())
+                                    .background(
+                                        Circle()
+                                            .stroke((colorScheme == .light ? Color("Sand") : Color("Blue")), lineWidth: 5)
+                                    )
+                                    .onTapGesture {
+                                        self.showPetLightbox = true
+                                    }
+                                    .sheet(isPresented: $showPetLightbox) {
+                                        VStack {
+                                            Text("Dog Picture")
+                                                .font(.headline)
+                                                .fontWeight(.bold)
+                                                .padding(10)
+                                            VStack {
+                                                Text(pet.name)
+                                                    .font(.title3)
+                                                    .fontWeight(.semibold)
+                                                WebImage(url: pet.profileImageURL)
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fit)
+                                            }
+                                        }
+                                        .onTapGesture {
+                                            self.showPetLightbox = false
+                                        }
+                                    }
+                            }
+                            Text(pet.name)
+                                .font(.title2.bold())
+                                .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Blue"))
+                            Text(pet.breed)
+                                .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Blue"))
+                                .padding(.horizontal, 10)
+                                .hAlign(.trailingLastTextBaseline)
+                        }
+                    }
+                }
+                .hLeading()
+                
+                // MARK: Team Members
+                HStack(spacing: 0){
+
+                    HStack(spacing: 20) {
+                        Text("Birthday: \(pet.birthDate.formatted(date: .abbreviated, time: .omitted))")
+                            .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Blue"))
+                            .padding(.horizontal, 10)
+                        Text("\(pet.weight) lbs")
+                            .font(.title3.bold())
+                            .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Blue"))
+                        // MARK: Delete Button
+                        Button {
+                            print("edit pet \(pet.name)")
+                        } label: {
+                            Image(systemName: "pencil")
+                                .foregroundStyle(colorScheme == .light ? Color.black : Color.white)
+                                .padding(10)
+                                .background((colorScheme == .light ? Color.white : Color.black), in: RoundedRectangle(cornerRadius: 10))
+                        }
+                    }
+                }
+                .padding(.top)
+            }
+            .foregroundColor(.black)
+            .padding(15)
+            .padding(.bottom,10)
+            .hLeading()
+            .background(
+                Color("Sand")
+                    .cornerRadius(25)
+            )
+        }
+        .hLeading()
+    }
     
     func fetchUserData() {
         let db = Firestore.firestore()
@@ -234,6 +293,10 @@ struct ReusableProfileContent: View {
                                 let partnerPet = PetModel(name: partnerPetName, birthDate: partnerPetBirthDate.dateValue(), breed: partnerPetBreed, profileImageURL: partnerPetPicURL, weight: partnerPetWeight)
                                 self.userWrapper.partner?.pet = partnerPet
                             }
+//                            if let partnerUID = self.userWrapper.user.partner?.partnerUID {
+//                                let partner = User(id: partnerUID, username: partnerUsername, userUID: partnerUID, userEmail: "", userProfileURL: partnerURL, token: partnerToken, credits: partnerCredits)
+//                                self.userWrapper.partner = partner
+//                            }
                         }
                     }
                 } else {
@@ -248,7 +311,7 @@ struct ReusableProfileContent: View {
                    let petPicURLString = currentPetData["petPicURL"] as? String,
                    let petPicURL = URL(string: petPicURLString) {
                     let pet = PetModel(name: petName, birthDate: petBirthDate.dateValue(), breed: petBreed, profileImageURL: petPicURL, weight: petWeight)
-                    self.userWrapper.user.pet = pet
+                    self.userWrapper.user.pet = [pet]
                 }
             } else {
                 print("Document does not exist")
