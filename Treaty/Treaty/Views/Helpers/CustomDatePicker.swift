@@ -144,9 +144,7 @@ struct CustomDatePicker: View {
                         .font(.title3.bold())
                         .foregroundColor(isSameDay(date1: record.taskDate, selectedDate: selectedDate) ? .white : .primary)
                         .frame(maxWidth: .infinity)
-                    
                     Spacer()
-                    
                     Circle()
                         .fill(isSameDay(date1: record.taskDate, selectedDate: selectedDate) ? .white : Color("Sand"))
                         .frame(width: 8,height: 8)

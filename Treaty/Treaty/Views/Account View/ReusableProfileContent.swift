@@ -42,6 +42,7 @@ struct ReusableProfileContent: View {
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 100, height: 100)
                         .clipShape(Circle())
+                        .overlay(Circle().stroke(colorScheme == .light ? Color("Blue") : Color("Sand"), lineWidth: 1))
                         .overlay(
                             WebImage(url: userWrapper.partner?.userProfileURL).placeholder{
                                 // MARK: Placeholder Image
@@ -103,6 +104,9 @@ struct ReusableProfileContent: View {
                         }
                         .hAlign(.leading)
                     }
+                    
+                    Divider()
+                    
                     Text("Pet Information")
                         .font(.title2)
                         .fontWeight(.semibold)
@@ -111,24 +115,23 @@ struct ReusableProfileContent: View {
                         .padding(.vertical,15)
                     
                     if let pets = self.userWrapper.user.pet {
-//                        TabView {
-                            ForEach(pets) { pet in
-                                VStack {
-                                    PetDetailView(pet: pet)
+                        ScrollView {
+                            VStack(spacing: 3) {
+                                ForEach(pets.indices, id: \.self) { index in
+                                    VStack {
+                                        PetDetailView(index: index, pet: pets[index])
+                                            .padding(15)
+                                    }
                                 }
-                                .padding(15)
-                                .tag(pet.id)
-                                .navigationBarTitle("\(pet.name)")
                             }
-//                        }
-                        .tabViewStyle(PageTabViewStyle())
-                        .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
+                        }
                     } else {
                         Text("No pet information found.")
                             .font(.subheadline)
                             .foregroundColor(colorScheme == .light ? Color.gray : Color.white)
                             .padding(.top, 10)
                     }
+
                     // Add a button here to allow users to add a new pet
                     Button(action: {
                         self.showPetView.toggle()
@@ -154,7 +157,7 @@ struct ReusableProfileContent: View {
         }).onAppear(perform: fetchUserData)
     }
     
-    func PetDetailView(pet: PetModel)->some View{
+    func PetDetailView(index: Int, pet: PetModel)->some View{
         HStack(alignment: .top,spacing: 30){
             VStack{
                 HStack(alignment: .top, spacing: 10) {
@@ -167,6 +170,8 @@ struct ReusableProfileContent: View {
                                     .aspectRatio(contentMode: .fill)
                                     .frame(width: 65, height: 65)
                                     .clipShape(Circle())
+                                    .overlay(Circle().stroke(colorScheme == .light ? Color("Blue") : Color("Sand"), lineWidth: 1))
+
                                     .background(
                                         Circle()
                                             .stroke((colorScheme == .light ? Color("Sand") : Color("Blue")), lineWidth: 5)
@@ -254,18 +259,6 @@ struct ReusableProfileContent: View {
                 let userToken = data["token"] as? String ?? ""
                 let credits = data["credits"] as? Int ?? 50
                 
-                // Fetch user pet data
-                if let petArray = data["pet"] as? [[String: Any]], let petData = petArray.first,
-                   let petName = petData["name"] as? String,
-                   let petBirthDate = petData["birthDate"] as? Timestamp,
-                   let petBreed = petData["breed"] as? String,
-                   let petWeight = petData["weight"] as? Int,
-                   let petProfileURLString = petData["petPicURL"] as? String,
-                   let petProfileURL = URL(string: petProfileURLString) {
-                    let petModel = PetModel(name: petName, birthDate: petBirthDate.dateValue(), breed: petBreed, profileImageURL: petProfileURL, weight: petWeight)
-                    self.userWrapper.pet = petModel
-                }
-                
                 if let url = URL(string: userProfileURL) {
                     self.userWrapper.user = User(id: "", username: username, userUID: userUID, userEmail: userEmail, userProfileURL: url, token: userToken, credits: credits)
                     self.profileURL = url
@@ -293,25 +286,30 @@ struct ReusableProfileContent: View {
                                 let partnerPet = PetModel(name: partnerPetName, birthDate: partnerPetBirthDate.dateValue(), breed: partnerPetBreed, profileImageURL: partnerPetPicURL, weight: partnerPetWeight)
                                 self.userWrapper.partner?.pet = partnerPet
                             }
-//                            if let partnerUID = self.userWrapper.user.partner?.partnerUID {
-//                                let partner = User(id: partnerUID, username: partnerUsername, userUID: partnerUID, userEmail: "", userProfileURL: partnerURL, token: partnerToken, credits: partnerCredits)
-//                                self.userWrapper.partner = partner
-//                            }
+                            if let partnerUID = self.userWrapper.user.partner?.partnerUID {
+                                let partner = PartnerModel(username: partnerUsername, userProfileURL: partnerURL, token: partnerToken, credits: partnerCredits, partnerUID: partnerUID)
+                                self.userWrapper.partner = partner
+                            }
                         }
                     }
                 } else {
                     self.userWrapper.partner?.pet = nil
                 }
                 // Fetching current user's pet data
-                if let petData = data["pet"] as? [[String: Any]], let currentPetData = petData.first,
-                   let petName = currentPetData["name"] as? String,
-                   let petBirthDate = currentPetData["birthDate"] as? Timestamp,
-                   let petBreed = currentPetData["breed"] as? String,
-                   let petWeight = currentPetData["weight"] as? Int,
-                   let petPicURLString = currentPetData["petPicURL"] as? String,
-                   let petPicURL = URL(string: petPicURLString) {
-                    let pet = PetModel(name: petName, birthDate: petBirthDate.dateValue(), breed: petBreed, profileImageURL: petPicURL, weight: petWeight)
-                    self.userWrapper.user.pet = [pet]
+                if let petArray = data["pet"] as? [[String: Any]] {
+                    var petModels = [PetModel]()
+                    for petData in petArray {
+                        if let petName = petData["name"] as? String,
+                           let petBirthDate = petData["birthDate"] as? Timestamp,
+                           let petBreed = petData["breed"] as? String,
+                           let petWeight = petData["weight"] as? Int,
+                           let petProfileURLString = petData["petPicURL"] as? String,
+                           let petProfileURL = URL(string: petProfileURLString) {
+                            let petModel = PetModel(name: petName, birthDate: petBirthDate.dateValue(), breed: petBreed, profileImageURL: petProfileURL, weight: petWeight)
+                            petModels.append(petModel)
+                        }
+                    }
+                    self.userWrapper.user.pet = petModels
                 }
             } else {
                 print("Document does not exist")
