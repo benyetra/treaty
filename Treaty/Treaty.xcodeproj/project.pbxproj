@@ -67,6 +67,7 @@
 		358BCF6829783AA8000A7F9C /* BarterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF6729783AA8000A7F9C /* BarterView.swift */; };
 		358BCF6D29783ACE000A7F9C /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF6C29783ACE000A7F9C /* AccountView.swift */; };
 		358BCF712978609B000A7F9C /* ReusableProfileContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF702978609B000A7F9C /* ReusableProfileContent.swift */; };
+		35AF362429A9291300880F51 /* CarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35AF362329A9291300880F51 /* CarouselView.swift */; };
 		35E3FCE129787C1A00B2E97A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 35E3FCE029787C1A00B2E97A /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
@@ -142,6 +143,7 @@
 		358BCF6729783AA8000A7F9C /* BarterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarterView.swift; sourceTree = "<group>"; };
 		358BCF6C29783ACE000A7F9C /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
 		358BCF702978609B000A7F9C /* ReusableProfileContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReusableProfileContent.swift; sourceTree = "<group>"; };
+		35AF362329A9291300880F51 /* CarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselView.swift; sourceTree = "<group>"; };
 		35E3FCE029787C1A00B2E97A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -357,6 +359,7 @@
 				3506E0402980262A005F0771 /* AddPartnerView.swift */,
 				3533B31629A0753A006199D2 /* PasswordFormView.swift */,
 				3533B32429A50918006199D2 /* BreedScrollView.swift */,
+				35AF362329A9291300880F51 /* CarouselView.swift */,
 			);
 			path = "Account View";
 			sourceTree = "<group>";
@@ -514,6 +517,7 @@
 			files = (
 				351818B1297D9B5900230753 /* EntryViewModel.swift in Sources */,
 				358BCF192978329F000A7F9C /* Treaty.xcdatamodeld in Sources */,
+				35AF362429A9291300880F51 /* CarouselView.swift in Sources */,
 				352F302F298BF7A6006857CB /* EditProfileView.swift in Sources */,
 				3533B31D29A27FF8006199D2 /* PetModel.swift in Sources */,
 				3533B32529A50918006199D2 /* BreedScrollView.swift in Sources */,

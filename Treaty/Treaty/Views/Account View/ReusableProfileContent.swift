@@ -22,6 +22,8 @@ struct ReusableProfileContent: View {
     @AppStorage("user_UID") var userUID: String = ""
     @AppStorage("user_profile_url") var profileURL: URL?
     @State var partnerUsername: String = ""
+    @State private var currentPetIndex = 0
+    @State private var currentIndex = 0
     @State private var partnerToken: String = ""
     @State private var showLightbox = false
     @State private var showPetLightbox = false
@@ -107,57 +109,85 @@ struct ReusableProfileContent: View {
                     
                     Divider()
                     
-                    Text("Pet Information")
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .foregroundColor(colorScheme == .light ? Color.black : Color.white)
-                        .hAlign(.leading)
-                        .padding(.vertical,15)
-                    
-                    if let pets = self.userWrapper.user.pet {
-                        ScrollView {
-                            VStack(spacing: 3) {
-                                ForEach(pets.indices, id: \.self) { index in
-                                    VStack {
-                                        PetDetailView(index: index, pet: pets[index])
-                                            .padding(15)
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        Text("No pet information found.")
-                            .font(.subheadline)
-                            .foregroundColor(colorScheme == .light ? Color.gray : Color.white)
-                            .padding(.top, 10)
-                    }
-
-                    // Add a button here to allow users to add a new pet
-                    Button(action: {
-                        self.showPetView.toggle()
-                    }, label: {
-                        Text("Add Pet +")
-                            .font(.headline)
+                    VStack {
+                        Text("Pet Information")
+                            .font(.title2)
                             .fontWeight(.semibold)
-                            .foregroundColor(Color("Blue"))
-                            .padding(.vertical, 8)
+                            .foregroundColor(Color.primary)
+                            .padding(.vertical, 15)
+                        
+                        if let pets = self.userWrapper.user.pet {
+                            GeometryReader { geometry in
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack(spacing: 0) {
+                                        ForEach(pets.indices, id: \.self) { index in
+                                            VStack {
+                                                PetDetailView(currentIndex: $currentPetIndex.wrappedValue, index: index, pet: pets[index])
+                                                    .frame(width: geometry.size.width)
+                                            }
+                                        }
+                                    }
+                                    .frame(width: geometry.size.width * CGFloat(pets.count))
+                                }
+                                .overlay(
+                                    HStack {
+                                        Button(action: {
+                                            withAnimation {
+                                                currentPetIndex = max(currentPetIndex - 1, 0)
+                                            }
+                                        }, label: {
+                                            Image(systemName: "chevron.left")
+                                                .font(.system(size: 20, weight: .semibold))
+                                                .foregroundColor(Color("Blue"))
+                                        })
+                                        
+                                        Button(action: {
+                                            withAnimation {
+                                                currentPetIndex = min(currentPetIndex + 1, pets.count - 1)
+                                            }
+                                        }, label: {
+                                            Image(systemName: "chevron.right")
+                                                .font(.system(size: 20, weight: .semibold))
+                                                .foregroundColor(Color("Blue"))
+                                        })
+                                    }
+                                    .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
+                                    .frame(width: geometry.size.width),
+                                    alignment: .bottom
+                                )
+                            }
                             .padding(.horizontal, 20)
-                            .background(Color(.white))
-                            .clipShape(Capsule())
-                            .overlay(Capsule().stroke(Color("Blue"), lineWidth: 1))
-                    })
-                    .fullScreenCover(isPresented: $showPetView) {
-                        PetInformationView(userWrapper: userWrapper)
+                        } else {
+                            Text("No pet information found.")
+                                .font(.subheadline)
+                                .foregroundColor(Color.secondary)
+                                .padding(.top, 10)
+                        }
+                        
+                        // Add a button here to allow users to add a new pet
+                        Button(action: {
+                            // Implement your action here
+                        }, label: {
+                            Text("Add Pet +")
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color("Blue"))
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 20)
+                                .background(Color(.white))
+                                .clipShape(Capsule())
+                                .overlay(Capsule().stroke(Color("Blue"), lineWidth: 1))
+                        })
+                        .padding(.top, 10)
                     }
                 }
-                .padding(15)
             }
         }, onRefresh: {
             fetchUserData()
         }).onAppear(perform: fetchUserData)
     }
     
-    func PetDetailView(index: Int, pet: PetModel)->some View{
+    func PetDetailView(currentIndex: Int, index: Int, pet: PetModel)->some View{
         HStack(alignment: .top,spacing: 30){
             VStack{
                 HStack(alignment: .top, spacing: 10) {
@@ -243,6 +273,9 @@ struct ReusableProfileContent: View {
                     .cornerRadius(25)
             )
         }
+        .padding(.top, 20)
+        .padding(.bottom, 20)
+        .frame(maxWidth: .infinity, maxHeight: .infinity) // set the frame to fill its container
         .hLeading()
     }
     
