@@ -117,17 +117,14 @@ struct ReusableProfileContent: View {
                             .padding(.vertical, 15)
                         
                         if let pets = self.userWrapper.user.pet {
-                            GeometryReader { geometry in
                                 ScrollView(.horizontal, showsIndicators: false) {
                                     HStack(spacing: 0) {
                                         ForEach(pets.indices, id: \.self) { index in
                                             VStack {
                                                 PetDetailView(currentIndex: $currentPetIndex.wrappedValue, index: index, pet: pets[index])
-                                                    .frame(width: geometry.size.width)
                                             }
                                         }
                                     }
-                                    .frame(width: geometry.size.width * CGFloat(pets.count))
                                 }
                                 .overlay(
                                     HStack {
@@ -152,10 +149,7 @@ struct ReusableProfileContent: View {
                                         })
                                     }
                                     .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
-                                    .frame(width: geometry.size.width),
-                                    alignment: .bottom
                                 )
-                            }
                             .padding(.horizontal, 20)
                         } else {
                             Text("No pet information found.")
@@ -164,9 +158,8 @@ struct ReusableProfileContent: View {
                                 .padding(.top, 10)
                         }
                         
-                        // Add a button here to allow users to add a new pet
                         Button(action: {
-                            // Implement your action here
+                            showPetView.toggle()
                         }, label: {
                             Text("Add Pet +")
                                 .font(.headline)
@@ -178,8 +171,14 @@ struct ReusableProfileContent: View {
                                 .clipShape(Capsule())
                                 .overlay(Capsule().stroke(Color("Blue"), lineWidth: 1))
                         })
+                        .fullScreenCover(isPresented: $showPetView){
+                            PetInformationView(userWrapper: userWrapper)
+                        }
                         .padding(.top, 10)
                     }
+                    
+                    Divider()
+                    
                 }
             }
         }, onRefresh: {
