@@ -10,7 +10,7 @@ import FirebaseFirestoreSwift
 import Firebase
 import FirebaseFirestore
 
-struct PetModel: Identifiable, Codable {
+struct PetModel: Identifiable, Codable, Hashable {
     @DocumentID var id: String?
     var name: String
     var birthDate: Date

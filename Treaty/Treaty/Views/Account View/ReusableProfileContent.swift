@@ -21,6 +21,7 @@ struct ReusableProfileContent: View {
     @AppStorage("user_name") var userNameStored: String = ""
     @AppStorage("user_UID") var userUID: String = ""
     @AppStorage("user_profile_url") var profileURL: URL?
+    @State private var selectedPet: PetModel?
     @State var partnerUsername: String = ""
     @State private var currentPetIndex = 0
     @State private var currentIndex = 0
@@ -29,7 +30,11 @@ struct ReusableProfileContent: View {
     @State private var showPetLightbox = false
     @State private var showPetView = false
     @Environment(\.colorScheme) private var colorScheme
-
+    
+    var petNames: [String] {
+            userWrapper.user.pet?.map { $0.name } ?? []
+        }
+    
     var body: some View {
         CustomRefreshView(lottieFileName: "Loading", backgroundColor: Color(.clear), content:  {
             ScrollView(.vertical, showsIndicators: false) {
@@ -109,84 +114,60 @@ struct ReusableProfileContent: View {
                     
                     Divider()
                     
-                    VStack {
-                        Text("Pet Information")
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                            .foregroundColor(Color.primary)
-                            .padding(.vertical, 15)
-                        
-                        if let pets = self.userWrapper.user.pet {
-                                ScrollView(.horizontal, showsIndicators: false) {
-                                    HStack(spacing: 0) {
-                                        ForEach(pets.indices, id: \.self) { index in
-                                            VStack {
-                                                PetDetailView(currentIndex: $currentPetIndex.wrappedValue, index: index, pet: pets[index])
-                                            }
-                                        }
-                                    }
-                                }
-                                .overlay(
-                                    HStack {
-                                        Button(action: {
-                                            withAnimation {
-                                                currentPetIndex = max(currentPetIndex - 1, 0)
-                                            }
-                                        }, label: {
-                                            Image(systemName: "chevron.left")
-                                                .font(.system(size: 20, weight: .semibold))
-                                                .foregroundColor(Color("Blue"))
-                                        })
-                                        
-                                        Button(action: {
-                                            withAnimation {
-                                                currentPetIndex = min(currentPetIndex + 1, pets.count - 1)
-                                            }
-                                        }, label: {
-                                            Image(systemName: "chevron.right")
-                                                .font(.system(size: 20, weight: .semibold))
-                                                .foregroundColor(Color("Blue"))
-                                        })
-                                    }
-                                    .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
-                                )
-                            .padding(.horizontal, 20)
-                        } else {
-                            Text("No pet information found.")
-                                .font(.subheadline)
-                                .foregroundColor(Color.secondary)
-                                .padding(.top, 10)
+                    if !petNames.isEmpty {
+                        Picker(selection: $currentPetIndex, label: Text("Select a pet")) {
+                            ForEach(0..<petNames.count, id: \.self) { index in
+                                Text(petNames[index])
+                            }
                         }
-                        
-                        Button(action: {
-                            showPetView.toggle()
-                        }, label: {
-                            Text("Add Pet +")
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color("Blue"))
-                                .padding(.vertical, 8)
-                                .padding(.horizontal, 20)
-                                .background(Color(.white))
-                                .clipShape(Capsule())
-                                .overlay(Capsule().stroke(Color("Blue"), lineWidth: 1))
-                        })
-                        .fullScreenCover(isPresented: $showPetView){
-                            PetInformationView(userWrapper: userWrapper)
+                        .pickerStyle(.segmented)
+                        .padding()
+                        .onChange(of: currentPetIndex) { index in
+                            if let pet = userWrapper.user.pet?[index] {
+                                selectedPet = pet
+                            }
                         }
-                        .padding(.top, 10)
+                    } else {
+                        Text("No pet information found.")
+                            .font(.subheadline)
+                            .foregroundColor(Color.secondary)
+                            .padding(.top, 10)
                     }
                     
-                    Divider()
+                    if let pet = selectedPet {
+                        PetDetailView(pet: pet)
+                    }
                     
+                    Button(action: {
+                        showPetView.toggle()
+                    }, label: {
+                        Text("Add Pet +")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color("Blue"))
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 20)
+                            .background(Color(.white))
+                            .clipShape(Capsule())
+                            .overlay(Capsule().stroke(Color("Blue"), lineWidth: 1))
+                    })
+                    .fullScreenCover(isPresented: $showPetView){
+                        PetInformationView(userWrapper: userWrapper)
+                    }
+                    .padding(.top, 10)
                 }
+                
+                Spacer()
+                
+                Divider()
+                
             }
         }, onRefresh: {
             fetchUserData()
         }).onAppear(perform: fetchUserData)
     }
     
-    func PetDetailView(currentIndex: Int, index: Int, pet: PetModel)->some View{
+    func PetDetailView(pet: PetModel)->some View{
         HStack(alignment: .top,spacing: 30){
             VStack{
                 HStack(alignment: .top, spacing: 10) {
