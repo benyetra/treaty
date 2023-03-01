@@ -192,11 +192,13 @@ struct ReusableProfileContent: View {
                                     .sheet(isPresented: $showPetLightbox) {
                                         VStack {
                                             Text("Dog Picture")
+                                                .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                                                 .font(.headline)
                                                 .fontWeight(.bold)
                                                 .padding(10)
                                             VStack {
                                                 Text(pet.name)
+                                                    .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Sand"))
                                                     .font(.title3)
                                                     .fontWeight(.semibold)
                                                 WebImage(url: pet.profileImageURL)
