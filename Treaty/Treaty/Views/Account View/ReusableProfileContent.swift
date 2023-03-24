@@ -27,6 +27,7 @@ struct ReusableProfileContent: View {
     @State private var currentIndex = 0
     @State private var partnerToken: String = ""
     @State private var showLightbox = false
+    @State private var showEditPetView = false
     @State private var showPetLightbox = false
     @State private var showPetView = false
     @Environment(\.colorScheme) private var colorScheme
@@ -235,6 +236,7 @@ struct ReusableProfileContent: View {
                             .foregroundColor(colorScheme == .light ? Color("Blue") : Color("Blue"))
                         // MARK: Delete Button
                         Button {
+                            showEditPetView.toggle()
                             print("edit pet \(pet.name)")
                         } label: {
                             Image(systemName: "pencil")
@@ -242,6 +244,9 @@ struct ReusableProfileContent: View {
                                 .padding(10)
                                 .background((colorScheme == .light ? Color.white : Color.black), in: RoundedRectangle(cornerRadius: 10))
                         }
+                    }
+                    .sheet(isPresented: $showEditPetView) {
+                        PetEditInformationView(userWrapper: userWrapper)
                     }
                 }
                 .padding(.top)

@@ -68,6 +68,7 @@
 		358BCF6829783AA8000A7F9C /* BarterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF6729783AA8000A7F9C /* BarterView.swift */; };
 		358BCF6D29783ACE000A7F9C /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF6C29783ACE000A7F9C /* AccountView.swift */; };
 		358BCF712978609B000A7F9C /* ReusableProfileContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358BCF702978609B000A7F9C /* ReusableProfileContent.swift */; };
+		358FC7A229CDF83900E349C5 /* PetEditInformationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358FC7A129CDF83900E349C5 /* PetEditInformationView.swift */; };
 		35AF362429A9291300880F51 /* CarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35AF362329A9291300880F51 /* CarouselView.swift */; };
 		35E3FCE129787C1A00B2E97A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 35E3FCE029787C1A00B2E97A /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
@@ -145,6 +146,7 @@
 		358BCF6729783AA8000A7F9C /* BarterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarterView.swift; sourceTree = "<group>"; };
 		358BCF6C29783ACE000A7F9C /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
 		358BCF702978609B000A7F9C /* ReusableProfileContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReusableProfileContent.swift; sourceTree = "<group>"; };
+		358FC7A129CDF83900E349C5 /* PetEditInformationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetEditInformationView.swift; sourceTree = "<group>"; };
 		35AF362329A9291300880F51 /* CarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselView.swift; sourceTree = "<group>"; };
 		35E3FCE029787C1A00B2E97A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -358,6 +360,7 @@
 				352F302E298BF7A6006857CB /* EditProfileView.swift */,
 				358BCF702978609B000A7F9C /* ReusableProfileContent.swift */,
 				3533B31A29A27C25006199D2 /* PetInformationView.swift */,
+				358FC7A129CDF83900E349C5 /* PetEditInformationView.swift */,
 				3544C8AF298865A800957435 /* PartnerRequestView.swift */,
 				3506E0402980262A005F0771 /* AddPartnerView.swift */,
 				3533B31629A0753A006199D2 /* PasswordFormView.swift */,
@@ -535,6 +538,7 @@
 				358BCF142978329F000A7F9C /* TreatyApp.swift in Sources */,
 				358BCF712978609B000A7F9C /* ReusableProfileContent.swift in Sources */,
 				353DF54E29887FAC0088237A /* PartnerRequestModel.swift in Sources */,
+				358FC7A229CDF83900E349C5 /* PetEditInformationView.swift in Sources */,
 				352F302D298B618D006857CB /* CustomCurveShape.swift in Sources */,
 				351818AE297D9B0D00230753 /* Entry.swift in Sources */,
 				358BCF5629783624000A7F9C /* ContentView.swift in Sources */,
