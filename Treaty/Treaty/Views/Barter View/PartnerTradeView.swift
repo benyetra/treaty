@@ -49,29 +49,23 @@ struct PartnerTradeView: View {
                 Section {
                     HStack {
                         HStack {
-                            if let transaction = self.selectedTransaction {
+                            HStack {
+                                Image(self.selectedTransaction.productIcon)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 30, height: 30)
+                                Text("\(self.selectedTransaction.product)")
+                            }
+                            .frame(maxWidth: .infinity,alignment: .leading)
+
+                            if userWrapper.partner != nil {
                                 HStack {
-                                    Image(transaction.productIcon)
+                                    Text("\(self.selectedTransaction.amountSpent)")
+                                    Image("treat")
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
-                                        .frame(width: 30, height: 30)
-                                    Text("\(transaction.product)")
+                                        .frame(width: 20, height: 20)
                                 }
-                                .frame(maxWidth: .infinity,alignment: .leading)
-
-                                if userWrapper.partner != nil {
-                                    HStack {
-                                        if let amountSpent = transaction.amountSpent {
-                                            Text("\(amountSpent)")
-                                        }
-                                        Image("treat")
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .frame(width: 20, height: 20)
-                                    }
-                                }
-                            } else {
-                                Text("No transaction selected")
                             }
                         }
                     }
